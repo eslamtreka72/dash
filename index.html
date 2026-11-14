@@ -72,6 +72,11 @@ button.pri:hover{background:linear-gradient(180deg,#ffe3a0,#f7c35e)}
 .brand .name{font-weight:700;font-size:17px;direction:ltr}
 .pill{font-size:12px;padding:3px 10px;border-radius:99px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:var(--mu)}
 #sst{cursor:pointer}
+.invc{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:12px;margin-bottom:10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.unm{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px;padding:10px;border:1px dashed var(--mid);border-radius:14px}
+.unm select{max-width:100%}
+.ok{color:var(--ok)}.warn{color:var(--mid)}.bad{color:#ff9a8a}
 .calc{font-size:13px;min-height:16px;margin-top:2px;direction:ltr;text-align:start;color:var(--gold)}
 .qk{display:flex;gap:6px}.qk button{flex:1;padding:7px 0;font-size:16px}
 .ex{font-size:11px;direction:ltr;text-align:start;color:var(--mu)}
@@ -157,13 +162,13 @@ dialog td input{width:110px;padding:6px 8px}
 
 <section class="two">
   <div class="card">
+    <button type="button" class="pri" id="btnImp" data-i="impBtn" style="width:100%;margin-bottom:14px"></button><input type="file" id="ifile" accept=".xls,application/vnd.ms-excel" multiple hidden>
     <h2 data-i="recTitle"></h2>
     <form id="f">
       <div class="seg" id="ftseg"><button type="button" data-t="sale" class="on" data-i="sale"></button><button type="button" data-t="return" data-i="return"></button></div>
       <label><span data-i="date"></span><input type="date" id="fd" required></label>
       <label><span data-i="brand"></span><select id="fb"></select></label>
       <label><span data-i="amount"></span><input type="text" id="fa" inputmode="decimal" autocomplete="off" required placeholder="0"><div class="calc" id="fa_r"></div></label>
-      <label><span data-i="cartonsN"></span><input type="text" id="fc" inputmode="decimal" autocomplete="off" required placeholder="0"><div class="calc" id="fc_r"></div></label>
       <div class="qk"><button type="button" data-c="+">+</button><button type="button" data-c="-">−</button><button type="button" data-c="*">×</button><button type="button" data-c="/">/</button><button type="button" data-c="(">(</button><button type="button" data-c=")">)</button></div>
       <div class="lbl" data-i="calcHint"></div>
       <button class="pri" type="submit" data-i="save"></button>
@@ -180,9 +185,16 @@ dialog td input{width:110px;padding:6px 8px}
   <h2 data-i="dlgTitle"></h2>
   <div class="tw"><table id="tt"></table></div>
   <div class="lbl" id="tsum" style="margin-top:10px"></div>
+  <div class="bar" style="margin-top:10px"><span class="lbl" data-i="vatMode"></span><select id="vsel"><option value="mul" data-i="vMul"></option><option value="div" data-i="vDiv"></option></select></div>
   <div class="bar" style="margin-top:14px;justify-content:flex-end">
     <button id="tcancel" data-i="cancel"></button><button class="pri" id="tsave" data-i="saveT"></button>
   </div>
+</dialog>
+<dialog id="idlg">
+  <h2 data-i="impTitle"></h2>
+  <p class="lbl" data-i="impHint" style="margin-bottom:10px"></p>
+  <div class="tw" id="ibody"></div>
+  <div class="bar" style="margin-top:14px;justify-content:flex-end"><button type="button" id="icancel" data-i="cancel"></button><button type="button" class="pri" id="iok" data-i="impOk"></button></div>
 </dialog>
 <dialog id="sdlg">
   <h2 data-i="syncTitle"></h2>
@@ -222,14 +234,14 @@ logTitle:"Transactions log",type:"Type",del:"Delete",empty:"No entries this mont
 dlgTitle:"Monthly targets & commission",tBrand:"Brand",tMoney:"Money target",tCartons:"Cartons target",tComm:"Commission %",tOthers:"Other indicators (target & commission)",tSum:"Total commission %",cancel:"Cancel",saveT:"Save targets",
 saved:"Saved",tSaved:"Targets saved",upd:"Updated",restored:"Restored",mergeQ:"Merge the backup's entries with yours?\nOK = merge (keep your data)\nCancel = replace everything with the backup",badFile:"This is not a valid backup file",noSave:"Auto-save failed, please take a backup"}
 };
-Object.assign(L.ar,{badNum:"اكتب رقم أو معادلة صحيحة (مثال: 5+2.5 أو 1/12)",calcHint:"تقدر تكتب معادلة زي الإكسيل: 5+2.5 أو 1/12 أو .25",syncBtn:"☁ مزامنة",syncTitle:"المزامنة بين الأجهزة",syncHint:"حط رابط Google Apps Script والرمز السري. استخدم نفس الرابط ونفس الرمز على كل جهاز.",sUrl:"رابط الـ Web app",sTok:"الرمز السري",sSave:"حفظ ومزامنة",sOff:"فصل",sClose:"إغلاق",sBusy:"جاري المزامنة…",sOk:"☁ تمت المزامنة",sErr:"☁ تعذرت المزامنة (أوفلاين؟)",sAuth:"☁ الرمز السري غلط",sNeed:"اكتب الرابط والرمز"});
-Object.assign(L.en,{badNum:"Enter a valid number or formula (e.g. 5+2.5 or 1/12)",calcHint:"You can type an Excel-style formula: 5+2.5 or 1/12 or .25",syncBtn:"☁ Sync",syncTitle:"Sync between devices",syncHint:"Paste your Google Apps Script URL and secret token. Use the same URL and token on every device.",sUrl:"Web app URL",sTok:"Secret token",sSave:"Save & sync",sOff:"Disconnect",sClose:"Close",sBusy:"Syncing…",sOk:"☁ Synced",sErr:"☁ Sync failed (offline?)",sAuth:"☁ Wrong token",sNeed:"Enter URL and token"});
+Object.assign(L.ar,{impBtn:"📄 استيراد فاتورة (Excel)",impTitle:"استيراد الفواتير",impHint:"القيمة المستوردة هي عمود «البونص» (قيمة الصنف) ومعاها اسم الصنف، والبراند بيتحدد من أول اسم براند في اسم الصنف.",itemsN:"صنف",impMatch:"مطابق لإجمالي الفاتورة",impMis:"مختلف عن إجمالي الفاتورة",impRet:"فاتورة مرتجع",impDup:"اتسجلت قبل كده",impUnk:"أصناف مش متعرف على براندها: اختار البراند أو سيبها تتجاهل",impSkip:"— تجاهل —",impRem:"افتكر الكلمة",impRules:"الكلمات المحفوظة",badXls:"ملف غير سليم (لازم Excel ‎.xls)",impDone:"تم استيراد {n} فاتورة",impOk:"استيراد",confirmDelInv:"دي عملية مستوردة من الفاتورة {n}. تحذف كل عمليات الفاتورة دي؟",vatMode:"طريقة خصم الضريبة",vMul:"خصم 14% (× 0.86)",vDiv:"الصافي من غير ضريبة (÷ 1.14)",badNum:"اكتب رقم أو معادلة صحيحة (مثال: 5+2.5 أو 1/12)",calcHint:"تقدر تكتب معادلة زي الإكسيل: 5+2.5 أو 1/12 أو .25",syncBtn:"☁ مزامنة",syncTitle:"المزامنة بين الأجهزة",syncHint:"حط رابط Google Apps Script والرمز السري. استخدم نفس الرابط ونفس الرمز على كل جهاز.",sUrl:"رابط الـ Web app",sTok:"الرمز السري",sSave:"حفظ ومزامنة",sOff:"فصل",sClose:"إغلاق",sBusy:"جاري المزامنة…",sOk:"☁ تمت المزامنة",sErr:"☁ تعذرت المزامنة (أوفلاين؟)",sAuth:"☁ الرمز السري غلط",sNeed:"اكتب الرابط والرمز"});
+Object.assign(L.en,{impBtn:"📄 Import invoice (Excel)",impTitle:"Import invoices",impHint:"The imported value is the “البونص” column (item value) with the item name; the brand is taken from the first brand name found in the item name.",itemsN:"items",impMatch:"matches invoice total",impMis:"differs from invoice total",impRet:"Return invoice",impDup:"already imported",impUnk:"Items with unknown brand: pick a brand or leave them ignored",impSkip:"— ignore —",impRem:"remember word",impRules:"Saved words",badXls:"Invalid file (must be Excel .xls)",impDone:"{n} invoice(s) imported",impOk:"Import",confirmDelInv:"This entry was imported from invoice {n}. Delete all entries of this invoice?",vatMode:"VAT removal method",vMul:"Deduct 14% (× 0.86)",vDiv:"Net excluding VAT (÷ 1.14)",badNum:"Enter a valid number or formula (e.g. 5+2.5 or 1/12)",calcHint:"You can type an Excel-style formula: 5+2.5 or 1/12 or .25",syncBtn:"☁ Sync",syncTitle:"Sync between devices",syncHint:"Paste your Google Apps Script URL and secret token. Use the same URL and token on every device.",sUrl:"Web app URL",sTok:"Secret token",sSave:"Save & sync",sOff:"Disconnect",sClose:"Close",sBusy:"Syncing…",sOk:"☁ Synced",sErr:"☁ Sync failed (offline?)",sAuth:"☁ Wrong token",sNeed:"Enter URL and token"});
 let S=load();
 const t=k=>L[S.lang][k]||k;
 function fix(d){
   d.ot=d.ot||{};OT.forEach(([k,tg,c])=>{if(!d.ot[k])d.ot[k]={target:tg,comm:c}});
   if(d.mig!=="c75"){let ch=0;["lines","cust","inv","active"].forEach(k=>{if(d.ot[k]&&d.ot[k].comm===8){d.ot[k].comm=7.5;ch=1}});d.mig="c75";if(ch)d.tsT=Date.now()}
-  d.act=d.act||{};d.tsT=d.tsT||0;d.tsA=d.tsA||{};d.lang=d.lang||"ar";d.base=d.base||"net";d.sales=d.sales||[];
+  d.act=d.act||{};d.rules=d.rules||{};d.vatMode=d.vatMode||"mul";d.tsT=d.tsT||0;d.tsA=d.tsA||{};d.lang=d.lang||"ar";d.base=d.base||"net";d.sales=d.sales||[];
   if(d.targets){
     if(d.targets.Maxxell){d.targets.MaxelMagic=d.targets.Maxxell;delete d.targets.Maxxell}
     BR.forEach(b=>{if(!d.targets[b])d.targets[b]={money:DEF[b][0],cartons:DEF[b][1],comm:DEF[b][2]}});
@@ -255,9 +267,10 @@ async function jf(url,opt,ms){
   finally{clearTimeout(id)}
 }
 function mergeInto(r){
+  S.rules=Object.assign({},r.rules||{},S.rules||{});
   const m=new Map(S.sales.map(x=>[x.id,x]));
   (r.sales||[]).forEach(x=>{const l=m.get(x.id);if(!l)S.sales.push(x);else if(x.del&&!l.del)l.del=1});
-  if((r.tsT||0)>(S.tsT||0)&&r.targets){S.targets=r.targets;if(r.ot)S.ot=r.ot;S.tsT=r.tsT}
+  if((r.tsT||0)>(S.tsT||0)&&r.targets){S.targets=r.targets;if(r.ot)S.ot=r.ot;if(r.vatMode)S.vatMode=r.vatMode;S.tsT=r.tsT}
   Object.keys(r.act||{}).forEach(mo=>{const rt=(r.tsA&&r.tsA[mo])||0;if(!S.act[mo]||rt>(S.tsA[mo]||0)){S.act[mo]=r.act[mo];S.tsA[mo]=rt}});
 }
 async function sync(){
@@ -270,7 +283,7 @@ async function sync(){
     if(g.error)throw new Error("auth");
     mergeInto(g);fix(S);save(false);
     if(!(document.activeElement&&document.activeElement.classList.contains("kin")))render();
-    const p={sales:S.sales,targets:S.targets,ot:S.ot,act:S.act,tsT:S.tsT,tsA:S.tsA};
+    const p={sales:S.sales,targets:S.targets,ot:S.ot,act:S.act,tsT:S.tsT,tsA:S.tsA,rules:S.rules,vatMode:S.vatMode};
     const w=await jf(u,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({token:tk,data:p})});
     if(w.error)throw new Error("auth");
     status("sOk","var(--ok)");
@@ -298,6 +311,125 @@ function calc(str){
   try{const v=ex();if(i!==s.length||!isFinite(v))return NaN;return Math.round(v*1e8)/1e8}catch(e){return NaN}
 }
 const isFormula=r=>/[+\-*/\u00D7\u00F7(]/.test(String(r).trim().replace(/^[=-]/,""))&&/^[\d.,+\-*/\u00D7\u00F7xX()=\s\u0660-\u0669\u066B]+$/.test(String(r));
+/* ===== XLS reader + invoice extraction ===== */
+function parseXLS(ab){
+  const u8=new Uint8Array(ab),dv=new DataView(ab);
+  const sig=[0xD0,0xCF,0x11,0xE0,0xA1,0xB1,0x1A,0xE1];
+  for(let i=0;i<8;i++)if(u8[i]!==sig[i])throw new Error("notxls");
+  const ss=1<<dv.getUint16(0x1E,true),ms=1<<dv.getUint16(0x20,true),cut=dv.getUint32(0x38,true);
+  const nfat=dv.getUint32(0x2C,true),dirS=dv.getUint32(0x30,true),mfS=dv.getUint32(0x3C,true),nmf=dv.getUint32(0x40,true);
+  let difS=dv.getUint32(0x44,true);const ndif=dv.getUint32(0x48,true);
+  const sec=n=>{const o=(n+1)*ss;return u8.subarray(o,o+ss)};
+  const dif=[];for(let i=0;i<109;i++){const v=dv.getUint32(0x4C+i*4,true);if(v<0xFFFFFFFA)dif.push(v)}
+  for(let d=0,s=difS;d<ndif&&s<0xFFFFFFFA;d++){const o=(s+1)*ss,dd=new DataView(ab,o,ss);for(let i=0;i<ss/4-1;i++){const v=dd.getUint32(i*4,true);if(v<0xFFFFFFFA)dif.push(v)}s=dd.getUint32(ss-4,true)}
+  const fat=[];dif.slice(0,nfat).forEach(s=>{const o=(s+1)*ss,dd=new DataView(ab,o,ss);for(let i=0;i<ss/4;i++)fat.push(dd.getUint32(i*4,true))});
+  const chain=(s,tbl)=>{const r=[];let g=0;while(s<0xFFFFFFFA&&g++<1e6){r.push(s);s=tbl[s]}return r};
+  const rd=(s,size)=>{const ch=chain(s,fat),out=new Uint8Array(ch.length*ss);ch.forEach((c,i)=>out.set(sec(c),i*ss));return size==null?out:out.subarray(0,size)};
+  const dirb=rd(dirS),ents=[];
+  for(let o=0;o+128<=dirb.length;o+=128){const d=new DataView(dirb.buffer,dirb.byteOffset+o,128),nl=d.getUint16(0x40,true);let nm="";for(let i=0;i<(nl>>1)-1;i++)nm+=String.fromCharCode(d.getUint16(i*2,true));ents.push({nm,type:d.getUint8(0x42),start:d.getUint32(0x74,true),size:d.getUint32(0x78,true)})}
+  const ent=ents.find(e=>e.type===2&&(e.nm==="Workbook"||e.nm==="Book"));
+  if(!ent)throw new Error("noworkbook");
+  let wb;
+  if(ent.size<cut){
+    const root=ents[0],mini=rd(root.start,root.size);
+    const mf=[];const mfb=rd(mfS);const mdv=new DataView(mfb.buffer,mfb.byteOffset,mfb.length);for(let i=0;i<mfb.length/4;i++)mf.push(mdv.getUint32(i*4,true));
+    const ch=chain(ent.start,mf),out=new Uint8Array(ch.length*ms);ch.forEach((c,i)=>out.set(mini.subarray(c*ms,c*ms+ms),i*ms));wb=out.subarray(0,ent.size);
+  }else wb=rd(ent.start,ent.size);
+  return biff(wb);
+}
+function biff(b){
+  const dv=new DataView(b.buffer,b.byteOffset,b.byteLength);
+  const sst=[],cells=[];let sheet=0,pos=0,pend=null;
+  const put=(r,c,v)=>{(cells[r]||(cells[r]=[]))[c]=v};
+  const rkv=v=>{let n;if(v&2)n=(v|0)>>2;else{const t=new DataView(new ArrayBuffer(8));t.setUint32(4,(v&0xFFFFFFFC)>>>0,true);n=t.getFloat64(0,true)}return v&1?n/100:n};
+  const ustr=(d,o,lenBytes)=>{ // returns string at d[o...] BIFF8 unicode string; lenBytes 2
+    const cch=d.getUint16(o,true),fl=d.getUint8(o+2);o+=3;let runs=0,ext=0;
+    if(fl&8){runs=d.getUint16(o,true);o+=2}if(fl&4){ext=d.getUint32(o,true);o+=4}
+    let s="";if(fl&1){for(let i=0;i<cch;i++)s+=String.fromCharCode(d.getUint16(o+i*2,true))}else{for(let i=0;i<cch;i++)s+=String.fromCharCode(d.getUint8(o+i))}
+    return s};
+  function readSST(chunks){
+    let ci=0,cp=8;const cur=()=>chunks[ci];
+    const adv=()=>{while(ci<chunks.length&&cp>=chunks[ci].length){ci++;cp=0}};
+    const g8=()=>{adv();return chunks[ci][cp++]};
+    const g16=()=>{const a=g8(),b=g8();return a|(b<<8)};
+    const g32=()=>{const a=g16(),b=g16();return (a|(b<<16))>>>0};
+    const skip=n=>{while(n>0&&ci<chunks.length){const a=chunks[ci].length-cp,t=Math.min(a,n);cp+=t;n-=t;if(n>0){ci++;cp=0}}};
+    const uniq=new DataView(chunks[0].buffer,chunks[0].byteOffset,8).getUint32(4,true);
+    for(let k=0;k<uniq;k++){
+      adv();if(ci>=chunks.length)break;
+      const cch=g16(),fl=g8();let runs=0,ext=0;
+      if(fl&8)runs=g16();if(fl&4)ext=g32();
+      let wide=fl&1,s="";
+      for(let i=0;i<cch;i++){
+        if(cp>=chunks[ci].length){ci++;cp=0;if(ci>=chunks.length)break;wide=chunks[ci][cp++]&1}
+        if(wide){const a=chunks[ci][cp++];if(cp>=chunks[ci].length&&false){}const bb=chunks[ci][cp++];s+=String.fromCharCode(a|(bb<<8))}else s+=String.fromCharCode(chunks[ci][cp++]);
+      }
+      skip(runs*4);skip(ext);
+      sst.push(s);
+    }
+  }
+  while(pos+4<=b.length){
+    const id=dv.getUint16(pos,true),len=dv.getUint16(pos+2,true),o=pos+4;
+    pos=o+len;
+    if(id===0x0809){const dt=dv.getUint16(o+2,true);if(dt===0x0010){sheet++;if(sheet>1)break}}
+    else if(id===0x00FC){const ch=[b.subarray(o,o+len)];let p=pos;while(p+4<=b.length&&dv.getUint16(p,true)===0x003C){const l=dv.getUint16(p+2,true);ch.push(b.subarray(p+4,p+4+l));p+=4+l}pos=p;readSST(ch)}
+    else if(sheet===1){
+      if(id===0x00FD){put(dv.getUint16(o,true),dv.getUint16(o+2,true),sst[dv.getUint32(o+6,true)])}
+      else if(id===0x0203){put(dv.getUint16(o,true),dv.getUint16(o+2,true),dv.getFloat64(o+6,true))}
+      else if(id===0x027E){put(dv.getUint16(o,true),dv.getUint16(o+2,true),rkv(dv.getUint32(o+6,true)))}
+      else if(id===0x00BD){const r=dv.getUint16(o,true),c0=dv.getUint16(o+2,true),c1=dv.getUint16(o+len-2,true);for(let c=c0,q=o+4;c<=c1;c++,q+=6)put(r,c,rkv(dv.getUint32(q+2,true)))}
+      else if(id===0x0204){put(dv.getUint16(o,true),dv.getUint16(o+2,true),ustr(dv,o+6))}
+      else if(id===0x0006){const r=dv.getUint16(o,true),c=dv.getUint16(o+2,true);if(dv.getUint16(o+12,true)!==0xFFFF)put(r,c,dv.getFloat64(o+6,true));else pend=[r,c]}
+      else if(id===0x0207&&pend){put(pend[0],pend[1],ustr(dv,o));pend=null}
+    }
+  }
+  const out=[];for(let r=0;r<cells.length;r++)out[r]=cells[r]?Array.from(cells[r],v=>v===undefined?null:v):[];
+  return out;
+}
+
+
+const BRN=["Glassy","Feba","MaxelMagic","Clorel","Velveta","Fema","Diva","Speed"];
+const BUILTIN=[["Glassy",["جلاسي","glassy"],0],["Feba",["فيبا","feba"],0],["MaxelMagic",["ماكسيل","ماكسل","ماجيك","maxel","maxxel"],0],["Clorel",["كلوريل","كلورل","clorel"],0],["Velveta",["فلفيت","فلفت","فيلفيت","فيلفت","velveta"],0],["Fema",["فيما","fema"],0],["Diva",["ديفا","diva"],1],["Speed",["سبيد","speed"],0]];
+const norm=s=>String(s==null?"":s).toLowerCase().replace(/[\u064B-\u0652\u0640]/g,"").replace(/[أإآٱ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه").replace(/ؤ/g,"و").replace(/ئ/g,"ي").trim();
+const toks=s=>norm(s).split(/[^\p{L}\p{N}]+/u).filter(Boolean);
+function brandOf(name,custom){
+  for(const tk of toks(name)){
+    if(custom&&custom[tk])return{b:custom[tk],tk};
+    for(const [b,ks,ex] of BUILTIN)for(const k of ks)if(ex?tk===k:tk.startsWith(k))return{b,tk};
+  }
+  return{b:"",tk:toks(name).find(x=>!/^\d+$/.test(x)&&x!=="عرض")||""};
+}
+const num=v=>typeof v==="number"&&isFinite(v);
+const serialToDate=n=>{const d=new Date(Math.round((n-25569)*864e5));return d.getUTCFullYear()+"-"+String(d.getUTCMonth()+1).padStart(2,"0")+"-"+String(d.getUTCDate()).padStart(2,"0")};
+function extractInvoice(rows,custom){
+  const clean=s=>norm(s).replace(/[:：]/g,"").replace(/\s+/g," ").trim();
+  let hr=-1,vc=-1,nc=-1;
+  for(let r=0;r<Math.min(rows.length,40)&&hr<0;r++){const row=rows[r]||[];const i=row.findIndex(x=>typeof x==="string"&&clean(x)==="البونص");if(i>=0){hr=r;vc=i;nc=row.findIndex(x=>typeof x==="string"&&clean(x)==="وحده")}}
+  if(hr<0||nc<0)throw new Error("noheader");
+  const meta={};
+  for(let r=0;r<hr;r++){const row=rows[r]||[];row.forEach((x,c)=>{if(typeof x!=="string"||!/[:：]/.test(x))return;const k=clean(x);const L=row[c-1],R=row[c+1];const val=(L!=null&&L!==""&&!(typeof L==="string"&&/[:：]\s*$|^\s*[:：]/.test(L)))?L:R;if(val!=null&&meta[k]==null)meta[k]=val})}
+  const lines=[];let started=false,expected=null,net=null;
+  for(let r=hr+1;r<rows.length;r++){
+    const row=rows[r]||[];const v=row[vc],nm=row[nc];
+    if(num(v)&&nm!=null&&String(nm).trim()){started=true;lines.push({name:String(nm).trim(),value:v});continue}
+    if(started){
+      row.forEach((x,c)=>{if(typeof x!=="string")return;const k=clean(x);
+        if(/القيمه المطلوبه/.test(k)){const a=row[c+1],b=row[c-1];expected=num(a)?a:num(b)?b:expected}
+        if(/^صافي القيمه/.test(k)){const a=row[c+1],b=row[c-1];net=num(a)?a:num(b)?b:net}});
+    }
+  }
+  if(!lines.length)throw new Error("nolines");
+  const head=(rows.slice(0,2).flat().filter(x=>typeof x==="string")).map(clean).join(" ");
+  const isReturn=/مرتجع|مرتجعات|return/.test(head);
+  const d=meta["تاريخ الفاتوره"];
+  const sum=lines.reduce((a,l)=>a+l.value,0);
+  lines.forEach(l=>{const m=brandOf(l.name,custom);l.b=m.b;l.tk=m.tk});
+  return{inv:String(meta["رقم الفاتوره"]||"").trim(),customer:String(meta["اسم العميل"]||"").trim(),date:num(d)?serialToDate(d):"",rep:String(meta["اسم المندوب"]||"").trim(),isReturn,lines,sum:Math.round(sum*100)/100,expected,net};
+}
+
+
+const nf=v=>S.vatMode==="div"?v/(1+VAT):v*(1-VAT);
+let uidn=0;const uid=()=>Date.now()*1000+(uidn++%1000);
 const col=p=>p>=100?"var(--ok)":p>=50?"var(--mid)":"var(--low)";
 const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
 function toast(m){const e=$("toast");e.textContent=m;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),1800)}
@@ -313,13 +445,13 @@ function render(){
   const m=$("month").value,k=1-VAT,net=S.base==="net";
   const ag={};BR.forEach(b=>ag[b]={a:0,c:0,ra:0,rc:0});
   const rows=S.sales.filter(s=>!s.del&&s.date.startsWith(m));
-  rows.forEach(s=>{const g=ag[s.brand];if(!g)return;if(s.type==="return"){g.ra+=s.amount;g.rc+=s.cartons}else{g.a+=s.amount;g.c+=s.cartons}});
-  let G=0,C=0,RA=0,TT=0,TC=0,KPI=0;
+  rows.forEach(s=>{const g=ag[s.brand];if(!g)return;if(s.type==="return")g.ra+=s.amount;else g.a+=s.amount});
+  let G=0,RA=0,TT=0,KPI=0;
   const cards=BR.map(b=>{
-    const tg=S.targets[b],g=ag[b],gross=g.a-g.ra,cn=g.c-g.rc,v=net?gross*k:gross;
-    G+=gross;C+=cn;RA+=g.ra;TT+=+tg.money;TC+=+tg.cartons;
-    const pm=tg.money>0?v/tg.money*100:0,pc=tg.cartons>0?cn/tg.cartons*100:0,tr=tier(pm),kp=tg.comm*tr/100;KPI+=kp;
-    const rt=(g.ra||g.rc)?`<div class="row"><span>${t("ret")}</span><span style="color:var(--low)">-${fmt(g.ra,2)} / -${fmtC(g.rc)}</span></div>`:"";
+    const tg=S.targets[b],g=ag[b],gross=g.a-g.ra,v=net?nf(gross):gross;
+    G+=gross;RA+=g.ra;TT+=+tg.money;
+    const pm=tg.money>0?v/tg.money*100:0,tr=tier(pm),kp=tg.comm*tr/100;KPI+=kp;
+    const rt=g.ra?`<div class="row"><span>${t("ret")}</span><span style="color:var(--low)">-${fmt(g.ra,2)}</span></div>`:"";
     return `<article class="card brand">
      <div class="top"><span class="name">${b}</span><span class="pill">${t("comm")} ${tg.comm}%</span></div>
      <div style="display:flex;justify-content:space-between;align-items:end"><span class="pct" style="color:${col(pm)}">${fmt(pm,1)}%</span><span class="lbl">${t("moneyPct")}</span></div>
@@ -328,9 +460,6 @@ function render(){
      <div class="row"><span>${t("target")}</span><span>${fmt(tg.money,2)}</span></div>
      <div class="row"><span>${t("remainB")}</span><span>${fmt(Math.max(tg.money-v,0),2)}</span></div>
      ${rt}
-     <div class="row" style="margin-top:12px"><span>${t("cartons")}</span><b>${fmtC(cn)} / ${fmtC(tg.cartons)}</b></div>
-     <div class="track"><i style="width:${Math.min(pc,100)}%;background:${col(pc)}"></i></div>
-     <div class="row"><span>${t("cartonsAch")}</span><span>${fmt(pc,1)}%</span></div>
      <div class="row"><span>${t("counted")}</span><span>${tr}%</span></div>
      <div class="row"><span>${t("kpi")}</span><b>${fmt(kp,2)}%</b></div>
     </article>`}).join("");
@@ -346,24 +475,22 @@ function render(){
      <div class="row"><span>${t("counted")}</span><span>${tr}%</span></div>
      <div class="row"><span>${t("kpi")}</span><b>${fmt(kp,2)}%</b></div>
     </article>`}).join("");
-  const N=G*k,V=net?N:G,P=TT>0?V/TT*100:0,PC=TC>0?C/TC*100:0;
+  const N=nf(G),V=net?N:G,P=TT>0?V/TT*100:0;
   $("hero").innerHTML=`<div class="ringbox">${ring(P,80,15,col(P))}<div class="c"><b style="color:${col(P)}">${fmt(P,1)}%</b><span>${t("ofTotal")}</span></div></div>
    <div><div class="lbl">${t("heroLbl")}</div>
    <div class="big">${fmt(N,2)}<small>${t("egp")}</small></div>
    <div class="stats">
     <div class="stat"><span class="lbl">${t("gross")}</span><b>${fmt(G,2)}</b></div>
-    <div class="stat"><span class="lbl">${t("vat")}</span><b style="color:var(--low)">${fmt(G*VAT,2)}</b></div>
+    <div class="stat"><span class="lbl">${t("vat")}</span><b style="color:var(--low)">${fmt(G-N,2)}</b></div>
     <div class="stat"><span class="lbl">${t("returns")}</span><b style="color:var(--low)">${fmt(RA,2)}</b></div>
     <div class="stat"><span class="lbl">${t("ttarget")}</span><b>${fmt(TT,2)}</b></div>
     <div class="stat"><span class="lbl">${t("remain")}</span><b>${fmt(Math.max(TT-V,0),2)}</b></div>
-    <div class="stat"><span class="lbl">${t("cartons")}</span><b>${fmtC(C)} / ${fmtC(TC)}</b></div>
-    <div class="stat"><span class="lbl">${t("cartonsPct")}</span><b>${fmt(PC,1)}%</b></div>
     <div class="stat"><span class="lbl">${t("kpiTotal")}</span><b style="color:var(--gold)">${fmt(KPI,2)}%</b></div>
    </div></div>`;
   $("brands").innerHTML=cards;
   const sorted=[...rows].sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
-  $("log").innerHTML=sorted.length?`<table><thead><tr><th>${t("date")}</th><th>${t("type")}</th><th>${t("brand")}</th><th>${t("amount")}</th><th>${t("cartonsN")}</th><th></th></tr></thead><tbody>`+
-   sorted.map(s=>{const r=s.type==="return";return `<tr><td>${s.date}</td><td><span class="pill ${r?"rt":""}">${t(r?"return":"sale")}</span></td><td>${s.brand}</td><td>${r?"-":""}${fmt(s.amount,2)}${s.ea?`<div class="ex">${esc(s.ea)}</div>`:""}</td><td>${r?"-":""}${fmtC(s.cartons)}${s.ec?`<div class="ex">${esc(s.ec)}</div>`:""}</td><td class="x"><button data-del="${s.id}">${t("del")}</button></td></tr>`}).join("")+`</tbody></table>`
+  $("log").innerHTML=sorted.length?`<table><thead><tr><th>${t("date")}</th><th>${t("type")}</th><th>${t("brand")}</th><th>${t("amount")}</th><th></th></tr></thead><tbody>`+
+   sorted.map(s=>{const r=s.type==="return";return `<tr><td>${s.date}</td><td><span class="pill ${r?"rt":""}">${t(r?"return":"sale")}</span></td><td>${s.brand}${s.inv?`<div class="ex">${esc(s.inv)}</div>`:""}</td><td>${r?"-":""}${fmt(s.amount,2)}${s.ea?`<div class="ex">${esc(s.ea)}</div>`:""}</td><td class="x"><button data-del="${s.id}">${t("del")}</button></td></tr>`}).join("")+`</tbody></table>`
    :`<div class="empty">${t("empty")}</div>`;
   document.querySelectorAll("#seg button").forEach(x=>x.classList.toggle("on",x.dataset.b===S.base));
 }
@@ -376,33 +503,37 @@ $("month").onchange=render;
 $("seg").onclick=e=>{const b=e.target.dataset.b;if(b){S.base=b;save();render()}};
 $("btnL").onclick=()=>{S.lang=S.lang==="ar"?"en":"ar";save();applyLang();render()};
 $("ftseg").onclick=e=>{const b=e.target.dataset.t;if(!b)return;cur=b;document.querySelectorAll("#ftseg button").forEach(x=>{x.classList.toggle("on",x.dataset.t===b);x.classList.toggle("r",b==="return"&&x.dataset.t==="return")})};
-function pv(inp,out,cart){const raw=inp.value.trim(),v=calc(raw);
-  out.textContent=!raw||/^\d*\.?\d*$/.test(raw)?"":isNaN(v)?"?":"= "+(cart?fmtC(v):fmt(v,2));
+function pv(inp,out){const raw=inp.value.trim(),v=calc(raw);
+  out.textContent=!raw||/^\d*\.?\d*$/.test(raw)?"":isNaN(v)?"?":"= "+fmt(v,2);
   out.style.color=isNaN(v)?"var(--low)":"var(--gold)"}
 let lastF=$("fa");
-["fa","fc"].forEach(id=>{const f=$(id);f.addEventListener("input",()=>pv(f,$(id+"_r"),id==="fc"));f.addEventListener("focus",()=>{lastF=f})});
+{const f=$("fa");f.addEventListener("input",()=>pv(f,$("fa_r")));f.addEventListener("focus",()=>{lastF=f})}
 document.querySelectorAll(".qk button").forEach(b=>b.addEventListener("pointerdown",e=>{e.preventDefault();const f=lastF||$("fa");f.focus();const a=f.selectionStart==null?f.value.length:f.selectionStart,z=f.selectionEnd==null?a:f.selectionEnd;f.setRangeText(b.dataset.c,a,z,"end");f.dispatchEvent(new Event("input"))}));
 $("f").onsubmit=e=>{e.preventDefault();
-  const ra=$("fa").value,rc=$("fc").value,a=calc(ra),c=calc(rc);
-  if(isNaN(a)||a<0||isNaN(c)||c<0){toast(t("badNum"));return}
-  S.sales.push({id:Date.now(),date:$("fd").value,brand:$("fb").value,amount:a,cartons:c,type:cur,ea:isFormula(ra)?ra.trim().replace(/^=/,""):"",ec:isFormula(rc)?rc.trim().replace(/^=/,""):""});
+  const ra=$("fa").value,a=calc(ra);
+  if(isNaN(a)||a<0){toast(t("badNum"));return}
+  S.sales.push({id:uid(),date:$("fd").value,brand:$("fb").value,amount:a,type:cur,ea:isFormula(ra)?ra.trim().replace(/^=/,""):""});
   save();$("month").value=$("fd").value.slice(0,7);
-  $("fa").value="";$("fc").value="";$("fa_r").textContent="";$("fc_r").textContent="";$("fa").focus();render();toast(t("saved"));
+  $("fa").value="";$("fa_r").textContent="";$("fa").focus();render();toast(t("saved"));
 };
-$("log").onclick=e=>{const id=e.target.dataset.del;if(id&&confirm(t("confirmDel"))){const x=S.sales.find(s=>s.id==id);if(x)x.del=1;save();render()}};
+$("log").onclick=e=>{const id=e.target.dataset.del;if(!id)return;const x=S.sales.find(q=>q.id==id);if(!x)return;
+  if(x.inv){if(confirm(t("confirmDelInv").replace("{n}",x.inv)))S.sales.forEach(q=>{if(q.inv===x.inv)q.del=1})}
+  else if(confirm(t("confirmDel")))x.del=1;
+  save();render()};
 $("others").onchange=e=>{const k=e.target.dataset.k;if(!k)return;const m=$("month").value;(S.act[m]=S.act[m]||{})[k]=parseFloat(e.target.value)||0;S.tsA[m]=Date.now();save();render();toast(t("upd"))};
 
 function sum(){let s=0;document.querySelectorAll("#tt input[data-k=comm]").forEach(i=>s+=parseFloat(i.value)||0);const e=$("tsum");e.textContent=t("tSum")+": "+fmt(s,1)+"%";e.style.color=Math.abs(s-100)<0.05?"var(--ok)":"var(--mid)"}
 $("btnT").onclick=()=>{
-  $("tt").innerHTML=`<thead><tr><th>${t("tBrand")}</th><th>${t("tMoney")}</th><th>${t("tCartons")}</th><th>${t("tComm")}</th></tr></thead><tbody>`+
-   BR.map(b=>{const o=S.targets[b];return `<tr><td><b>${b}</b></td><td><input type="number" step="0.01" min="0" data-b="${b}" data-k="money" value="${o.money}"></td><td><input type="number" step="any" min="0" data-b="${b}" data-k="cartons" value="${o.cartons}"></td><td><input type="number" step="0.1" min="0" data-b="${b}" data-k="comm" value="${o.comm}"></td></tr>`}).join("")+
-   `<tr><th colspan="4">${t("tOthers")}</th></tr>`+
-   OT.map(([key])=>{const o=S.ot[key];return `<tr><td><b>${t("o_"+key)}</b></td><td><input type="number" step="any" min="0" data-o="${key}" data-k="target" value="${o.target}"></td><td></td><td><input type="number" step="0.1" min="0" data-o="${key}" data-k="comm" value="${o.comm}"></td></tr>`}).join("")+`</tbody>`;
+  $("tt").innerHTML=`<thead><tr><th>${t("tBrand")}</th><th>${t("tMoney")}</th><th>${t("tComm")}</th></tr></thead><tbody>`+
+   BR.map(b=>{const o=S.targets[b];return `<tr><td><b>${b}</b></td><td><input type="number" step="0.01" min="0" data-b="${b}" data-k="money" value="${o.money}"></td><td><input type="number" step="0.1" min="0" data-b="${b}" data-k="comm" value="${o.comm}"></td></tr>`}).join("")+
+   `<tr><th colspan="3">${t("tOthers")}</th></tr>`+
+   OT.map(([key])=>{const o=S.ot[key];return `<tr><td><b>${t("o_"+key)}</b></td><td><input type="number" step="any" min="0" data-o="${key}" data-k="target" value="${o.target}"></td><td><input type="number" step="0.1" min="0" data-o="${key}" data-k="comm" value="${o.comm}"></td></tr>`}).join("")+`</tbody>`;
+  $("vsel").value=S.vatMode||"mul";
   sum();$("dlg").showModal();
 };
 $("tt").oninput=sum;
 $("tcancel").onclick=()=>$("dlg").close();
-$("tsave").onclick=()=>{document.querySelectorAll("#tt input").forEach(i=>{const v=parseFloat(i.value)||0;if(i.dataset.b)S.targets[i.dataset.b][i.dataset.k]=v;else S.ot[i.dataset.o][i.dataset.k]=v});S.tsT=Date.now();save();$("dlg").close();render();toast(t("tSaved"))};
+$("tsave").onclick=()=>{document.querySelectorAll("#tt input").forEach(i=>{const v=parseFloat(i.value)||0;if(i.dataset.b)S.targets[i.dataset.b][i.dataset.k]=v;else S.ot[i.dataset.o][i.dataset.k]=v});S.vatMode=$("vsel").value;S.tsT=Date.now();save();$("dlg").close();render();toast(t("tSaved"))};
 
 $("btnE").onclick=()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify({...S,sync:null})],{type:"application/json"}));a.download="dashboard-backup-"+today()+".json";a.click()};
 $("btnI").onclick=()=>$("file").click();
@@ -417,6 +548,51 @@ $("file").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileRe
   r.readAsText(f);e.target.value=""};
 $("sst").onclick=()=>sync();
 $("splash").onclick=()=>{$("splash").classList.add("go");document.body.classList.add("skip")};
+
+/* ===== invoice import UI ===== */
+let pendInv=[];
+$("btnImp").onclick=()=>$("ifile").click();
+$("ifile").onchange=async e=>{
+  const files=[...e.target.files];e.target.value="";if(!files.length)return;
+  pendInv=[];const errs=[];
+  for(const f of files){try{const iv=extractInvoice(parseXLS(await f.arrayBuffer()),S.rules);iv.file=f.name;pendInv.push(iv)}catch(x){errs.push(f.name)}}
+  showImp(errs);
+};
+function showImp(errs){
+  const have=new Set(S.sales.filter(q=>!q.del&&q.inv).map(q=>q.inv));
+  const un={};pendInv.forEach(iv=>iv.lines.forEach(l=>{if(!l.b){const u=un[l.tk]||(un[l.tk]={n:0,sum:0,ex:l.name});u.n++;u.sum+=l.value}}));
+  let h="";
+  pendInv.forEach((iv,i)=>{
+    iv.dup=!!iv.inv&&have.has(iv.inv);
+    const ok=iv.expected!=null&&Math.abs(iv.sum-iv.expected)<0.05,by={};
+    iv.lines.forEach(l=>{if(l.b)by[l.b]=(by[l.b]||0)+l.value});
+    h+=`<div class="invc"><label style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><input type="checkbox" data-use="${i}" ${iv.dup?"":"checked"}><b dir="ltr">${esc(iv.inv||iv.file)}</b><span class="lbl">${esc(iv.customer)} · ${esc(iv.date)}</span></label>
+     <div class="lbl" style="margin-top:6px">${iv.lines.length} ${t("itemsN")} · ${fmt(iv.sum,2)} <span class="${ok?"ok":"warn"}">${ok?"✓ "+t("impMatch"):iv.expected!=null?"⚠ "+t("impMis")+" "+fmt(iv.expected,2):""}</span>${iv.isReturn?` · <span class="bad">${t("impRet")}</span>`:""}${iv.dup?` · <span class="warn">${t("impDup")}</span>`:""}</div>
+     <div class="chips">${Object.keys(by).map(b=>`<span class="pill">${b} ${fmt(by[b],2)}</span>`).join("")}</div></div>`;
+  });
+  const tk=Object.keys(un);
+  if(tk.length)h+=`<div class="lbl" style="margin:6px 0">${t("impUnk")}</div>`+tk.map(k=>`<div class="unm"><b dir="auto">${esc(k)}</b><span class="lbl">${un[k].n} ${t("itemsN")} · ${fmt(un[k].sum,2)}</span><span class="lbl" dir="auto">${esc(un[k].ex)}</span><select data-un="${esc(k)}"><option value="">${t("impSkip")}</option>${BR.map(b=>`<option>${b}</option>`).join("")}</select><label class="lbl"><input type="checkbox" data-rem="${esc(k)}" checked> ${t("impRem")}</label></div>`).join("");
+  if(errs&&errs.length)h+=`<div class="bad" style="margin-top:8px">${t("badXls")}: ${errs.map(esc).join(" , ")}</div>`;
+  const rl=Object.keys(S.rules||{});
+  if(rl.length)h+=`<div class="lbl" style="margin-top:10px">${t("impRules")}: ${rl.map(k=>`<span class="pill">${esc(k)} → ${esc(S.rules[k])} <button type="button" data-rdel="${esc(k)}" style="padding:0 6px;border-radius:8px">×</button></span>`).join(" ")}</div>`;
+  $("ibody").innerHTML=h;if(!$("idlg").open)$("idlg").showModal();
+}
+$("ibody").onclick=e=>{const k=e.target.dataset.rdel;if(!k)return;delete S.rules[k];save();pendInv.forEach(iv=>iv.lines.forEach(l=>{const m=brandOf(l.name,S.rules);l.b=m.b;l.tk=m.tk}));showImp([])};
+$("icancel").onclick=()=>$("idlg").close();
+$("iok").onclick=()=>{
+  const asg={};document.querySelectorAll("#ibody [data-un]").forEach(q=>{asg[q.dataset.un]=q.value});
+  document.querySelectorAll("#ibody [data-rem]").forEach(c=>{const k=c.dataset.rem;if(c.checked&&asg[k])S.rules[k]=asg[k]});
+  let n=0,last="";
+  document.querySelectorAll("#ibody [data-use]").forEach(c=>{
+    if(!c.checked)return;const iv=pendInv[+c.dataset.use],by={};
+    iv.lines.forEach(l=>{const b=l.b||asg[l.tk];if(b)by[b]=(by[b]||0)+l.value});
+    const sg=iv.isReturn?-1:1,date=iv.date||today();
+    Object.keys(by).forEach(b=>{const v=Math.round(by[b]*sg*100)/100;if(!v)return;S.sales.push({id:uid(),date,brand:b,amount:Math.abs(v),type:v>0?"sale":"return",inv:iv.inv||iv.file,src:"xls"})});
+    n++;last=date;
+  });
+  $("idlg").close();
+  if(n){save();$("month").value=last.slice(0,7);render();toast(t("impDone").replace("{n}",n))}
+};
 $("btnS").onclick=()=>{$("surl").value=(S.sync&&S.sync.url)||"";$("stok").value=(S.sync&&S.sync.token)||"";$("smsg").textContent="";$("sdlg").showModal()};
 $("sclose").onclick=()=>$("sdlg").close();
 $("soff").onclick=()=>{S.sync=null;save(false);status("sOk");$("sdlg").close()};
