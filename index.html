@@ -127,6 +127,33 @@ dialog td input{width:110px;padding:6px 8px}
 @keyframes spOut{to{opacity:0;visibility:hidden;pointer-events:none;transform:scale(1.07);filter:blur(12px)}}
 @keyframes wrapIn{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){#splash{animation:spOut .3s ease .5s forwards}.sp-logo,.sp-name,.sp-sub,.sp-bar,.sp-bar i{animation:none}.sp-bar i{width:100%}.sp-logo::after{display:none}.wrap{animation:none}}
+
+.tabs{display:flex;gap:6px;padding:6px;border-radius:20px;margin-bottom:18px;overflow-x:auto;background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.04));border:1px solid var(--gb);-webkit-backdrop-filter:blur(var(--bl)) saturate(170%);backdrop-filter:blur(var(--bl)) saturate(170%);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 10px 26px rgba(0,0,0,.28)}
+.tabs button{flex:1;border:0;background:transparent;color:var(--mu);border-radius:15px;padding:10px 14px;white-space:nowrap;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
+.tabs button.on{background:linear-gradient(180deg,#ffd983,#f2b84b);color:#1b1405;font-weight:700}
+.view{display:none}.view.on{display:block}
+.ctl{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;align-items:center}
+.ctl input[type=search]{flex:1;min-width:150px}
+.clist{padding:6px 14px}
+.crow{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(90px,1fr) auto;gap:12px;align-items:center;padding:12px 4px;border-bottom:1px solid rgba(255,255,255,.1);cursor:pointer}
+.crow:last-child{border:0}
+.crow:hover{background:rgba(255,255,255,.05)}
+.cn b{display:block;font-size:15px}.cn small{color:var(--mu);direction:ltr;display:inline-block}
+.cv{text-align:end;min-width:110px}.cv .p{font-size:18px;font-weight:700}.cv small{display:block;color:var(--mu);font-size:12px}
+.chip{font-size:11px;padding:2px 8px;border-radius:99px;border:1px solid rgba(255,255,255,.2);margin-inline-start:6px;color:var(--mu)}
+.chip.d{color:var(--ok);border-color:var(--ok)}.chip.z{color:#ff9a8a;border-color:#ef6f5e}
+.cbtn{display:inline-flex;gap:6px;align-items:center;text-decoration:none;color:var(--tx);padding:8px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.09);margin:2px}
+#cdlg,#idlg{max-width:780px}
+.ytab td,.ytab th{padding:6px 8px;font-size:12.5px;text-align:center}
+.btn2{width:100%}
+.imps{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+@media(max-width:600px){.crow{grid-template-columns:1fr auto}.crow .cp{grid-column:1/-1;order:3}}
+
+.brandhd{width:100%;justify-content:space-between;flex-direction:row}
+.who{text-align:end}
+.pill.okp{color:var(--ok);border-color:var(--ok)}.pill.nop{color:#ff9a8a;border-color:#ef6f5e}
+.invc b{display:block;margin-bottom:4px}
+@media(max-width:520px){.brandhd{gap:8px}}
 </style>
 </head>
 <body>
@@ -143,7 +170,7 @@ dialog td input{width:110px;padding:6px 8px}
     <div class="who"><b>Eslam Ezz</b><span data-i="sub"></span></div>
   </div>
   <div class="bar">
-    <input type="month" id="month" aria-label="Month">
+    <select id="month" aria-label="Month"></select>
     <div class="seg" id="seg"><button data-b="net" data-i="after"></button><button data-b="gross" data-i="before"></button></div>
     <button id="btnT" data-i="targets"></button>
     <button id="btnE" data-i="backup"></button>
@@ -153,22 +180,25 @@ dialog td input{width:110px;padding:6px 8px}
     <input type="file" id="file" accept=".json" hidden>
   </div>
 </header>
+<nav class="tabs" id="tabs"><button data-tab="dash" class="on" data-i="tabDash"></button><button data-tab="cust" data-i="tabCust"></button><button data-tab="items" data-i="tabItems"></button></nav>
 
+<div class="view on" id="v_dash">
 <section class="card hero" id="hero"></section>
 <section class="grid" id="brands"></section>
-
 <div class="sec"><span data-i="others"></span><span class="lbl" data-i="othersHint"></span></div>
 <section class="grid" id="others"></section>
-
 <section class="two">
   <div class="card">
-    <button type="button" class="pri" id="btnImp" data-i="impBtn" style="width:100%;margin-bottom:14px"></button><input type="file" id="ifile" accept=".xls,application/vnd.ms-excel" multiple hidden>
+    <div class="imps"><button type="button" class="pri" id="btnImpS" data-i="impBtnS"></button><button type="button" id="btnImpR" data-i="impBtnR"></button></div>
+    <input type="file" id="ifile" accept=".xls,application/vnd.ms-excel" multiple hidden>
     <h2 data-i="recTitle"></h2>
     <form id="f">
       <div class="seg" id="ftseg"><button type="button" data-t="sale" class="on" data-i="sale"></button><button type="button" data-t="return" data-i="return"></button></div>
       <label><span data-i="date"></span><input type="date" id="fd" required></label>
       <label><span data-i="brand"></span><select id="fb"></select></label>
+      <label><span data-i="custBox"></span><input type="text" id="fcu" list="cdl" autocomplete="off"><datalist id="cdl"></datalist></label>
       <label><span data-i="amount"></span><input type="text" id="fa" inputmode="decimal" autocomplete="off" required placeholder="0"><div class="calc" id="fa_r"></div></label>
+      <label><span data-i="cartonsN"></span><input type="text" id="fc" inputmode="decimal" autocomplete="off" required placeholder="0"><div class="calc" id="fc_r"></div></label>
       <div class="qk"><button type="button" data-c="+">+</button><button type="button" data-c="-">−</button><button type="button" data-c="*">×</button><button type="button" data-c="/">/</button><button type="button" data-c="(">(</button><button type="button" data-c=")">)</button></div>
       <div class="lbl" data-i="calcHint"></div>
       <button class="pri" type="submit" data-i="save"></button>
@@ -181,20 +211,61 @@ dialog td input{width:110px;padding:6px 8px}
 </section>
 </div>
 
+<div class="view" id="v_cust">
+  <div class="card" style="margin-bottom:14px"><div class="stats" id="cstats" style="margin-top:0"></div></div>
+  <div class="ctl">
+    <input type="search" id="cq" data-ph="search">
+    <select id="cst"><option value="all" data-i="fAll"></option><option value="open" data-i="fOpen"></option><option value="zero" data-i="fZero"></option><option value="done" data-i="fDone"></option><option value="np" data-i="fNoPlan"></option><option value="qty" data-i="fQty"></option></select>
+    <select id="csort"><option value="rem" data-i="sRem"></option><option value="pct" data-i="sPct"></option><option value="name" data-i="sName"></option><option value="tgt" data-i="sTgt"></option><option value="ach" data-i="sAch"></option></select>
+  </div>
+  <div class="ctl">
+    <div class="seg" id="csrc"><button data-s="sheet" data-i="srcSheet"></button><button data-s="inv" data-i="srcInv"></button></div>
+    <button id="btnK" data-i="kBtn"></button><button id="btnCust" data-i="custUpd"></button><input type="file" id="cfile" accept=".xlsx" hidden>
+  </div>
+  <div class="card clist" id="clist"></div>
+  <div id="cunk"></div>
+</div>
+
+<div class="view" id="v_items">
+  <div class="ctl">
+    <input type="search" id="iq" data-ph="itemSearch">
+    <button id="btnPrice" class="pri" data-i="priceUpd"></button><input type="file" id="pfile" accept=".xlsx" hidden>
+  </div>
+  <div class="lbl" id="icount" style="margin:0 6px 10px"></div>
+  <div class="card"><div class="tw" id="itable" style="max-height:none"></div></div>
+</div>
+</div>
+
 <dialog id="dlg">
   <h2 data-i="dlgTitle"></h2>
   <div class="tw"><table id="tt"></table></div>
   <div class="lbl" id="tsum" style="margin-top:10px"></div>
   <div class="bar" style="margin-top:10px"><span class="lbl" data-i="vatMode"></span><select id="vsel"><option value="mul" data-i="vMul"></option><option value="div" data-i="vDiv"></option></select></div>
+  <div class="bar" style="margin-top:10px"><span class="lbl" data-i="calLbl"></span><select id="calsel"><option value="co" data-i="calCo"></option><option value="gr" data-i="calGr"></option></select></div>
+  <div class="bar" style="margin-top:10px"><span class="lbl" data-i="repLbl"></span><input id="repn" dir="auto"></div>
   <div class="bar" style="margin-top:14px;justify-content:flex-end">
     <button id="tcancel" data-i="cancel"></button><button class="pri" id="tsave" data-i="saveT"></button>
   </div>
 </dialog>
 <dialog id="idlg">
-  <h2 data-i="impTitle"></h2>
+  <h2 id="itit"></h2>
   <p class="lbl" data-i="impHint" style="margin-bottom:10px"></p>
   <div class="tw" id="ibody"></div>
   <div class="bar" style="margin-top:14px;justify-content:flex-end"><button type="button" id="icancel" data-i="cancel"></button><button type="button" class="pri" id="iok" data-i="impOk"></button></div>
+</dialog>
+<dialog id="bdlg">
+  <div class="tw" id="bdbody" style="max-height:70vh"></div>
+  <div class="bar" style="margin-top:14px;justify-content:flex-end"><button type="button" id="bdclose" data-i="close"></button></div>
+</dialog>
+<dialog id="kdlg">
+  <h2 data-i="kTitle"></h2>
+  <p class="lbl" data-i="kHint" style="margin-bottom:10px"></p>
+  <form id="kform" onsubmit="return false"><div id="kbody" style="display:grid;gap:10px"></div></form>
+  <div class="bar" style="margin-top:14px;justify-content:flex-end"><button type="button" id="kcancel" data-i="cancel"></button><button type="button" class="pri" id="ksave" data-i="kSave"></button></div>
+</dialog>
+<dialog id="cdlg">
+  <div class="tw" id="cdbody" style="max-height:70vh"></div>
+  <div class="bar" style="margin-top:14px;justify-content:flex-end"><button type="button" id="cdclose" data-i="close"></button></div>
 </dialog>
 <dialog id="sdlg">
   <h2 data-i="syncTitle"></h2>
@@ -209,8 +280,8 @@ dialog td input{width:110px;padding:6px 8px}
   </div>
 </dialog>
 <div class="toast" id="toast"></div>
-
 <script>
+
 const BR=["Glassy","Feba","MaxelMagic","Clorel","Velveta","Fema","Diva","Speed"];
 const VAT=0.14,KEY="sales_dash_v1";
 const DEF={Glassy:[16341.62,0,3],Feba:[374696.10,0,31],MaxelMagic:[17862.22,0,4],Clorel:[81663.84,0,5],Velveta:[47586.80,0,6],Fema:[0,0,0],Diva:[52843.87,0,5],Speed:[17955.70,0,3]};
@@ -236,82 +307,13 @@ saved:"Saved",tSaved:"Targets saved",upd:"Updated",restored:"Restored",mergeQ:"M
 };
 Object.assign(L.ar,{impBtn:"📄 استيراد فاتورة (Excel)",impTitle:"استيراد الفواتير",impHint:"القيمة المستوردة هي عمود «البونص» (قيمة الصنف) ومعاها اسم الصنف، والبراند بيتحدد من أول اسم براند في اسم الصنف.",itemsN:"صنف",impMatch:"مطابق لإجمالي الفاتورة",impMis:"مختلف عن إجمالي الفاتورة",impRet:"فاتورة مرتجع",impDup:"اتسجلت قبل كده",impUnk:"أصناف مش متعرف على براندها: اختار البراند أو سيبها تتجاهل",impSkip:"— تجاهل —",impRem:"افتكر الكلمة",impRules:"الكلمات المحفوظة",badXls:"ملف غير سليم (لازم Excel ‎.xls)",impDone:"تم استيراد {n} فاتورة",impOk:"استيراد",confirmDelInv:"دي عملية مستوردة من الفاتورة {n}. تحذف كل عمليات الفاتورة دي؟",vatMode:"طريقة خصم الضريبة",vMul:"خصم 14% (× 0.86)",vDiv:"الصافي من غير ضريبة (÷ 1.14)",badNum:"اكتب رقم أو معادلة صحيحة (مثال: 5+2.5 أو 1/12)",calcHint:"تقدر تكتب معادلة زي الإكسيل: 5+2.5 أو 1/12 أو .25",syncBtn:"☁ مزامنة",syncTitle:"المزامنة بين الأجهزة",syncHint:"حط رابط Google Apps Script والرمز السري. استخدم نفس الرابط ونفس الرمز على كل جهاز.",sUrl:"رابط الـ Web app",sTok:"الرمز السري",sSave:"حفظ ومزامنة",sOff:"فصل",sClose:"إغلاق",sBusy:"جاري المزامنة…",sOk:"☁ تمت المزامنة",sErr:"☁ تعذرت المزامنة (أوفلاين؟)",sAuth:"☁ الرمز السري غلط",sNeed:"اكتب الرابط والرمز"});
 Object.assign(L.en,{impBtn:"📄 Import invoice (Excel)",impTitle:"Import invoices",impHint:"The imported value is the “البونص” column (item value) with the item name; the brand is taken from the first brand name found in the item name.",itemsN:"items",impMatch:"matches invoice total",impMis:"differs from invoice total",impRet:"Return invoice",impDup:"already imported",impUnk:"Items with unknown brand: pick a brand or leave them ignored",impSkip:"— ignore —",impRem:"remember word",impRules:"Saved words",badXls:"Invalid file (must be Excel .xls)",impDone:"{n} invoice(s) imported",impOk:"Import",confirmDelInv:"This entry was imported from invoice {n}. Delete all entries of this invoice?",vatMode:"VAT removal method",vMul:"Deduct 14% (× 0.86)",vDiv:"Net excluding VAT (÷ 1.14)",badNum:"Enter a valid number or formula (e.g. 5+2.5 or 1/12)",calcHint:"You can type an Excel-style formula: 5+2.5 or 1/12 or .25",syncBtn:"☁ Sync",syncTitle:"Sync between devices",syncHint:"Paste your Google Apps Script URL and secret token. Use the same URL and token on every device.",sUrl:"Web app URL",sTok:"Secret token",sSave:"Save & sync",sOff:"Disconnect",sClose:"Close",sBusy:"Syncing…",sOk:"☁ Synced",sErr:"☁ Sync failed (offline?)",sAuth:"☁ Wrong token",sNeed:"Enter URL and token"});
-let S=load();
-const t=k=>L[S.lang][k]||k;
-function fix(d){
-  d.ot=d.ot||{};OT.forEach(([k,tg,c])=>{if(!d.ot[k])d.ot[k]={target:tg,comm:c}});
-  if(d.mig!=="c75"){let ch=0;["lines","cust","inv","active"].forEach(k=>{if(d.ot[k]&&d.ot[k].comm===8){d.ot[k].comm=7.5;ch=1}});d.mig="c75";if(ch)d.tsT=Date.now()}
-  d.act=d.act||{};d.rules=d.rules||{};d.vatMode=d.vatMode||"mul";d.tsT=d.tsT||0;d.tsA=d.tsA||{};d.lang=d.lang||"ar";d.base=d.base||"net";d.sales=d.sales||[];
-  if(d.targets){
-    if(d.targets.Maxxell){d.targets.MaxelMagic=d.targets.Maxxell;delete d.targets.Maxxell}
-    BR.forEach(b=>{if(!d.targets[b])d.targets[b]={money:DEF[b][0],cartons:DEF[b][1],comm:DEF[b][2]}});
-  }
-  d.sales.forEach(s=>{if(s.brand==="Maxxell")s.brand="MaxelMagic";if(!s.type)s.type="sale"});
-  return d;
-}
-function load(){
-  try{const r=localStorage.getItem(KEY);if(r)return fix(JSON.parse(r))}catch(e){}
-  const tg={};BR.forEach(b=>tg[b]={money:DEF[b][0],cartons:DEF[b][1],comm:DEF[b][2]});
-  return fix({targets:tg,sales:[]});
-}
-let tm=null,syncing=false,again=false;
-function save(push=true){
-  try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast(t("noSave"))}
-  if(push&&S.sync&&S.sync.url){clearTimeout(tm);tm=setTimeout(sync,1500)}
-}
-function status(k,c,x){const e=$("sst");if(!S.sync||!S.sync.url){e.hidden=true;return}e.hidden=false;e.textContent=t(k)+(x?" – "+x:"");e.style.color=c||"var(--mu)"}
-async function jf(url,opt,ms){
-  const c=new AbortController(),id=setTimeout(()=>c.abort(),ms||25000);
-  try{const r=await fetch(url,Object.assign({signal:c.signal,cache:"no-store"},opt||{}));const tx=await r.text();
-    try{return JSON.parse(tx)}catch(e){throw new Error("bad:"+tx.replace(/<[^>]*>/g," ").replace(/\s+/g," ").trim().slice(0,50))}}
-  finally{clearTimeout(id)}
-}
-function mergeInto(r){
-  S.rules=Object.assign({},r.rules||{},S.rules||{});
-  const m=new Map(S.sales.map(x=>[x.id,x]));
-  (r.sales||[]).forEach(x=>{const l=m.get(x.id);if(!l)S.sales.push(x);else if(x.del&&!l.del)l.del=1});
-  if((r.tsT||0)>(S.tsT||0)&&r.targets){S.targets=r.targets;if(r.ot)S.ot=r.ot;if(r.vatMode)S.vatMode=r.vatMode;S.tsT=r.tsT}
-  Object.keys(r.act||{}).forEach(mo=>{const rt=(r.tsA&&r.tsA[mo])||0;if(!S.act[mo]||rt>(S.tsA[mo]||0)){S.act[mo]=r.act[mo];S.tsA[mo]=rt}});
-}
-async function sync(){
-  if(!S.sync||!S.sync.url)return;
-  if(syncing){again=true;return}
-  syncing=true;status("sBusy");
-  try{
-    const u=S.sync.url,tk=S.sync.token;
-    const g=await jf(u+(u.includes("?")?"&":"?")+"token="+encodeURIComponent(tk));
-    if(g.error)throw new Error("auth");
-    mergeInto(g);fix(S);save(false);
-    if(!(document.activeElement&&document.activeElement.classList.contains("kin")))render();
-    const p={sales:S.sales,targets:S.targets,ot:S.ot,act:S.act,tsT:S.tsT,tsA:S.tsA,rules:S.rules,vatMode:S.vatMode};
-    const w=await jf(u,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({token:tk,data:p})});
-    if(w.error)throw new Error("auth");
-    status("sOk","var(--ok)");
-  }catch(e){const m=e.name==="AbortError"?"timeout":(e.message||"").startsWith("bad:")?e.message.slice(4):e.message==="auth"?"":"network";
-    status(e.message==="auth"?"sAuth":"sErr","var(--low)",m)}
-  syncing=false;
-  if(again){again=false;sync()}
-}
-const $=id=>document.getElementById(id);
-const fmt=(n,d=0)=>Number(n||0).toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d});
-const fmtC=n=>Number(n||0).toLocaleString("en-US",{maximumFractionDigits:4});
-const esc=x=>String(x).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-function calc(str){
-  let s=String(str==null?"":str).trim();
-  if(!s)return NaN;
-  s=s.replace(/^=/,"").replace(/[\u0660-\u0669]/g,d=>d.charCodeAt(0)-1632).replace(/[\u06F0-\u06F9]/g,d=>d.charCodeAt(0)-1776)
-   .replace(/\u066B/g,".").replace(/[\u00D7xX*]/g,"*").replace(/[\u00F7]/g,"/").replace(/[\u2212\u2013\u2014]/g,"-").replace(/\s+/g,"")
-   .replace(/,(?=\d{3}(?!\d))/g,"").replace(/,/g,".");
-  let i=0;
-  const pk=()=>s[i];
-  function num(){const m=/^(\d+\.?\d*|\.\d+)/.exec(s.slice(i));if(!m)throw 0;i+=m[0].length;return parseFloat(m[0])}
-  function atom(){const c=pk();if(c==="("){i++;const v=ex();if(pk()!==")")throw 0;i++;return v}if(c==="-"){i++;return -atom()}if(c==="+"){i++;return atom()}return num()}
-  function term(){let v=atom();while(pk()==="*"||pk()==="/"){const o=s[i++],r=atom();if(o==="*")v*=r;else{if(r===0)throw 0;v/=r}}return v}
-  function ex(){let v=term();while(pk()==="+"||pk()==="-"){const o=s[i++],r=term();v=o==="+"?v+r:v-r}return v}
-  try{const v=ex();if(i!==s.length||!isFinite(v))return NaN;return Math.round(v*1e8)/1e8}catch(e){return NaN}
-}
-const isFormula=r=>/[+\-*/\u00D7\u00F7(]/.test(String(r).trim().replace(/^[=-]/,""))&&/^[\d.,+\-*/\u00D7\u00F7xX()=\s\u0660-\u0669\u066B]+$/.test(String(r));
-/* ===== XLS reader + invoice extraction ===== */
+
+
+Object.assign(L.ar,{"tabDash": "الداشبورد", "tabCust": "العملاء", "tabItems": "الأصناف", "impBtnS": "📄 استيراد فاتورة بيع", "impBtnR": "↩ استيراد فاتورة مرتجع", "impTitleS": "استيراد فاتورة بيع", "impTitleR": "استيراد فاتورة مرتجع", "custBox": "العميل (اختياري)", "fAll": "كل العملاء", "fOpen": "لسه ماحققش", "fZero": "لسه ماشترّاش", "fDone": "حقق الهدف", "fNoPlan": "بدون هدف", "sRem": "الأكبر متبقي", "sPct": "الأقل تحقيقًا", "sName": "الاسم", "sTgt": "الأعلى هدف", "sAch": "الأعلى مبيعات", "srcSheet": "المحقق: الشيت", "srcInv": "المحقق: فواتيري", "custUpd": "تحديث قاعدة العملاء (Excel)", "priceUpd": "تحديث قائمة الأسعار (Excel)", "search": "ابحث بالاسم أو الكود", "itemSearch": "ابحث باسم أو كود الصنف", "cPlanned": "عملاء بهدف", "cReached": "حققوا الهدف", "cZero": "لسه ماشتروش", "cTarget": "الهدف", "cAch": "المحقق", "cRemain": "المتبقي", "srcSheetNote": "المحقق من شيت الشركة، المبيعات حتى", "srcInvNote": "المحقق من الفواتير اللي استوردتها في التطبيق", "noDB": "مفيش قاعدة عملاء لسه. دوس «تحديث قاعدة العملاء» واختار شيت المحققات.", "noRes": "مفيش نتائج", "cUnknown": "عملاء من الفواتير مش في القاعدة", "yearTot": "السنة (محقق / هدف)", "yTarget": "هدف", "yAch": "محقق", "appInv": "فواتير التطبيق", "code": "الكود", "iname": "الصنف", "ikind": "النوع", "ipack": "العبوة", "iupc": "وحدات/كرتونة", "ishrink": "الشدة", "icp": "سعر الكرتونة", "moreRes": "اعرض أقل بالبحث…", "noItems": "مفيش أصناف. دوس «تحديث قائمة الأسعار» واختار ملف الأسعار.", "close": "إغلاق", "reading": "جاري قراءة الملف…", "itemsDone": "تم تحميل {n} صنف", "custDone": "تم تحميل {n} عميل", "badBook": "الملف مش Excel (.xlsx) سليم", "noFinal": "مالقيتش شيت Final في الملف", "noRep": "مالقيتش عملاء للمندوب «{r}» في الشيت", "repLbl": "اسم المندوب (لفلترة العملاء)", "calLbl": "تقويم الشهور", "calCo": "شهور الشركة (4-4-5 أسابيع)", "calGr": "شهور ميلادية", "cartonsUnknown": "{n} صنف مالقيتش شدتها (الكراتين ناقصة)", "custIn": "عميلك ✓", "custOut": "مش في قاعدة العملاء", "impNoItems": "قائمة الأسعار مش متحملة، فالكراتين مش هتتحسب. حمّلها من تاب الأصناف."});
+Object.assign(L.en,{"tabDash": "Dashboard", "tabCust": "Customers", "tabItems": "Items", "impBtnS": "📄 Import sales invoice", "impBtnR": "↩ Import return invoice", "impTitleS": "Import sales invoice", "impTitleR": "Import return invoice", "custBox": "Customer (optional)", "fAll": "All customers", "fOpen": "Not reached", "fZero": "No purchase yet", "fDone": "Reached target", "fNoPlan": "No target", "sRem": "Largest remaining", "sPct": "Lowest achievement", "sName": "Name", "sTgt": "Highest target", "sAch": "Highest sales", "srcSheet": "Achieved: sheet", "srcInv": "Achieved: my invoices", "custUpd": "Update customers DB (Excel)", "priceUpd": "Update price list (Excel)", "search": "Search by name or code", "itemSearch": "Search item name or code", "cPlanned": "Customers with target", "cReached": "Reached target", "cZero": "No purchase yet", "cTarget": "Target", "cAch": "Achieved", "cRemain": "Remaining", "srcSheetNote": "Achieved from the company sheet, sales until", "srcInvNote": "Achieved from the invoices you imported in the app", "noDB": "No customers database yet. Tap “Update customers DB” and choose the tracking sheet.", "noRes": "No results", "cUnknown": "Invoice customers not in the database", "yearTot": "Year (achieved / target)", "yTarget": "Target", "yAch": "Achieved", "appInv": "App invoices", "code": "Code", "iname": "Item", "ikind": "Type", "ipack": "Pack", "iupc": "Units/carton", "ishrink": "Shrink", "icp": "Carton price", "moreRes": "Refine your search to see fewer…", "noItems": "No items. Tap “Update price list” and choose the price list file.", "close": "Close", "reading": "Reading file…", "itemsDone": "{n} items loaded", "custDone": "{n} customers loaded", "badBook": "Not a valid Excel (.xlsx) file", "noFinal": "Could not find the Final sheet", "noRep": "No customers found for rep “{r}” in the sheet", "repLbl": "Rep name (to filter customers)", "calLbl": "Month calendar", "calCo": "Company months (4-4-5 weeks)", "calGr": "Calendar months", "cartonsUnknown": "{n} items without a pack size (cartons incomplete)", "custIn": "Your customer ✓", "custOut": "Not in customers DB", "impNoItems": "Price list not loaded, so cartons will not be calculated. Load it from the Items tab."});
+
+
+
 function parseXLS(ab){
   const u8=new Uint8Array(ab),dv=new DataView(ab);
   const sig=[0xD0,0xCF,0x11,0xE0,0xA1,0xB1,0x1A,0xE1];
@@ -408,10 +410,12 @@ function extractInvoice(rows,custom){
   if(hr<0||nc<0)throw new Error("noheader");
   const meta={};
   for(let r=0;r<hr;r++){const row=rows[r]||[];row.forEach((x,c)=>{if(typeof x!=="string"||!/[:：]/.test(x))return;const k=clean(x);const L=row[c-1],R=row[c+1];const val=(L!=null&&L!==""&&!(typeof L==="string"&&/[:：]\s*$|^\s*[:：]/.test(L)))?L:R;if(val!=null&&meta[k]==null)meta[k]=val})}
+  const UN=/^(each|crt|ctn|cs|case|carton|pcs?|pc|unit|box)$/i;let uc=-1;
+  for(let r=hr+1;r<Math.min(rows.length,hr+30)&&uc<0;r++){const row=rows[r]||[];const i=row.findIndex((x,c)=>c!==nc&&typeof x==="string"&&UN.test(x.trim()));if(i>=0)uc=i}
   const lines=[];let started=false,expected=null,net=null;
   for(let r=hr+1;r<rows.length;r++){
     const row=rows[r]||[];const v=row[vc],nm=row[nc];
-    if(num(v)&&nm!=null&&String(nm).trim()){started=true;lines.push({name:String(nm).trim(),value:v});continue}
+    if(num(v)&&nm!=null&&String(nm).trim()){started=true;lines.push({name:String(nm).trim(),value:v,net:num(row[vc+1])?v-row[vc+1]:v/1.14,code:typeof row[nc+1]==="string"?row[nc+1].trim().toUpperCase():"",unit:uc>=0&&row[uc]!=null?String(row[uc]).trim():"",qty:uc>=0&&num(row[uc+1])?row[uc+1]:null});continue}
     if(started){
       row.forEach((x,c)=>{if(typeof x!=="string")return;const k=clean(x);
         if(/القيمه المطلوبه/.test(k)){const a=row[c+1],b=row[c-1];expected=num(a)?a:num(b)?b:expected}
@@ -424,35 +428,318 @@ function extractInvoice(rows,custom){
   const d=meta["تاريخ الفاتوره"];
   const sum=lines.reduce((a,l)=>a+l.value,0);
   lines.forEach(l=>{const m=brandOf(l.name,custom);l.b=m.b;l.tk=m.tk});
-  return{inv:String(meta["رقم الفاتوره"]||"").trim(),customer:String(meta["اسم العميل"]||"").trim(),date:num(d)?serialToDate(d):"",rep:String(meta["اسم المندوب"]||"").trim(),isReturn,lines,sum:Math.round(sum*100)/100,expected,net};
+  return{inv:String(meta["رقم الفاتوره"]||"").trim(),customer:String(meta["اسم العميل"]||"").trim(),date:num(d)?serialToDate(d):"",rep:String(meta["اسم المندوب"]||"").trim(),ccode:String(meta["كود العميل"]||"").trim(),isReturn,lines,sum:Math.round(sum*100)/100,expected,net};
 }
 
 
-const nf=v=>S.vatMode==="div"?v/(1+VAT):v*(1-VAT);
-let uidn=0;const uid=()=>Date.now()*1000+(uidn++%1000);
+async function readXlsx(ab){
+  const u8=new Uint8Array(ab),dv=new DataView(ab);
+  let e=u8.length-22;while(e>=0&&dv.getUint32(e,true)!==0x06054b50)e--;
+  if(e<0)throw new Error("notxlsx");
+  const cnt=dv.getUint16(e+10,true);let p=dv.getUint32(e+16,true);const F={};
+  for(let i=0;i<cnt;i++){
+    if(dv.getUint32(p,true)!==0x02014b50)break;
+    const m=dv.getUint16(p+10,true),cs=dv.getUint32(p+20,true),nl=dv.getUint16(p+28,true),xl=dv.getUint16(p+30,true),cl=dv.getUint16(p+32,true),lo=dv.getUint32(p+42,true);
+    F[new TextDecoder().decode(u8.subarray(p+46,p+46+nl))]={m,cs,lo};p+=46+nl+xl+cl;
+  }
+  const raw=async n=>{const f=F[n];if(!f)return null;const nl=dv.getUint16(f.lo+26,true),xl=dv.getUint16(f.lo+28,true),s=f.lo+30+nl+xl,d=u8.subarray(s,s+f.cs);
+    if(f.m===0)return d;
+    const st=new Blob([d]).stream().pipeThrough(new DecompressionStream("deflate-raw"));
+    return new Uint8Array(await new Response(st).arrayBuffer())};
+  const txt=async n=>{const r=await raw(n);return r?new TextDecoder().decode(r):""};
+  const dec=s=>s.replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"').replace(/&apos;/g,"'").replace(/&#(\d+);/g,(_,n)=>String.fromCharCode(+n)).replace(/&#x([0-9a-f]+);/gi,(_,n)=>String.fromCharCode(parseInt(n,16))).replace(/&amp;/g,"&");
+  const wbx=await txt("xl/workbook.xml"),rel=await txt("xl/_rels/workbook.xml.rels");
+  if(!wbx)throw new Error("notxlsx");
+  const rels={};
+  for(const m of rel.matchAll(/<Relationship\b[^>]*>/g)){const a=m[0],id=/\bId="([^"]*)"/.exec(a),tg=/\bTarget="([^"]*)"/.exec(a);if(id&&tg)rels[id[1]]=tg[1]}
+  const sheets=[];
+  for(const m of wbx.matchAll(/<sheet\b[^>]*>/g)){const a=m[0],nm=/\bname="([^"]*)"/.exec(a),id=/\br:id="([^"]*)"/.exec(a);if(nm&&id)sheets.push({name:dec(nm[1]),rid:id[1]})}
+  const sst=[],sx=await txt("xl/sharedStrings.xml");
+  for(const m of sx.matchAll(/<si\b[^>]*?(?:\/>|>([\s\S]*?)<\/si>)/g)){let s="";if(m[1])for(const q of m[1].matchAll(/<t\b[^>]*>([\s\S]*?)<\/t>/g))s+=q[1];sst.push(dec(s))}
+  const colIdx=s=>{let n=0;for(const ch of s)n=n*26+ch.charCodeAt(0)-64;return n-1};
+  const out={};
+  for(const sh of sheets){
+    let tg=rels[sh.rid];if(!tg)continue;
+    tg=tg.replace(/^\//,"");if(!tg.startsWith("xl/"))tg="xl/"+tg;
+    const x=await txt(tg),rows=[];
+    for(const m of x.matchAll(/<c\b([^>]*?)(?:\/>|>([\s\S]*?)<\/c>)/g)){
+      const at=m[1],body=m[2];if(!body)continue;
+      const rr=/\br="([A-Z]+)(\d+)"/.exec(at);if(!rr)continue;
+      const ty=/\bt="([^"]*)"/.exec(at),tt=ty?ty[1]:"n";let v=null;
+      if(tt==="inlineStr"){let s="";for(const q of body.matchAll(/<t\b[^>]*>([\s\S]*?)<\/t>/g))s+=q[1];v=dec(s)}
+      else{const vm=/<v>([\s\S]*?)<\/v>/.exec(body);if(!vm)continue;const rv=vm[1];
+        if(tt==="s")v=sst[+rv];else if(tt==="str")v=dec(rv);else if(tt==="b")v=rv==="1";else if(tt==="e")v=null;else v=parseFloat(rv)}
+      const r=+rr[2]-1,c=colIdx(rr[1]);(rows[r]||(rows[r]=[]))[c]=v;
+    }
+    for(let i=0;i<rows.length;i++)rows[i]=rows[i]?Array.from(rows[i],v=>v===undefined?null:v):[];
+    out[sh.name.trim()]=rows;
+  }
+  return out;
+}
+
+
+
+Object.assign(L.ar,{"kBtn": "شروط العقد", "kTitle": "شروط عقد العملاء (ROI)", "kHint": "القيم الافتراضية من صورة العقد. القيمة المستهدفة لكل عميل بتيجي من شيت المتابعة.", "kVd": "خصم القيمة الشهري %", "kQd": "خصم الكمية الشهري الإضافي %", "kQq": "خصم الربع %", "kAn": "خصم السنة %", "kGb": "البراندات (بالإنجليزي وبينها فاصلة)", "kMin": "أقل كمية شهرية (كراتين)", "kReg": "نسبة الصرف حسب شهور التعامل في الربع: شهر / شهرين / 3 شهور (%)", "kSave": "حفظ شروط العقد", "cValue": "القيمة (بدون ضريبة)", "cMonthC": "عقد الشهر", "grp1": "مجموعة 1", "grp2": "مجموعة 2", "cDiscM": "الخصم الشهري المتوقع", "cQuarter": "الربع", "cQDisc": "الخصم المتوقع للربع (حتى الآن)", "cActive": "شهور التعامل", "cFactor": "نسبة الصرف", "cItems": "الأصناف اللي أخدها في الشهر", "cCover": "تغطية البراندات", "cBM": "اشترى الشهر", "cBY": "اشترى قبل كده في السنة", "cNever": "لسه ماشتراش", "noInvC": "مفيش فواتير في الشهر ده", "tapItems": "اضغط لعرض أصناف البراند", "manualE": "تسجيل يدوي", "unitsL": "قطع", "valShort": "القيمة", "ncust": "عملاء", "custShort": "العميل", "noPack": "صنف بدون شدة", "valNet": "قيمة بدون ضريبة", "autoInv": "من الفواتير", "stBoth": "حققوا القيمة والكمية", "stQDisc": "الخصم المتوقع للربع (حتى الآن)", "fQty": "حقق القيمة ومحتاج كمية", "packTitle": "أصناف مالهاش عدد قطع في الكرتونة: اكتب العدد وهيتحفظ للفواتير الجاية", "perCarton": "قطع/كرتونة", "legacyUpd": "هتتحدث بالنسخة الجديدة (كراتين وأصناف)"});
+Object.assign(L.en,{"kBtn": "Contract terms", "kTitle": "Customer contract terms (ROI)", "kHint": "Defaults come from the contract image. Each customer's target comes from the tracking sheet.", "kVd": "Monthly value discount %", "kQd": "Extra monthly quantity discount %", "kQq": "Quarterly discount %", "kAn": "Annual discount %", "kGb": "Brands (English, comma separated)", "kMin": "Minimum monthly quantity (cartons)", "kReg": "Payout by active months in the quarter: 1 / 2 / 3 months (%)", "kSave": "Save contract terms", "cValue": "Value (excl. VAT)", "cMonthC": "Month contract", "grp1": "Group 1", "grp2": "Group 2", "cDiscM": "Expected monthly discount", "cQuarter": "Quarter", "cQDisc": "Expected quarter discount (so far)", "cActive": "Active months", "cFactor": "Payout rate", "cItems": "Items taken this month", "cCover": "Brand coverage", "cBM": "bought this month", "cBY": "bought earlier this year", "cNever": "not yet", "noInvC": "No invoices this month", "tapItems": "Tap to see brand items", "manualE": "Manual entry", "unitsL": "Units", "valShort": "Value", "ncust": "customers", "custShort": "Customer", "noPack": "items without pack size", "valNet": "Value excl. VAT", "autoInv": "from invoices", "stBoth": "Reached value & quantity", "stQDisc": "Expected quarter discount (so far)", "fQty": "Reached value, needs quantity", "packTitle": "Items without units per carton: enter the count, it will be remembered", "perCarton": "units/carton", "legacyUpd": "will be updated with the new format (cartons & items)"});
+
+const DEFREP="اسلام عز كمال";
+const $=id=>document.getElementById(id);
+const fmt=(n,d=0)=>Number(n||0).toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d});
+const fmtC=n=>Number(n||0).toLocaleString("en-US",{maximumFractionDigits:4});
+const esc=x=>String(x==null?"":x).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const col=p=>p>=100?"var(--ok)":p>=50?"var(--mid)":"var(--low)";
 const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
-function toast(m){const e=$("toast");e.textContent=m;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),1800)}
+let uidn=0;const uid=()=>Date.now()*1000+(uidn++%1000);
+const nf=v=>S.vatMode==="div"?v/(1+VAT):v*(1-VAT);
+const MN=["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"],PAT=[4,5,4,4,5,4,4,5,4,4,5,4];
+const CAL=[];(()=>{let x=Date.UTC(2026,0,3);for(let y=2026;y<=2027;y++)for(let i=0;i<12;i++){const s=x;x+=PAT[i]*6048e5;CAL.push({k:y+"-"+String(i+1).padStart(2,"0"),s,e:x-864e5,y,i})}})();
+const ds=d=>{const a=String(d).split("-");return Date.UTC(+a[0],+a[1]-1,+a[2])};
+const dfmt=ms=>{const d=new Date(ms);return String(d.getUTCDate()).padStart(2,"0")+"/"+String(d.getUTCMonth()+1).padStart(2,"0")};
+const ckey=d=>{if(!d)return"";const x=ds(d),c=CAL.find(q=>x>=q.s&&x<=q.e);return c?c.k:d.slice(0,7)};
+const mkey=d=>S.cal==="gr"?String(d||"").slice(0,7):ckey(d);
 function ring(p,r,w,c){const L2=2*Math.PI*r,v=Math.min(p,100)/100*L2,z=2*(r+w);
  return `<svg viewBox="0 0 ${z} ${z}"><circle cx="${r+w}" cy="${r+w}" r="${r}" fill="none" stroke="rgba(255,255,255,.13)" stroke-width="${w}"/><circle cx="${r+w}" cy="${r+w}" r="${r}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-dasharray="${v} ${L2}"/></svg>`}
+function calc(str){
+  let s=String(str==null?"":str).trim();
+  if(!s)return NaN;
+  s=s.replace(/^=/,"").replace(/[\u0660-\u0669]/g,d=>d.charCodeAt(0)-1632).replace(/[\u06F0-\u06F9]/g,d=>d.charCodeAt(0)-1776)
+   .replace(/\u066B/g,".").replace(/[\u00D7xX*]/g,"*").replace(/[\u00F7]/g,"/").replace(/[\u2212\u2013\u2014]/g,"-").replace(/\s+/g,"")
+   .replace(/,(?=\d{3}(?!\d))/g,"").replace(/,/g,".");
+  let i=0;const pk=()=>s[i];
+  function num_(){const m=/^(\d+\.?\d*|\.\d+)/.exec(s.slice(i));if(!m)throw 0;i+=m[0].length;return parseFloat(m[0])}
+  function atom(){const c=pk();if(c==="("){i++;const v=ex();if(pk()!==")")throw 0;i++;return v}if(c==="-"){i++;return -atom()}if(c==="+"){i++;return atom()}return num_()}
+  function term(){let v=atom();while(pk()==="*"||pk()==="/"){const o=s[i++],r=atom();if(o==="*")v*=r;else{if(r===0)throw 0;v/=r}}return v}
+  function ex(){let v=term();while(pk()==="+"||pk()==="-"){const o=s[i++],r=term();v=o==="+"?v+r:v-r}return v}
+  try{const v=ex();if(i!==s.length||!isFinite(v))return NaN;return Math.round(v*1e8)/1e8}catch(e){return NaN}
+}
+const isFormula=r=>/[+\-*/\u00D7\u00F7(]/.test(String(r).trim().replace(/^[=-]/,""))&&/^[\d.,+\-*/\u00D7\u00F7xX()=\s\u0660-\u0669\u066B]+$/.test(String(r));
+
+/* ---------- state ---------- */
+function fix(d){
+  d.ot=d.ot||{};OT.forEach(([k,tg,c])=>{if(!d.ot[k])d.ot[k]={target:tg,comm:c}});
+  if(d.mig!=="c75"){let ch=0;["lines","cust","inv","active"].forEach(k=>{if(d.ot[k]&&d.ot[k].comm===8){d.ot[k].comm=7.5;ch=1}});d.mig="c75";if(ch)d.tsT=Date.now()}
+  d.act=d.act||{};d.rules=d.rules||{};d.vatMode=d.vatMode||"mul";d.tsT=d.tsT||0;d.tsA=d.tsA||{};d.lang=d.lang||"ar";d.base=d.base||"net";d.sales=d.sales||[];
+  d.cal=d.cal||"co";d.csrc=d.csrc||"inv";d.rep=d.rep||DEFREP;d.invs=d.invs||[];d.pk=d.pk||{};
+  d.ct=Object.assign({vd:0.75,qd:1.5,qq:1.25,an:0,a:{b:["Clorel","Feba"],m:15},g:{b:["Glassy","MaxelMagic","Velveta","Diva","Speed"],m:10},reg:[80,90,100]},d.ct||{});
+  if(d.mig2!=="v3"){d.csrc="inv";d.mig2="v3"}
+  d.items=d.items||{ts:0,map:{}};d.custdb=d.custdb||{ts:0,map:{},salesTo:""};
+  if(d.targets){
+    if(d.targets.Maxxell){d.targets.MaxelMagic=d.targets.Maxxell;delete d.targets.Maxxell}
+    BR.forEach(b=>{if(!d.targets[b])d.targets[b]={money:DEF[b][0],cartons:DEF[b][1],comm:DEF[b][2]}});
+  }
+  d.sales.forEach(s=>{if(s.brand==="Maxxell")s.brand="MaxelMagic";if(!s.type)s.type="sale"});
+  return d;
+}
+function load(){
+  try{const r=localStorage.getItem(KEY);if(r)return fix(JSON.parse(r))}catch(e){}
+  const tg={};BR.forEach(b=>tg[b]={money:DEF[b][0],cartons:DEF[b][1],comm:DEF[b][2]});
+  return fix({targets:tg,sales:[]});
+}
+let S=load();
+const t=k=>(L[S.lang]&&L[S.lang][k])||k;
+let tm=null,syncing=false,again=false,_E=null,_A=null;
+function save(push=true){
+  _E=null;_A=null;
+  try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast(t("noSave"))}
+  if(push&&S.sync&&S.sync.url){clearTimeout(tm);tm=setTimeout(sync,1500)}
+}
+function toast(m){const e=$("toast");e.textContent=m;e.classList.add("show");clearTimeout(toast.h);toast.h=setTimeout(()=>e.classList.remove("show"),2200)}
+function status(k,c,x){const e=$("sst");if(!S.sync||!S.sync.url){e.hidden=true;return}e.hidden=false;e.textContent=t(k)+(x?" – "+x:"");e.style.color=c||"var(--mu)"}
+async function jf(url,opt,ms){
+  const c=new AbortController(),id=setTimeout(()=>c.abort(),ms||25000);
+  try{const r=await fetch(url,Object.assign({signal:c.signal,cache:"no-store"},opt||{}));const tx=await r.text();
+    try{return JSON.parse(tx)}catch(e){throw new Error("bad:"+tx.replace(/<[^>]*>/g," ").replace(/\s+/g," ").trim().slice(0,50))}}
+  finally{clearTimeout(id)}
+}
+function mergeInto(r){
+  S.rules=Object.assign({},r.rules||{},S.rules||{});
+  const m=new Map(S.sales.map(x=>[x.id,x]));
+  (r.sales||[]).forEach(x=>{const l=m.get(x.id);if(!l)S.sales.push(x);else if(x.del&&!l.del)l.del=1});
+  if((r.tsT||0)>(S.tsT||0)&&r.targets){if(r.ct)S.ct=r.ct;S.targets=r.targets;if(r.ot)S.ot=r.ot;if(r.vatMode)S.vatMode=r.vatMode;S.tsT=r.tsT}
+  Object.keys(r.act||{}).forEach(mo=>{const rt=(r.tsA&&r.tsA[mo])||0;if(!S.act[mo]||rt>(S.tsA[mo]||0)){S.act[mo]=r.act[mo];S.tsA[mo]=rt}});
+  const im=new Map(S.invs.map(x=>[x.id,x]));(r.invs||[]).forEach(x=>{const l=im.get(x.id);if(!l)S.invs.push(x);else if(x.del&&!l.del)l.del=1});
+  S.pk=Object.assign({},r.pk||{},S.pk||{});
+  if(r.items&&(r.items.ts||0)>(S.items.ts||0))S.items=r.items;
+  if(r.custdb&&(r.custdb.ts||0)>(S.custdb.ts||0))S.custdb=r.custdb;
+}
+async function sync(){
+  if(!S.sync||!S.sync.url)return;
+  if(syncing){again=true;return}
+  syncing=true;status("sBusy");
+  try{
+    const u=S.sync.url,tk=S.sync.token;
+    const g=await jf(u+(u.includes("?")?"&":"?")+"token="+encodeURIComponent(tk));
+    if(g.error)throw new Error("auth");
+    mergeInto(g);fix(S);save(false);
+    if(!(document.activeElement&&document.activeElement.classList.contains("kin")))render();
+    const p={sales:S.sales,targets:S.targets,ot:S.ot,act:S.act,tsT:S.tsT,tsA:S.tsA,rules:S.rules,vatMode:S.vatMode,items:S.items,custdb:S.custdb,invs:S.invs,pk:S.pk,ct:S.ct};
+    const w=await jf(u,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({token:tk,data:p})});
+    if(w.error)throw new Error("auth");
+    status("sOk","var(--ok)");
+  }catch(e){const m=e.name==="AbortError"?"timeout":(e.message||"").startsWith("bad:")?e.message.slice(4):e.message==="auth"?"":"network";
+    status(e.message==="auth"?"sAuth":"sErr","var(--low)",m)}
+  syncing=false;
+  if(again){again=false;sync()}
+}
 function applyLang(){
   const h=document.documentElement;h.lang=S.lang;h.dir=S.lang==="ar"?"rtl":"ltr";
   document.querySelectorAll("[data-i]").forEach(e=>e.textContent=t(e.dataset.i));
+  document.querySelectorAll("[data-ph]").forEach(e=>e.placeholder=t(e.dataset.ph));
   document.title="Eslam Ezz | "+t("sub");
 }
+function monthOpts(){
+  const sel=$("month"),old=sel.value;
+  if(S.cal==="gr"){let h="";for(let y=2026;y<=2027;y++)for(let i=1;i<=12;i++){const k=y+"-"+String(i).padStart(2,"0");h+=`<option value="${k}">${k}</option>`}sel.innerHTML=h}
+  else sel.innerHTML=CAL.map(c=>`<option value="${c.k}">${MN[c.i]} ${c.y} · ${dfmt(c.s)} → ${dfmt(c.e)}</option>`).join("");
+  const want=old&&[...sel.options].some(o=>o.value===old)?old:mkey(today());
+  if(![...sel.options].some(o=>o.value===want)){const o=document.createElement("option");o.value=want;o.textContent=want;sel.appendChild(o)}
+  sel.value=want;
+}
+function setMonthFor(date){const k=mkey(date),sel=$("month");if(![...sel.options].some(o=>o.value===k)){const o=document.createElement("option");o.value=k;o.textContent=k;sel.appendChild(o)}sel.value=k}
 
-function render(){
-  const m=$("month").value,k=1-VAT,net=S.base==="net";
-  const ag={};BR.forEach(b=>ag[b]={a:0,c:0,ra:0,rc:0});
-  const rows=S.sales.filter(s=>!s.del&&s.date.startsWith(m));
-  rows.forEach(s=>{const g=ag[s.brand];if(!g)return;if(s.type==="return")g.ra+=s.amount;else g.a+=s.amount});
-  let G=0,RA=0,TT=0,KPI=0;
+/* ---------- derived data (everything is built from invoices) ---------- */
+function cartonsOfRaw(code,q,u){
+  if(!isFinite(q))return null;
+  u=String(u||"").toLowerCase();
+  if(/^(crt|ctn|cs|case|carton|box)$/.test(u)||u.includes("كرتون"))return q;
+  const k=String(code||"").toUpperCase(),it=S.items.map[k],pk=(S.pk&&S.pk[k])||(it&&it.u);
+  return pk>0?q/pk:null;
+}
+function buildLN(){
+  const LN=[];
+  S.invs.forEach(v=>{if(v.del)return;const sg=v.mode==="return"?-1:1;
+    v.L.forEach(a=>{
+      const code=a[0],it=S.items.map[code];let b=a[5],nm=a[6]||"";
+      if(!nm&&it)nm=it.n;
+      if(!b&&nm)b=brandOf(nm,S.rules).b;
+      const ct=cartonsOfRaw(code,a[1],a[2]);
+      LN.push({d:v.date,cc:v.cc||"",cn:v.cn||"",inv:v.no,iid:v.id,b,code,nm,q:sg*Math.abs(a[1]||0),u:a[2],g:sg*Math.abs(a[3]),n:sg*Math.abs(a[4]),ct:ct==null?0:sg*Math.abs(ct),unk:ct==null,sg,man:false});
+    })});
+  S.sales.forEach(s=>{if(s.del)return;const sg=s.type==="return"?-1:1;
+    LN.push({d:s.date,cc:s.cc||"",cn:s.cn||"",inv:s.inv||"",iid:0,sid:s.id,b:s.brand,code:"",nm:"",q:0,u:"",g:sg*s.amount,n:sg*s.amount/(1+VAT),ct:sg*(+s.cartons||0),unk:false,sg,man:true})});
+  LN.forEach(l=>l.mk=mkey(l.d));
+  return LN;
+}
+const ents=()=>_E||(_E=buildLN());
+function aggC(){
+  if(_A)return _A;const A={};
+  ents().forEach(l=>{if(!l.cc)return;const c=A[l.cc]||(A[l.cc]={}),m=c[l.mk]||(c[l.mk]={n:0,g:0,ct:0,b:{},inv:new Set});
+    m.n+=l.n;m.g+=l.g;m.ct+=l.ct;if(l.b){const o=m.b[l.b]||(m.b[l.b]={n:0,ct:0});o.n+=l.n;o.ct+=l.ct}if(l.sg>0&&l.inv)m.inv.add(l.inv)});
+  return _A=A;
+}
+function contract(code,mk){
+  const c=S.custdb.map[code],i=+mk.slice(5,7)-1,mm=((aggC()[code]||{})[mk])||{n:0,ct:0,b:{}};
+  const tg=c?(+c.t[i]||0):0,n=mm.n,sum=bs=>bs.reduce((a,b)=>a+((mm.b[b]||{}).ct||0),0);
+  const ca=sum(S.ct.a.b),cg=sum(S.ct.g.b),valOk=tg>0&&n>=tg-0.005,qtyOk=ca>=S.ct.a.m-1e-9&&cg>=S.ct.g.m-1e-9;
+  const pct=(valOk?S.ct.vd:0)+(valOk&&qtyOk?S.ct.qd:0);
+  return{tg,n,ca,cg,valOk,qtyOk,pct,amt:Math.max(n,0)*pct/100,act:n>0.005,b:mm.b};
+}
+function quarter(code,mk){
+  const y=mk.slice(0,4),q0=Math.floor((+mk.slice(5,7)-1)/3)*3,ms=[0,1,2].map(k=>y+"-"+String(q0+k+1).padStart(2,"0")),c=S.custdb.map[code]||{t:Array(12).fill(0)};
+  const mo=ms.map(k=>contract(code,k)),tg=[0,1,2].reduce((a,k)=>a+(+c.t[q0+k]||0),0),n=mo.reduce((a,x)=>a+x.n,0);
+  const qOk=tg>0&&n>=tg-0.005,mp=mo.reduce((a,x)=>a+x.amt,0),qp=qOk?Math.max(n,0)*S.ct.qq/100:0,act=mo.filter(x=>x.act).length,f=act?(S.ct.reg[act-1]||0)/100:0;
+  return{q:q0/3+1,ms,mo,tg,n,qOk,mp,qp,act,f,total:(mp+qp)*f};
+}
+
+const hn=x=>norm(x).replace(/\s+/g,"");
+const fp=x=>{let s=String(x==null?"":x).replace(/\D/g,"");if(!s||/^0+$/.test(s))return"";if(s.startsWith("0020"))s="0"+s.slice(4);else if(s.startsWith("20")&&s.length>=12)s="0"+s.slice(2);return s};
+async function importItems(f){
+  const R=await readXlsx(await f.arrayBuffer());
+  const map={};let n=0;
+  for(const nm of Object.keys(R)){
+    const rows=R[nm];let hr=-1;const H={};
+    for(let r=0;r<Math.min(rows.length,10)&&hr<0;r++){const row=rows[r]||[];
+      if(row.some(x=>typeof x==="string"&&hn(x)==="كودالصنف")){hr=r;row.forEach((x,c)=>{if(typeof x==="string"&&H[hn(x)]==null)H[hn(x)]=c})}}
+    if(hr<0)continue;
+    const g=k=>{if(H[k]!=null)return H[k];const e=Object.keys(H).find(q=>q.startsWith(k));return e?H[e]:-1};
+    const cc=g("كودالصنف"),cn=g("اسمالصنف"),ck=g("عادي/عرض"),cu=g("عددالوحداتبالكرتونه"),cs=g("الشده"),cp=g("نوعالعبوه"),cup=g("سعرالعبوهغيرشامل"),ccp=g("سعرالكرتونهغيرشامل");
+    for(let r=hr+1;r<rows.length;r++){
+      const row=rows[r]||[];
+      const code=String(row[cc]==null?"":row[cc]).trim().toUpperCase(),name=String(row[cn]==null?"":row[cn]).trim();
+      if(!code||!name)continue;
+      const N=c=>c>=0&&typeof row[c]==="number"?row[c]:null;
+      map[code]={n:name,k:ck>=0&&row[ck]?String(row[ck]).trim():(nm.includes("عروض")?"عرض":""),u:N(cu),sh:N(cs),pt:cp>=0&&row[cp]?String(row[cp]).trim():"",up:N(cup),cp:N(ccp)};n++;
+    }
+  }
+  if(!n)throw new Error("noitems");
+  S.items={ts:Date.now(),map,file:f.name,n};
+  return n;
+}
+async function importCust(f){
+  const R=await readXlsx(await f.arrayBuffer());
+  const get=nm=>{const k=Object.keys(R).find(q=>q.toLowerCase()===nm);return k?R[k]:null};
+  const fin=get("final");if(!fin)throw new Error("nofinal");
+  let hr=-1;for(let r=0;r<8&&hr<0;r++){if((fin[r]||[]).some(x=>String(x).trim().toUpperCase()==="JAN"))hr=r}
+  if(hr<0)throw new Error("nofinal");
+  const mc=MN.map(m=>(fin[hr]||[]).findIndex(x=>String(x).trim().toUpperCase()===m));
+  const rep=norm(S.rep),map={},r2=v=>typeof v==="number"?Math.round(v*100)/100:0;
+  for(let r=hr+1;r<fin.length;r++){
+    const row=fin[r]||[],code=String(row[1]==null?"":row[1]).trim();
+    if(!/^[A-Za-z]{2,5}-\d+/.test(code)||norm(row[0])!==rep)continue;
+    map[code]={n:String(row[2]||"").trim(),cl:String(row[3]||"").trim(),t:mc.map(c=>c>=0?r2(row[c]):0),a:mc.map(c=>c>=0?r2(row[c+1]):0),s:null,ct:"",ad:"",ci:"",ph:[],pay:""};
+  }
+  if(!Object.keys(map).length)throw new Error("norep");
+  let repCode="";
+  const cm=get("customer map");
+  if(cm){
+    const H={};(cm[0]||[]).forEach((x,c)=>{if(typeof x==="string"&&H[x.trim()]==null)H[x.trim()]=c});
+    const val=(row,k)=>{const v=row[H[k]];return v==null?"":String(v).trim()};
+    const cnt={};
+    for(let r=1;r<cm.length;r++){const row=cm[r]||[],code=val(row,"Customer Number");if(map[code]){const sp=val(row,"Salesperson ID");if(sp)cnt[sp]=(cnt[sp]||0)+1}}
+    repCode=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a])[0]||"";
+    for(let r=1;r<cm.length;r++){
+      const row=cm[r]||[],code=val(row,"Customer Number");if(!code)continue;
+      let c=map[code];
+      if(!c){if(!repCode||val(row,"Salesperson ID")!==repCode||/^(1|true|yes)$/i.test(val(row,"Inactive")))continue;
+        c=map[code]={n:val(row,"Customer Name"),cl:"",t:Array(12).fill(0),a:Array(12).fill(0),s:null,ct:"",ad:"",ci:"",ph:[],pay:""}}
+      c.ct=val(row,"Contact Person");
+      c.ad=[val(row,"Address 1"),val(row,"Address 3")].filter(Boolean).join(" - ");
+      c.ci=val(row,"City");
+      c.ph=[...new Set([val(row,"Phone 1"),val(row,"Phone 2"),val(row,"Phone 3")].map(fp).filter(Boolean))];
+      c.pay=val(row,"Payment Terms ID");
+      if(!c.cl)c.cl=val(row,"Customer Class");
+    }
+  }
+  let salesTo="",nS=0;
+  const sl=get("sales");
+  if(sl){
+    let h=-1;const H={};
+    for(let r=0;r<12&&h<0;r++){const row=sl[r]||[];if(row.includes("Subtotal")&&row.includes("Customer Number")){h=r;row.forEach((x,c)=>{if(typeof x==="string"&&H[x.trim()]==null)H[x.trim()]=c})}}
+    if(h>=0){
+      Object.values(map).forEach(c=>c.s=Array(12).fill(0));
+      for(let r=h+1;r<sl.length;r++){
+        const row=sl[r]||[],c=map[row[H["Customer Number"]]];if(!c)continue;
+        const v=row[H["Subtotal"]];if(typeof v!=="number")continue;
+        const dn=row[H["Document Date"]],dd=typeof dn==="number"?serialToDate(dn):"";
+        let mi=MN.indexOf(String(row[H["month"]]||"").trim().toUpperCase());
+        if(mi<0&&dd)mi=+ckey(dd).slice(5)-1;
+        if(mi<0||mi>11)continue;
+        c.s[mi]+=v;nS++;if(dd>salesTo)salesTo=dd;
+      }
+      Object.values(map).forEach(c=>c.s=c.s.map(x=>Math.round(x*100)/100));
+    }
+  }
+  S.custdb={ts:Date.now(),map,salesTo,file:f.name,repCode,nS};
+  return Object.keys(map).length;
+}
+function cartonsOf(l){return cartonsOfRaw(l.code,l.qty,l.unit)}
+
+let cur="sale",impMode="sale",pendInv=[],tab="dash";
+const cf={q:"",st:"all",sort:"rem"};
+const ok_=b=>b?'<span class="ok">✓</span>':'<span class="bad">✗</span>';
+
+/* ---------- dashboard ---------- */
+function renderDash(){
+  const m=$("month").value,net=S.base==="net",LN=ents().filter(l=>l.mk===m);
+  const ag={};BR.forEach(b=>ag[b]={g:0,c:0,ra:0,rc:0});
+  LN.forEach(l=>{const a=ag[l.b];if(!a)return;a.g+=l.g;a.c+=l.ct;if(l.sg<0){a.ra-=l.g;a.rc-=l.ct}});
+  let G=0,C=0,RA=0,TT=0,TC=0,KPI=0;
   const cards=BR.map(b=>{
-    const tg=S.targets[b],g=ag[b],gross=g.a-g.ra,v=net?nf(gross):gross;
-    G+=gross;RA+=g.ra;TT+=+tg.money;
-    const pm=tg.money>0?v/tg.money*100:0,tr=tier(pm),kp=tg.comm*tr/100;KPI+=kp;
-    const rt=g.ra?`<div class="row"><span>${t("ret")}</span><span style="color:var(--low)">-${fmt(g.ra,2)}</span></div>`:"";
-    return `<article class="card brand">
+    const tg=S.targets[b],g=ag[b],gross=g.g,cn=g.c,v=net?nf(gross):gross;
+    G+=gross;C+=cn;RA+=g.ra;TT+=+tg.money;TC+=+tg.cartons;
+    const pm=tg.money>0?v/tg.money*100:0,pc=tg.cartons>0?cn/tg.cartons*100:0,tr=tier(pm),kp=tg.comm*tr/100;KPI+=kp;
+    const rt=(g.ra||g.rc)?`<div class="row"><span>${t("ret")}</span><span style="color:var(--low)">-${fmt(g.ra,2)} / -${fmtC(g.rc)}</span></div>`:"";
+    return `<article class="card brand" data-brand="${b}" style="cursor:pointer">
      <div class="top"><span class="name">${b}</span><span class="pill">${t("comm")} ${tg.comm}%</span></div>
      <div style="display:flex;justify-content:space-between;align-items:end"><span class="pct" style="color:${col(pm)}">${fmt(pm,1)}%</span><span class="lbl">${t("moneyPct")}</span></div>
      <div class="track"><i style="width:${Math.min(pm,100)}%;background:${col(pm)}"></i></div>
@@ -460,22 +747,30 @@ function render(){
      <div class="row"><span>${t("target")}</span><span>${fmt(tg.money,2)}</span></div>
      <div class="row"><span>${t("remainB")}</span><span>${fmt(Math.max(tg.money-v,0),2)}</span></div>
      ${rt}
+     <div class="row" style="margin-top:12px"><span>${t("cartons")}</span><b>${fmtC(cn)} / ${fmtC(tg.cartons)}</b></div>
+     <div class="track"><i style="width:${Math.min(pc,100)}%;background:${col(pc)}"></i></div>
+     <div class="row"><span>${t("cartonsAch")}</span><span>${fmt(pc,1)}%</span></div>
      <div class="row"><span>${t("counted")}</span><span>${tr}%</span></div>
      <div class="row"><span>${t("kpi")}</span><b>${fmt(kp,2)}%</b></div>
+     <div class="lbl" style="margin-top:8px;text-align:center">${t("tapItems")}</div>
     </article>`}).join("");
+  /* indicators computed from invoices */
+  const A=aggC(),invM=S.invs.filter(v=>!v.del&&v.mode!=="return"&&mkey(v.date)===m),i0=+m.slice(5,7)-1;
+  let achieved=0;Object.keys(S.custdb.map).forEach(code=>{const tg=+S.custdb.map[code].t[i0]||0,mm=(A[code]||{})[m];if(tg>0&&mm&&mm.n>=tg-0.005)achieved++});
+  const auto={cust:achieved,active:new Set(invM.map(v=>v.cc).filter(Boolean)).size,inv:invM.length,lines:invM.length?invM.reduce((a,v)=>a+v.L.length,0)/invM.length:0};
   const act=S.act[m]||{};
   $("others").innerHTML=OT.map(([key])=>{
-    const o=S.ot[key],a=+act[key]||0,p=o.target>0?a/o.target*100:0,tr=tier(p),kp=o.comm*tr/100;KPI+=kp;
+    const o=S.ot[key],isA=key in auto,a=isA?auto[key]:(+act[key]||0),p=o.target>0?a/o.target*100:0,tr=tier(p),kp=o.comm*tr/100;KPI+=kp;
     return `<article class="card brand">
      <div class="top"><span class="name" style="direction:inherit">${t("o_"+key)}</span><span class="pill">${t("comm")} ${o.comm}%</span></div>
-     <div style="display:flex;justify-content:space-between;align-items:end"><span class="pct" style="color:${col(p)}">${fmt(p,1)}%</span></div>
+     <div style="display:flex;justify-content:space-between;align-items:end"><span class="pct" style="color:${col(p)}">${fmt(p,1)}%</span>${isA?`<span class="lbl">${t("autoInv")}</span>`:""}</div>
      <div class="track"><i style="width:${Math.min(p,100)}%;background:${col(p)}"></i></div>
-     <div class="row"><span>${t("achieved")}</span><input class="kin" type="number" step="any" min="0" data-k="${key}" value="${a||""}" placeholder="0"></div>
+     <div class="row"><span>${t("achieved")}</span>${isA?`<b>${fmt(a,key==="lines"?2:0)}</b>`:`<input class="kin" type="number" step="any" min="0" data-k="${key}" value="${a||""}" placeholder="0">`}</div>
      <div class="row"><span>${t("target")}</span><span>${fmt(o.target,o.target%1?2:0)}</span></div>
      <div class="row"><span>${t("counted")}</span><span>${tr}%</span></div>
      <div class="row"><span>${t("kpi")}</span><b>${fmt(kp,2)}%</b></div>
     </article>`}).join("");
-  const N=nf(G),V=net?N:G,P=TT>0?V/TT*100:0;
+  const N=nf(G),V=net?N:G,P=TT>0?V/TT*100:0,PC=TC>0?C/TC*100:0;
   $("hero").innerHTML=`<div class="ringbox">${ring(P,80,15,col(P))}<div class="c"><b style="color:${col(P)}">${fmt(P,1)}%</b><span>${t("ofTotal")}</span></div></div>
    <div><div class="lbl">${t("heroLbl")}</div>
    <div class="big">${fmt(N,2)}<small>${t("egp")}</small></div>
@@ -485,91 +780,249 @@ function render(){
     <div class="stat"><span class="lbl">${t("returns")}</span><b style="color:var(--low)">${fmt(RA,2)}</b></div>
     <div class="stat"><span class="lbl">${t("ttarget")}</span><b>${fmt(TT,2)}</b></div>
     <div class="stat"><span class="lbl">${t("remain")}</span><b>${fmt(Math.max(TT-V,0),2)}</b></div>
+    <div class="stat"><span class="lbl">${t("cartons")}</span><b>${fmtC(C)} / ${fmtC(TC)}</b></div>
+    <div class="stat"><span class="lbl">${t("cartonsPct")}</span><b>${fmt(PC,1)}%</b></div>
     <div class="stat"><span class="lbl">${t("kpiTotal")}</span><b style="color:var(--gold)">${fmt(KPI,2)}%</b></div>
    </div></div>`;
   $("brands").innerHTML=cards;
-  const sorted=[...rows].sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
-  $("log").innerHTML=sorted.length?`<table><thead><tr><th>${t("date")}</th><th>${t("type")}</th><th>${t("brand")}</th><th>${t("amount")}</th><th></th></tr></thead><tbody>`+
-   sorted.map(s=>{const r=s.type==="return";return `<tr><td>${s.date}</td><td><span class="pill ${r?"rt":""}">${t(r?"return":"sale")}</span></td><td>${s.brand}${s.inv?`<div class="ex">${esc(s.inv)}</div>`:""}</td><td>${r?"-":""}${fmt(s.amount,2)}${s.ea?`<div class="ex">${esc(s.ea)}</div>`:""}</td><td class="x"><button data-del="${s.id}">${t("del")}</button></td></tr>`}).join("")+`</tbody></table>`
+  /* log: invoices + manual entries */
+  const tot={};LN.forEach(l=>{if(l.iid){const o=tot[l.iid]||(tot[l.iid]={g:0,c:0,u:0});o.g+=l.g;o.c+=l.ct;if(l.unk)o.u++}});
+  const items=[];
+  S.invs.forEach(v=>{if(!v.del&&mkey(v.date)===m)items.push({date:v.date,id:v.id,v})});
+  S.sales.forEach(s=>{if(!s.del&&mkey(s.date)===m)items.push({date:s.date,id:s.id,s})});
+  items.sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
+  $("log").innerHTML=items.length?`<table><thead><tr><th>${t("date")}</th><th>${t("type")}</th><th>${t("brand")} / ${t("custShort")}</th><th>${t("amount")}</th><th>${t("cartonsN")}</th><th></th></tr></thead><tbody>`+
+   items.map(x=>{
+     if(x.v){const v=x.v,r=v.mode==="return",o=tot[v.id]||{g:0,c:0,u:0};
+       return `<tr><td>${v.date}</td><td><span class="pill ${r?"rt":""}">${t(r?"return":"sale")}</span></td><td><div dir="auto">${esc(v.cn||v.cc||"—")}</div><div class="ex">${esc(v.no)}${o.u?` · <span class="warn">${o.u} ${t("noPack")}</span>`:""}</div></td><td>${fmt(o.g,2)}</td><td>${fmtC(o.c)}</td><td class="x"><button data-delinv="${v.id}">${t("del")}</button></td></tr>`}
+     const s=x.s,r=s.type==="return";
+     return `<tr><td>${s.date}</td><td><span class="pill ${r?"rt":""}">${t(r?"return":"sale")}</span></td><td>${s.brand}${s.inv?`<div class="ex">${esc(s.inv)}</div>`:""}${s.cn?`<div class="ex" dir="auto">${esc(s.cn)}</div>`:""}</td><td>${r?"-":""}${fmt(s.amount,2)}${s.ea?`<div class="ex">${esc(s.ea)}</div>`:""}</td><td>${r?"-":""}${fmtC(s.cartons)}${s.ec?`<div class="ex">${esc(s.ec)}</div>`:""}</td><td class="x"><button data-del="${s.id}">${t("del")}</button></td></tr>`}).join("")+`</tbody></table>`
    :`<div class="empty">${t("empty")}</div>`;
   document.querySelectorAll("#seg button").forEach(x=>x.classList.toggle("on",x.dataset.b===S.base));
 }
+function showBrand(b){
+  const m=$("month").value,net=S.base==="net",f=x=>net?nf(x):x,by={},cs=new Set();
+  ents().forEach(l=>{if(l.mk!==m||l.b!==b)return;const k=l.code||("m:"+l.sid);const o=by[k]||(by[k]={nm:l.nm||t("manualE"),g:0,c:0,q:0,cs:new Set()});o.g+=l.g;o.c+=l.ct;o.q+=l.q;if(l.cc){o.cs.add(l.cc);cs.add(l.cc)}});
+  const rows=Object.values(by).sort((a,b)=>b.g-a.g);
+  $("bdbody").innerHTML=`<h2>${b} · ${$("month").selectedOptions[0]?$("month").selectedOptions[0].textContent.split("·")[0]:m}</h2>
+   <div class="lbl" style="margin-bottom:8px">${rows.length} ${t("itemsN")} · ${cs.size} ${t("ncust")}</div>`+
+   (rows.length?`<div class="tw"><table><thead><tr><th>${t("iname")}</th><th>${t("cartons")}</th><th>${t("unitsL")}</th><th>${t("valShort")}</th><th>${t("ncust")}</th></tr></thead><tbody>`+
+   rows.map(o=>`<tr><td dir="auto" style="white-space:normal;min-width:180px">${esc(o.nm)}</td><td>${fmtC(o.c)}</td><td>${o.q?fmtC(o.q):""}</td><td>${fmt(f(o.g),2)}</td><td>${o.cs.size||""}</td></tr>`).join("")+`</tbody></table></div>`:`<div class="empty">${t("noInvC")}</div>`);
+  $("bdlg").showModal();
+}
 
-let cur="sale";
-$("fb").innerHTML=BR.map(b=>`<option>${b}</option>`).join("");
-$("fd").value=today();
-$("month").value=today().slice(0,7);
+/* ---------- customers ---------- */
+function nameOf(cc){const v=S.invs.find(x=>x.cc===cc&&x.cn);return v?v.cn:""}
+function custData(){
+  const m=$("month").value,i=Math.max(0,Math.min(11,(+m.slice(5,7)||1)-1)),map=S.custdb.map,A=aggC();
+  const rows=Object.keys(map).map(code=>{
+    const c=map[code],tg=+c.t[i]||0,k=contract(code,m),aS=c.s?(+c.s[i]||0):(+c.a[i]||0),a=S.csrc==="inv"?k.n:aS,p=tg>0?a/tg*100:0;
+    return{code,c,tg,a,k,qy:quarter(code,m),p,rem:Math.max(tg-a,0),st:tg<=0?"np":a>=tg-0.005?"dn":a<=0?"zr":"op"};
+  });
+  const unk=Object.keys(A).filter(cc=>!map[cc]&&A[cc][m]).map(cc=>({code:cc,name:nameOf(cc),a:A[cc][m].n}));
+  return{m,i,rows,unk};
+}
+function renderCust(){
+  document.querySelectorAll("#csrc button").forEach(x=>x.classList.toggle("on",x.dataset.s===S.csrc));
+  const codes=Object.keys(S.custdb.map);
+  if(!codes.length){$("cstats").innerHTML="";$("clist").innerHTML=`<div class="empty">${t("noDB")}</div>`;$("cunk").innerHTML="";return}
+  const d=custData(),pl=d.rows.filter(r=>r.tg>0);
+  const tgT=pl.reduce((a,r)=>a+r.tg,0),aT=pl.reduce((a,r)=>a+r.a,0),rem=pl.reduce((a,r)=>a+r.rem,0),dn=pl.filter(r=>r.st==="dn").length,zr=pl.filter(r=>r.st==="zr").length;
+  const both=pl.filter(r=>r.k.valOk&&r.k.qtyOk).length,qd=d.rows.reduce((a,r)=>a+r.qy.total,0),P=tgT>0?aT/tgT*100:0,qn=d.rows[0]?d.rows[0].qy.q:1;
+  $("cstats").innerHTML=`<div class="stat"><span class="lbl">${t("cPlanned")}</span><b>${pl.length} / ${d.rows.length}</b></div>
+   <div class="stat"><span class="lbl">${t("cReached")}</span><b style="color:var(--ok)">${dn}</b></div>
+   <div class="stat"><span class="lbl">${t("stBoth")}</span><b style="color:var(--ok)">${both}</b></div>
+   <div class="stat"><span class="lbl">${t("cZero")}</span><b style="color:var(--low)">${zr}</b></div>
+   <div class="stat"><span class="lbl">${t("cTarget")}</span><b>${fmt(tgT)}</b></div>
+   <div class="stat"><span class="lbl">${t("cAch")}</span><b style="color:${col(P)}">${fmt(aT)} · ${fmt(P,1)}%</b></div>
+   <div class="stat"><span class="lbl">${t("cRemain")}</span><b>${fmt(rem)}</b></div>
+   <div class="stat"><span class="lbl">${t("stQDisc")} Q${qn}</span><b style="color:var(--gold)">${fmt(qd)}</b></div>
+   <div class="stat" style="grid-column:1/-1"><span class="lbl">${S.csrc==="inv"?t("srcInvNote"):t("srcSheetNote")+" "+(S.custdb.salesTo||"—")}</span></div>`;
+  const q=norm(cf.q);
+  let rows=d.rows.filter(r=>{
+    if(q&&!(norm(r.c.n).includes(q)||r.code.toLowerCase().includes(q)))return false;
+    return cf.st==="all"||(cf.st==="open"&&(r.st==="op"||r.st==="zr"))||(cf.st==="done"&&r.st==="dn")||(cf.st==="zero"&&r.st==="zr")||(cf.st==="np"&&r.st==="np")||(cf.st==="qty"&&r.k.valOk&&!r.k.qtyOk);
+  });
+  const sorters={rem:(a,b)=>b.rem-a.rem,pct:(a,b)=>(a.tg>0?a.p:9e9)-(b.tg>0?b.p:9e9),name:(a,b)=>a.c.n.localeCompare(b.c.n,"ar"),tgt:(a,b)=>b.tg-a.tg,ach:(a,b)=>b.a-a.a};
+  rows.sort(sorters[cf.sort]||sorters.rem);
+  $("clist").innerHTML=rows.length?rows.map(r=>{
+    const k=r.k,chip=r.st==="dn"?`<span class="chip d">✓</span>`:r.st==="zr"?`<span class="chip z">0</span>`:r.st==="np"?`<span class="chip">${t("fNoPlan")}</span>`:"";
+    const qline=r.tg>0?`<div class="lbl" style="font-size:11.5px;margin-top:2px">${t("grp1")} ${fmtC(k.ca)}/${S.ct.a.m} · ${t("grp2")} ${fmtC(k.cg)}/${S.ct.g.m} ${k.valOk&&k.qtyOk?'<span class="ok">✓</span>':""}</div>`:"";
+    return `<div class="crow" data-cc="${esc(r.code)}"><div class="cn"><b dir="auto">${esc(r.c.n)}</b><small>${esc(r.code)}</small>${chip}${qline}</div>
+     <div class="cp"><div class="track"><i style="width:${Math.min(r.p,100)}%;background:${col(r.p)}"></i></div></div>
+     <div class="cv"><span class="p" style="color:${col(r.p)}">${r.tg>0?fmt(r.p,0)+"%":"—"}</span><small>${fmt(r.a)} / ${fmt(r.tg)}</small></div></div>`}).join(""):`<div class="empty">${t("noRes")}</div>`;
+  $("cunk").innerHTML=d.unk.length?`<div class="card" style="margin-top:14px"><h2>${t("cUnknown")}</h2>`+d.unk.map(u=>`<div class="row"><span dir="auto">${esc(u.code)} ${esc(u.name)}</span><b>${fmt(u.a,2)}</b></div>`).join("")+`</div>`:"";
+}
+function showCust(code){
+  const c=S.custdb.map[code];if(!c)return;
+  const d=custData(),r=d.rows.find(x=>x.code===code),i=d.i,m=d.m,k=r.k,qy=r.qy,ser=c.s||c.a,A=aggC()[code]||{};
+  const yN=Object.keys(A).filter(x=>x.slice(0,4)===m.slice(0,4)).reduce((a,x)=>a+A[x].n,0),yT=c.t.reduce((a,b)=>a+b,0);
+  const mx=Math.max(1,...c.t,...MN.map((_,j)=>(A[m.slice(0,4)+"-"+String(j+1).padStart(2,"0")]||{n:0}).n));
+  const vals=MN.map((_,j)=>(A[m.slice(0,4)+"-"+String(j+1).padStart(2,"0")]||{n:0}).n);
+  const bars=MN.map((mn,j)=>{const x=6+j*30,tv=c.t[j]/mx*84,av=Math.max(vals[j],0)/mx*84;
+    return `<rect x="${x}" y="${96-tv}" width="12" height="${tv}" rx="3" fill="rgba(255,255,255,.25)"/><rect x="${x+13}" y="${96-av}" width="12" height="${av}" rx="3" fill="${j===i?"#f2b84b":"#37c6a8"}"/><text x="${x+13}" y="112" font-size="9" text-anchor="middle" fill="#a9bad6">${mn}</text>`}).join("");
+  const btn=(h,l)=>`<a class="cbtn" href="${h}" target="_blank" rel="noopener">${l}</a>`;
+  const ph=(c.ph||[]).map(p=>btn("tel:+20"+p.slice(1),"📞 "+p)+btn("https://wa.me/20"+p.slice(1),"💬 WhatsApp")).join(" ");
+  /* items taken this month + coverage */
+  const it={};ents().forEach(l=>{if(l.cc!==code||l.mk!==m)return;const kk=l.code||("m:"+l.b);const o=it[kk]||(it[kk]={nm:l.nm||l.b,b:l.b,c:0,n:0});o.c+=l.ct;o.n+=l.n});
+  const il=Object.values(it).sort((a,b)=>b.n-a.n);
+  const yb={};Object.keys(A).filter(x=>x.slice(0,4)===m.slice(0,4)).forEach(x=>Object.keys(A[x].b).forEach(b=>{if(A[x].b[b].n>0)yb[b]=1}));
+  const cover=BR.filter(b=>b!=="Fema").map(b=>{const mm=(k.b[b]||{n:0}).n>0,yy=yb[b];return `<span class="pill ${mm?"okp":yy?"":"nop"}">${b} ${mm?"✓":yy?"○":"✗"}</span>`}).join(" ");
+  /* contract */
+  const need=(a,b)=>Math.max(b-a,0);
+  const ctr=`<div class="invc"><b>${t("cMonthC")}</b>
+    <div class="row"><span>${t("cValue")}</span><span>${ok_(k.valOk)} ${fmt(k.n)} / ${fmt(k.tg)} · ${t("cRemain")} ${fmt(need(k.n,k.tg))}</span></div>
+    <div class="row"><span>${t("grp1")} (${S.ct.a.b.join("+")})</span><span>${ok_(k.ca>=S.ct.a.m)} ${fmtC(k.ca)} / ${S.ct.a.m} · ${t("cRemain")} ${fmtC(need(k.ca,S.ct.a.m))}</span></div>
+    <div class="row"><span>${t("grp2")} (${S.ct.g.b.join("+")})</span><span>${ok_(k.cg>=S.ct.g.m)} ${fmtC(k.cg)} / ${S.ct.g.m} · ${t("cRemain")} ${fmtC(need(k.cg,S.ct.g.m))}</span></div>
+    <div class="row"><span>${t("cDiscM")}</span><b style="color:var(--gold)">${fmt(k.pct,2)}% · ${fmt(k.amt,2)}</b></div></div>
+   <div class="invc"><b>${t("cQuarter")} Q${qy.q}</b>
+    <div class="row"><span>${t("cValue")}</span><span>${ok_(qy.qOk)} ${fmt(qy.n)} / ${fmt(qy.tg)} · ${t("cRemain")} ${fmt(need(qy.n,qy.tg))}</span></div>
+    <div class="row"><span>${t("cActive")}</span><span>${qy.act} / 3 · ${t("cFactor")} ${fmt(qy.f*100)}%</span></div>
+    <div class="row"><span>${t("cDiscM")} (Σ)</span><span>${fmt(qy.mp,2)}</span></div>
+    <div class="row"><span>${t("kQq")} ${S.ct.qq}%</span><span>${fmt(qy.qp,2)}</span></div>
+    <div class="row"><span>${t("cQDisc")}</span><b style="color:var(--gold)">${fmt(qy.total,2)}</b></div></div>`;
+  const invs={};S.invs.forEach(v=>{if(!v.del&&v.cc===code)invs[v.id]=v});
+  const tot={};ents().forEach(l=>{if(l.iid&&invs[l.iid]){const o=tot[l.iid]||(tot[l.iid]={n:0,c:0});o.n+=l.n;o.c+=l.ct}});
+  const ivl=Object.values(invs).sort((a,b)=>b.date.localeCompare(a.date));
+  $("cdbody").innerHTML=`<h2 dir="auto" style="margin-bottom:2px">${esc(c.n)}</h2><div class="lbl" dir="ltr" style="margin-bottom:10px">${esc(code)} ${c.cl?"· "+esc(c.cl):""} ${c.pay?"· "+esc(c.pay):""}</div>
+   <div class="stats"><div class="stat"><span class="lbl">${t("cTarget")} ${MN[i]}</span><b>${fmt(k.tg)}</b></div><div class="stat"><span class="lbl">${t("cAch")}</span><b style="color:${col(r.p)}">${fmt(r.a)} · ${r.tg>0?fmt(r.p,0)+"%":"—"}</b></div><div class="stat"><span class="lbl">${t("cRemain")}</span><b>${fmt(r.rem)}</b></div><div class="stat"><span class="lbl">${t("yearTot")}</span><b>${fmt(yN)} / ${fmt(yT)}</b></div></div>
+   <div style="margin:12px 0">${ph||""} ${c.ct?`<span class="lbl" dir="auto">👤 ${esc(c.ct)}</span>`:""}</div>
+   ${c.ad||c.ci?`<div class="lbl" dir="auto" style="margin-bottom:10px">📍 ${esc([c.ad,c.ci].filter(Boolean).join(" - "))}</div>`:""}
+   ${ctr}
+   <h2 style="margin:12px 0 6px">${t("cCover")}</h2><div>${cover}</div><div class="lbl" style="margin-top:4px">✓ ${t("cBM")} · ○ ${t("cBY")} · ✗ ${t("cNever")}</div>
+   <h2 style="margin:14px 0 6px">${t("cItems")}</h2>
+   ${il.length?`<div class="tw" style="max-height:260px"><table><thead><tr><th>${t("iname")}</th><th>${t("cartons")}</th><th>${t("valNet")}</th></tr></thead><tbody>`+il.map(o=>`<tr><td dir="auto" style="white-space:normal;min-width:170px">${esc(o.nm)}<div class="ex">${o.b||""}</div></td><td>${fmtC(o.c)}</td><td>${fmt(o.n,2)}</td></tr>`).join("")+`</tbody></table></div>`:`<div class="lbl">${t("noInvC")}</div>`}
+   <svg viewBox="0 0 372 120" style="width:100%;height:auto;margin-top:12px">${bars}</svg>
+   <div class="tw" dir="ltr"><table class="ytab"><thead><tr><th></th>${MN.map(x=>`<th>${x}</th>`).join("")}</tr></thead><tbody>
+    <tr><th>${t("yTarget")}</th>${c.t.map(v=>`<td>${fmt(v)}</td>`).join("")}</tr>
+    <tr><th>${t("yAch")}</th>${vals.map(v=>`<td>${fmt(v)}</td>`).join("")}</tr>
+    <tr><th>${t("srcSheet")}</th>${ser.map(v=>`<td>${fmt(v)}</td>`).join("")}</tr></tbody></table></div>
+   ${ivl.length?`<h2 style="margin-top:14px">${t("appInv")}</h2>`+ivl.map(v=>{const o=tot[v.id]||{n:0,c:0};return `<div class="row"><span dir="ltr">${esc(v.no)} · ${v.date}${v.mode==="return"?" ↩":""}</span><b>${fmt(o.n,2)} · ${fmtC(o.c)}</b></div>`}).join(""):""}`;
+  $("cdlg").showModal();
+}
+function openContract(){
+  const c=S.ct;
+  $("kbody").innerHTML=[["kVd","vd",c.vd],["kQd","qd",c.qd],["kQq","qq",c.qq],["kAn","an",c.an]].map(([l,k,v])=>`<label class="lbl">${t(l)}<input type="number" step="0.01" min="0" data-k="${k}" value="${v}"></label>`).join("")+
+   `<label class="lbl">${t("kGb")} (${t("grp1")})<input data-k="ab" dir="ltr" value="${esc(c.a.b.join(","))}"></label><label class="lbl">${t("kMin")} (${t("grp1")})<input type="number" step="any" min="0" data-k="am" value="${c.a.m}"></label>
+    <label class="lbl">${t("kGb")} (${t("grp2")})<input data-k="gb" dir="ltr" value="${esc(c.g.b.join(","))}"></label><label class="lbl">${t("kMin")} (${t("grp2")})<input type="number" step="any" min="0" data-k="gm" value="${c.g.m}"></label>
+    <label class="lbl">${t("kReg")}<span style="display:flex;gap:6px"><input type="number" data-k="r1" value="${c.reg[0]}"><input type="number" data-k="r2" value="${c.reg[1]}"><input type="number" data-k="r3" value="${c.reg[2]}"></span></label>`;
+  $("kdlg").showModal();
+}
+$("btnK").onclick=openContract;
+$("kcancel").onclick=()=>$("kdlg").close();
+$("ksave").onclick=()=>{
+  const g=k=>$("kbody").querySelector(`[data-k="${k}"]`).value,n=k=>parseFloat(g(k))||0,bl=k=>g(k).split(",").map(x=>x.trim()).filter(x=>BR.includes(x));
+  S.ct={vd:n("vd"),qd:n("qd"),qq:n("qq"),an:n("an"),a:{b:bl("ab"),m:n("am")},g:{b:bl("gb"),m:n("gm")},reg:[n("r1"),n("r2"),n("r3")]};
+  S.tsT=Date.now();save();$("kdlg").close();render();toast(t("tSaved"));
+};
+
+/* ---------- items ---------- */
+function renderItems(){
+  const arr=Object.entries(S.items.map),q=norm($("iq").value);
+  const f=q?arr.filter(([c,x])=>norm(x.n).includes(q)||c.toLowerCase().includes(q)):arr;
+  f.sort((a,b)=>a[0].localeCompare(b[0]));
+  $("icount").textContent=arr.length?`${f.length} / ${arr.length} ${t("itemsN")}${S.items.file?" · "+S.items.file:""}`:"";
+  $("itable").innerHTML=arr.length?`<table><thead><tr><th>${t("code")}</th><th>${t("iname")}</th><th>${t("ikind")}</th><th>${t("ipack")}</th><th>${t("iupc")}</th><th>${t("ishrink")}</th><th>${t("icp")}</th></tr></thead><tbody>`+
+   f.slice(0,200).map(([c,x])=>`<tr><td dir="ltr">${esc(c)}</td><td dir="auto" style="white-space:normal;min-width:200px">${esc(x.n)}</td><td>${esc(x.k)}</td><td>${esc(x.pt)}</td><td>${x.u==null?"":fmtC(x.u)}</td><td>${x.sh==null?"":fmtC(x.sh)}</td><td>${x.cp==null?"":fmt(x.cp,2)}</td></tr>`).join("")+`</tbody></table>`+(f.length>200?`<div class="empty">${t("moreRes")}</div>`:""):`<div class="empty">${t("noItems")}</div>`;
+}
+function render(){renderDash();renderCust();renderItems();$("cdl").innerHTML=Object.entries(S.custdb.map).map(([c,x])=>`<option value="${esc(c)} — ${esc(x.n)}">`).join("")}
+
+/* ---------- tabs ---------- */
+function setTab(x){tab=x;document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===x));document.querySelectorAll(".view").forEach(v=>v.classList.toggle("on",v.id==="v_"+x))}
+$("tabs").onclick=e=>{const b=e.target.closest("button[data-tab]");if(b)setTab(b.dataset.tab)};
+
+/* ---------- header / form handlers ---------- */
 $("month").onchange=render;
 $("seg").onclick=e=>{const b=e.target.dataset.b;if(b){S.base=b;save();render()}};
 $("btnL").onclick=()=>{S.lang=S.lang==="ar"?"en":"ar";save();applyLang();render()};
 $("ftseg").onclick=e=>{const b=e.target.dataset.t;if(!b)return;cur=b;document.querySelectorAll("#ftseg button").forEach(x=>{x.classList.toggle("on",x.dataset.t===b);x.classList.toggle("r",b==="return"&&x.dataset.t==="return")})};
-function pv(inp,out){const raw=inp.value.trim(),v=calc(raw);
-  out.textContent=!raw||/^\d*\.?\d*$/.test(raw)?"":isNaN(v)?"?":"= "+fmt(v,2);
+function pv(inp,out,cart){const raw=inp.value.trim(),v=calc(raw);
+  out.textContent=!raw||/^\d*\.?\d*$/.test(raw)?"":isNaN(v)?"?":"= "+(cart?fmtC(v):fmt(v,2));
   out.style.color=isNaN(v)?"var(--low)":"var(--gold)"}
 let lastF=$("fa");
-{const f=$("fa");f.addEventListener("input",()=>pv(f,$("fa_r")));f.addEventListener("focus",()=>{lastF=f})}
+["fa","fc"].forEach(id=>{const f=$(id);f.addEventListener("input",()=>pv(f,$(id+"_r"),id==="fc"));f.addEventListener("focus",()=>{lastF=f})});
 document.querySelectorAll(".qk button").forEach(b=>b.addEventListener("pointerdown",e=>{e.preventDefault();const f=lastF||$("fa");f.focus();const a=f.selectionStart==null?f.value.length:f.selectionStart,z=f.selectionEnd==null?a:f.selectionEnd;f.setRangeText(b.dataset.c,a,z,"end");f.dispatchEvent(new Event("input"))}));
 $("f").onsubmit=e=>{e.preventDefault();
-  const ra=$("fa").value,a=calc(ra);
-  if(isNaN(a)||a<0){toast(t("badNum"));return}
-  S.sales.push({id:uid(),date:$("fd").value,brand:$("fb").value,amount:a,type:cur,ea:isFormula(ra)?ra.trim().replace(/^=/,""):""});
-  save();$("month").value=$("fd").value.slice(0,7);
-  $("fa").value="";$("fa_r").textContent="";$("fa").focus();render();toast(t("saved"));
+  const ra=$("fa").value,rc=$("fc").value,a=calc(ra),c=calc(rc);
+  if(isNaN(a)||a<0||isNaN(c)||c<0){toast(t("badNum"));return}
+  const cm=/^[A-Za-z]{2,5}-\d+/.exec($("fcu").value.trim()),cc=cm?cm[0]:"",cr=cc&&S.custdb.map[cc];
+  S.sales.push({id:uid(),date:$("fd").value,brand:$("fb").value,amount:a,cartons:c,type:cur,cc,cn:cr?cr.n:"",ea:isFormula(ra)?ra.trim().replace(/^=/,""):"",ec:isFormula(rc)?rc.trim().replace(/^=/,""):""});
+  save();setMonthFor($("fd").value);
+  $("fa").value="";$("fc").value="";$("fcu").value="";$("fa_r").textContent="";$("fc_r").textContent="";$("fa").focus();render();toast(t("saved"));
 };
-$("log").onclick=e=>{const id=e.target.dataset.del;if(!id)return;const x=S.sales.find(q=>q.id==id);if(!x)return;
+$("log").onclick=e=>{
+  const iv=e.target.dataset.delinv;
+  if(iv){const v=S.invs.find(q=>q.id==iv);if(v&&confirm(t("confirmDelInv").replace("{n}",v.no))){v.del=1;save();render()}return}
+  const id=e.target.dataset.del;if(!id)return;const x=S.sales.find(q=>q.id==id);if(!x)return;
   if(x.inv){if(confirm(t("confirmDelInv").replace("{n}",x.inv)))S.sales.forEach(q=>{if(q.inv===x.inv)q.del=1})}
   else if(confirm(t("confirmDel")))x.del=1;
   save();render()};
+$("brands").onclick=e=>{const c=e.target.closest("[data-brand]");if(c)showBrand(c.dataset.brand)};
+$("bdclose").onclick=()=>$("bdlg").close();
 $("others").onchange=e=>{const k=e.target.dataset.k;if(!k)return;const m=$("month").value;(S.act[m]=S.act[m]||{})[k]=parseFloat(e.target.value)||0;S.tsA[m]=Date.now();save();render();toast(t("upd"))};
 
+/* ---------- targets dialog ---------- */
 function sum(){let s=0;document.querySelectorAll("#tt input[data-k=comm]").forEach(i=>s+=parseFloat(i.value)||0);const e=$("tsum");e.textContent=t("tSum")+": "+fmt(s,1)+"%";e.style.color=Math.abs(s-100)<0.05?"var(--ok)":"var(--mid)"}
 $("btnT").onclick=()=>{
-  $("tt").innerHTML=`<thead><tr><th>${t("tBrand")}</th><th>${t("tMoney")}</th><th>${t("tComm")}</th></tr></thead><tbody>`+
-   BR.map(b=>{const o=S.targets[b];return `<tr><td><b>${b}</b></td><td><input type="number" step="0.01" min="0" data-b="${b}" data-k="money" value="${o.money}"></td><td><input type="number" step="0.1" min="0" data-b="${b}" data-k="comm" value="${o.comm}"></td></tr>`}).join("")+
-   `<tr><th colspan="3">${t("tOthers")}</th></tr>`+
-   OT.map(([key])=>{const o=S.ot[key];return `<tr><td><b>${t("o_"+key)}</b></td><td><input type="number" step="any" min="0" data-o="${key}" data-k="target" value="${o.target}"></td><td><input type="number" step="0.1" min="0" data-o="${key}" data-k="comm" value="${o.comm}"></td></tr>`}).join("")+`</tbody>`;
-  $("vsel").value=S.vatMode||"mul";
+  $("tt").innerHTML=`<thead><tr><th>${t("tBrand")}</th><th>${t("tMoney")}</th><th>${t("tCartons")}</th><th>${t("tComm")}</th></tr></thead><tbody>`+
+   BR.map(b=>{const o=S.targets[b];return `<tr><td><b>${b}</b></td><td><input type="number" step="0.01" min="0" data-b="${b}" data-k="money" value="${o.money}"></td><td><input type="number" step="any" min="0" data-b="${b}" data-k="cartons" value="${o.cartons}"></td><td><input type="number" step="0.1" min="0" data-b="${b}" data-k="comm" value="${o.comm}"></td></tr>`}).join("")+
+   `<tr><th colspan="4">${t("tOthers")}</th></tr>`+
+   OT.map(([key])=>{const o=S.ot[key];return `<tr><td><b>${t("o_"+key)}</b></td><td><input type="number" step="any" min="0" data-o="${key}" data-k="target" value="${o.target}"></td><td></td><td><input type="number" step="0.1" min="0" data-o="${key}" data-k="comm" value="${o.comm}"></td></tr>`}).join("")+`</tbody>`;
+  $("vsel").value=S.vatMode||"mul";$("calsel").value=S.cal;$("repn").value=S.rep;
   sum();$("dlg").showModal();
 };
 $("tt").oninput=sum;
 $("tcancel").onclick=()=>$("dlg").close();
-$("tsave").onclick=()=>{document.querySelectorAll("#tt input").forEach(i=>{const v=parseFloat(i.value)||0;if(i.dataset.b)S.targets[i.dataset.b][i.dataset.k]=v;else S.ot[i.dataset.o][i.dataset.k]=v});S.vatMode=$("vsel").value;S.tsT=Date.now();save();$("dlg").close();render();toast(t("tSaved"))};
+$("tsave").onclick=()=>{
+  document.querySelectorAll("#tt input").forEach(i=>{const v=parseFloat(i.value)||0;if(i.dataset.b)S.targets[i.dataset.b][i.dataset.k]=v;else S.ot[i.dataset.o][i.dataset.k]=v});
+  S.vatMode=$("vsel").value;S.rep=$("repn").value.trim()||DEFREP;
+  const cal=$("calsel").value;if(cal!==S.cal){S.cal=cal;monthOpts()}
+  S.tsT=Date.now();save();$("dlg").close();render();toast(t("tSaved"))};
 
+/* ---------- backup / restore ---------- */
 $("btnE").onclick=()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify({...S,sync:null})],{type:"application/json"}));a.download="dashboard-backup-"+today()+".json";a.click()};
 $("btnI").onclick=()=>$("file").click();
 $("file").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();
   r.onload=()=>{try{
     const d=fix(JSON.parse(r.result));if(!d.targets||!d.sales)throw 0;
-    if(confirm(t("mergeQ"))){
-      mergeInto(d);
-    }else{const lg=S.lang,sy=S.sync;S=d;S.lang=lg;S.sync=sy;S.tsT=Date.now()}
-    save();applyLang();render();toast(t("restored"));
+    if(confirm(t("mergeQ"))){mergeInto(d)}else{const lg=S.lang,sy=S.sync;S=d;S.lang=lg;S.sync=sy;S.tsT=Date.now()}
+    save();applyLang();monthOpts();render();toast(t("restored"));
   }catch(x){alert(t("badFile"))}};
   r.readAsText(f);e.target.value=""};
-$("sst").onclick=()=>sync();
-$("splash").onclick=()=>{$("splash").classList.add("go");document.body.classList.add("skip")};
 
-/* ===== invoice import UI ===== */
-let pendInv=[];
-$("btnImp").onclick=()=>$("ifile").click();
+/* ---------- invoice import ---------- */
+function startImp(mode){impMode=mode;$("ifile").click()}
+$("btnImpS").onclick=()=>startImp("sale");
+$("btnImpR").onclick=()=>startImp("return");
 $("ifile").onchange=async e=>{
   const files=[...e.target.files];e.target.value="";if(!files.length)return;
   pendInv=[];const errs=[];
   for(const f of files){try{const iv=extractInvoice(parseXLS(await f.arrayBuffer()),S.rules);iv.file=f.name;pendInv.push(iv)}catch(x){errs.push(f.name)}}
   showImp(errs);
 };
+function lineCartons(iv){let c=0,unk=0;iv.lines.forEach(l=>{l.ct=cartonsOf(l);if(l.ct==null)unk++;else c+=l.ct});iv.cartons=c;iv.unk=unk}
 function showImp(errs){
-  const have=new Set(S.sales.filter(q=>!q.del&&q.inv).map(q=>q.inv));
-  const un={};pendInv.forEach(iv=>iv.lines.forEach(l=>{if(!l.b){const u=un[l.tk]||(un[l.tk]={n:0,sum:0,ex:l.name});u.n++;u.sum+=l.value}}));
+  $("itit").textContent=t(impMode==="return"?"impTitleR":"impTitleS");
+  const un={},pk={};
+  pendInv.forEach(iv=>iv.lines.forEach(l=>{
+    if(!l.b){const u=un[l.tk]||(un[l.tk]={n:0,sum:0,ex:l.name});u.n++;u.sum+=l.value}
+    l.ct=cartonsOf(l);if(l.ct==null&&l.code&&num(l.qty)){const p=pk[l.code]||(pk[l.code]={nm:l.name,q:0});p.q+=l.qty}}));
   let h="";
+  if(!Object.keys(S.items.map).length)h+=`<div class="warn" style="margin-bottom:8px">${t("impNoItems")}</div>`;
   pendInv.forEach((iv,i)=>{
-    iv.dup=!!iv.inv&&have.has(iv.inv);
+    lineCartons(iv);
+    const exact=S.invs.some(v=>!v.del&&v.no===iv.inv&&v.mode===impMode),legacy=!exact&&S.sales.some(s=>!s.del&&s.inv===iv.inv&&s.src==="xls");
+    iv.dup=!!iv.inv&&exact;iv.legacy=legacy;
     const ok=iv.expected!=null&&Math.abs(iv.sum-iv.expected)<0.05,by={};
-    iv.lines.forEach(l=>{if(l.b)by[l.b]=(by[l.b]||0)+l.value});
-    h+=`<div class="invc"><label style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><input type="checkbox" data-use="${i}" ${iv.dup?"":"checked"}><b dir="ltr">${esc(iv.inv||iv.file)}</b><span class="lbl">${esc(iv.customer)} · ${esc(iv.date)}</span></label>
-     <div class="lbl" style="margin-top:6px">${iv.lines.length} ${t("itemsN")} · ${fmt(iv.sum,2)} <span class="${ok?"ok":"warn"}">${ok?"✓ "+t("impMatch"):iv.expected!=null?"⚠ "+t("impMis")+" "+fmt(iv.expected,2):""}</span>${iv.isReturn?` · <span class="bad">${t("impRet")}</span>`:""}${iv.dup?` · <span class="warn">${t("impDup")}</span>`:""}</div>
-     <div class="chips">${Object.keys(by).map(b=>`<span class="pill">${b} ${fmt(by[b],2)}</span>`).join("")}</div></div>`;
+    iv.lines.forEach(l=>{if(l.b){const o=by[l.b]||(by[l.b]={v:0,c:0});o.v+=l.value;o.c+=l.ct||0}});
+    const cr=S.custdb.map[iv.ccode];
+    h+=`<div class="invc"><label style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><input type="checkbox" data-use="${i}" ${iv.dup?"":"checked"}><b dir="ltr">${esc(iv.inv||iv.file)}</b><span class="lbl" dir="auto">${esc(iv.customer)} · ${esc(iv.date)}</span></label>
+     <div class="lbl" style="margin-top:6px">${iv.lines.length} ${t("itemsN")} · ${fmt(iv.sum,2)} · ${fmtC(iv.cartons)} ${t("cartons")} <span class="${ok?"ok":"warn"}">${ok?"✓ "+t("impMatch"):iv.expected!=null?"⚠ "+t("impMis")+" "+fmt(iv.expected,2):""}</span>${iv.isReturn&&impMode==="sale"?` · <span class="bad">${t("impRet")}</span>`:""}${iv.dup?` · <span class="warn">${t("impDup")}</span>`:""}${legacy?` · <span class="ok">${t("legacyUpd")}</span>`:""}</div>
+     <div class="lbl" style="margin-top:4px" dir="auto">${iv.ccode?esc(iv.ccode)+" · ":""}${cr?`<span class="ok">${t("custIn")}</span>`:`<span class="warn">${t("custOut")}</span>`}</div>
+     <div class="chips">${Object.keys(by).map(b=>`<span class="pill">${b} ${fmt(by[b].v,2)} · ${fmtC(by[b].c)}</span>`).join("")}</div></div>`;
   });
+  const pc=Object.keys(pk);
+  if(pc.length)h+=`<div class="lbl" style="margin:6px 0">${t("packTitle")}</div>`+pc.map(k=>`<div class="unm"><b dir="ltr">${esc(k)}</b><span class="lbl" dir="auto" style="flex:1">${esc(pk[k].nm)} · ${fmtC(pk[k].q)} ${t("unitsL")}</span><input type="number" min="1" step="any" data-pk="${esc(k)}" placeholder="${t("perCarton")}" style="width:120px"></div>`).join("");
   const tk=Object.keys(un);
   if(tk.length)h+=`<div class="lbl" style="margin:6px 0">${t("impUnk")}</div>`+tk.map(k=>`<div class="unm"><b dir="auto">${esc(k)}</b><span class="lbl">${un[k].n} ${t("itemsN")} · ${fmt(un[k].sum,2)}</span><span class="lbl" dir="auto">${esc(un[k].ex)}</span><select data-un="${esc(k)}"><option value="">${t("impSkip")}</option>${BR.map(b=>`<option>${b}</option>`).join("")}</select><label class="lbl"><input type="checkbox" data-rem="${esc(k)}" checked> ${t("impRem")}</label></div>`).join("");
   if(errs&&errs.length)h+=`<div class="bad" style="margin-top:8px">${t("badXls")}: ${errs.map(esc).join(" , ")}</div>`;
@@ -582,24 +1035,49 @@ $("icancel").onclick=()=>$("idlg").close();
 $("iok").onclick=()=>{
   const asg={};document.querySelectorAll("#ibody [data-un]").forEach(q=>{asg[q.dataset.un]=q.value});
   document.querySelectorAll("#ibody [data-rem]").forEach(c=>{const k=c.dataset.rem;if(c.checked&&asg[k])S.rules[k]=asg[k]});
+  document.querySelectorAll("#ibody [data-pk]").forEach(q=>{const v=parseFloat(q.value);if(v>0)S.pk[q.dataset.pk]=v});
   let n=0,last="";
   document.querySelectorAll("#ibody [data-use]").forEach(c=>{
-    if(!c.checked)return;const iv=pendInv[+c.dataset.use],by={};
-    iv.lines.forEach(l=>{const b=l.b||asg[l.tk];if(b)by[b]=(by[b]||0)+l.value});
-    const sg=iv.isReturn?-1:1,date=iv.date||today();
-    Object.keys(by).forEach(b=>{const v=Math.round(by[b]*sg*100)/100;if(!v)return;S.sales.push({id:uid(),date,brand:b,amount:Math.abs(v),type:v>0?"sale":"return",inv:iv.inv||iv.file,src:"xls"})});
+    if(!c.checked)return;const iv=pendInv[+c.dataset.use];
+    if(iv.legacy)S.sales.forEach(s=>{if(s.src==="xls"&&s.inv===iv.inv)s.del=1});
+    const date=iv.date||today();
+    S.invs.push({id:uid(),no:iv.inv||iv.file,date,cc:iv.ccode||"",cn:iv.customer||"",mode:impMode,file:iv.file,
+      L:iv.lines.map(l=>{const b=l.b||asg[l.tk]||"",row=[l.code,l.qty==null?0:l.qty,l.unit,Math.round(Math.abs(l.value)*100)/100,Math.round(Math.abs(l.net)*100)/100,b];if(!S.items.map[l.code]||!b)row.push(l.name);return row})});
     n++;last=date;
   });
   $("idlg").close();
-  if(n){save();$("month").value=last.slice(0,7);render();toast(t("impDone").replace("{n}",n))}
+  if(n){save();setMonthFor(last);render();toast(t("impDone").replace("{n}",n))}
 };
+
+/* ---------- databases ---------- */
+$("btnPrice").onclick=()=>$("pfile").click();
+$("pfile").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;toast(t("reading"));
+  try{const n=await importItems(f);save();render();toast(t("itemsDone").replace("{n}",n))}catch(x){alert(t("badBook"))}};
+$("btnCust").onclick=()=>$("cfile").click();
+$("cfile").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;toast(t("reading"));
+  try{const n=await importCust(f);save();render();toast(t("custDone").replace("{n}",n))}
+  catch(x){alert(x.message==="nofinal"?t("noFinal"):x.message==="norep"?t("noRep").replace("{r}",S.rep):t("badBook"))}};
+$("iq").oninput=renderItems;
+$("cq").oninput=e=>{cf.q=e.target.value;renderCust()};
+$("cst").onchange=e=>{cf.st=e.target.value;renderCust()};
+$("csort").onchange=e=>{cf.sort=e.target.value;renderCust()};
+$("csrc").onclick=e=>{const s=e.target.dataset.s;if(s){S.csrc=s;save();renderCust()}};
+$("clist").onclick=e=>{const r=e.target.closest(".crow");if(r)showCust(r.dataset.cc)};
+$("cdclose").onclick=()=>$("cdlg").close();
+
+/* ---------- sync dialog ---------- */
+$("sst").onclick=()=>sync();
+$("splash").onclick=()=>{$("splash").classList.add("go");document.body.classList.add("skip")};
 $("btnS").onclick=()=>{$("surl").value=(S.sync&&S.sync.url)||"";$("stok").value=(S.sync&&S.sync.token)||"";$("smsg").textContent="";$("sdlg").showModal()};
 $("sclose").onclick=()=>$("sdlg").close();
 $("soff").onclick=()=>{S.sync=null;save(false);status("sOk");$("sdlg").close()};
 $("ssave").onclick=async()=>{const u=$("surl").value.trim(),k=$("stok").value.trim();if(!u||!k){$("smsg").textContent=t("sNeed");return}S.sync={url:u,token:k};save(false);$("sdlg").close();await sync()};
 addEventListener("online",sync);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)sync()});
-applyLang();render();sync();
+$("fb").innerHTML=BR.map(b=>`<option>${b}</option>`).join("");
+$("fd").value=today();
+applyLang();monthOpts();render();sync();
+
 </script>
 </body>
 </html>
