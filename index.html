@@ -149,11 +149,11 @@ dialog td input{width:110px;padding:6px 8px}
 .imps{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
 @media(max-width:600px){.crow{grid-template-columns:1fr auto}.crow .cp{grid-column:1/-1;order:3}}
 
-.brandhd{width:100%;justify-content:space-between;flex-direction:row}
-.who{text-align:end}
 .pill.okp{color:var(--ok);border-color:var(--ok)}.pill.nop{color:#ff9a8a;border-color:#ef6f5e}
 .invc b{display:block;margin-bottom:4px}
-@media(max-width:520px){.brandhd{gap:8px}}
+.mchips{display:flex;gap:6px;flex-wrap:wrap;margin:-6px 0 14px}
+.mchips button{padding:5px 12px;font-size:13px;border-radius:99px}
+.mchips button.on{background:rgba(242,184,75,.28);border-color:#f2b84b}
 </style>
 </head>
 <body>
@@ -181,6 +181,7 @@ dialog td input{width:110px;padding:6px 8px}
   </div>
 </header>
 <nav class="tabs" id="tabs"><button data-tab="dash" class="on" data-i="tabDash"></button><button data-tab="cust" data-i="tabCust"></button><button data-tab="items" data-i="tabItems"></button></nav>
+<div class="mchips" id="mchips"></div>
 
 <div class="view on" id="v_dash">
 <section class="card hero" id="hero"></section>
@@ -482,6 +483,8 @@ async function readXlsx(ab){
 Object.assign(L.ar,{"kBtn": "شروط العقد", "kTitle": "شروط عقد العملاء (ROI)", "kHint": "القيم الافتراضية من صورة العقد. القيمة المستهدفة لكل عميل بتيجي من شيت المتابعة.", "kVd": "خصم القيمة الشهري %", "kQd": "خصم الكمية الشهري الإضافي %", "kQq": "خصم الربع %", "kAn": "خصم السنة %", "kGb": "البراندات (بالإنجليزي وبينها فاصلة)", "kMin": "أقل كمية شهرية (كراتين)", "kReg": "نسبة الصرف حسب شهور التعامل في الربع: شهر / شهرين / 3 شهور (%)", "kSave": "حفظ شروط العقد", "cValue": "القيمة (بدون ضريبة)", "cMonthC": "عقد الشهر", "grp1": "مجموعة 1", "grp2": "مجموعة 2", "cDiscM": "الخصم الشهري المتوقع", "cQuarter": "الربع", "cQDisc": "الخصم المتوقع للربع (حتى الآن)", "cActive": "شهور التعامل", "cFactor": "نسبة الصرف", "cItems": "الأصناف اللي أخدها في الشهر", "cCover": "تغطية البراندات", "cBM": "اشترى الشهر", "cBY": "اشترى قبل كده في السنة", "cNever": "لسه ماشتراش", "noInvC": "مفيش فواتير في الشهر ده", "tapItems": "اضغط لعرض أصناف البراند", "manualE": "تسجيل يدوي", "unitsL": "قطع", "valShort": "القيمة", "ncust": "عملاء", "custShort": "العميل", "noPack": "صنف بدون شدة", "valNet": "قيمة بدون ضريبة", "autoInv": "من الفواتير", "stBoth": "حققوا القيمة والكمية", "stQDisc": "الخصم المتوقع للربع (حتى الآن)", "fQty": "حقق القيمة ومحتاج كمية", "packTitle": "أصناف مالهاش عدد قطع في الكرتونة: اكتب العدد وهيتحفظ للفواتير الجاية", "perCarton": "قطع/كرتونة", "legacyUpd": "هتتحدث بالنسخة الجديدة (كراتين وأصناف)"});
 Object.assign(L.en,{"kBtn": "Contract terms", "kTitle": "Customer contract terms (ROI)", "kHint": "Defaults come from the contract image. Each customer's target comes from the tracking sheet.", "kVd": "Monthly value discount %", "kQd": "Extra monthly quantity discount %", "kQq": "Quarterly discount %", "kAn": "Annual discount %", "kGb": "Brands (English, comma separated)", "kMin": "Minimum monthly quantity (cartons)", "kReg": "Payout by active months in the quarter: 1 / 2 / 3 months (%)", "kSave": "Save contract terms", "cValue": "Value (excl. VAT)", "cMonthC": "Month contract", "grp1": "Group 1", "grp2": "Group 2", "cDiscM": "Expected monthly discount", "cQuarter": "Quarter", "cQDisc": "Expected quarter discount (so far)", "cActive": "Active months", "cFactor": "Payout rate", "cItems": "Items taken this month", "cCover": "Brand coverage", "cBM": "bought this month", "cBY": "bought earlier this year", "cNever": "not yet", "noInvC": "No invoices this month", "tapItems": "Tap to see brand items", "manualE": "Manual entry", "unitsL": "Units", "valShort": "Value", "ncust": "customers", "custShort": "Customer", "noPack": "items without pack size", "valNet": "Value excl. VAT", "autoInv": "from invoices", "stBoth": "Reached value & quantity", "stQDisc": "Expected quarter discount (so far)", "fQty": "Reached value, needs quantity", "packTitle": "Items without units per carton: enter the count, it will be remembered", "perCarton": "units/carton", "legacyUpd": "will be updated with the new format (cartons & items)"});
 
+Object.assign(L.ar,{"ipp":"سعر العبوة (بعد الضريبة)","icpi":"سعر الكرتونة (بعد الضريبة)","idc":"نسبة الخصم","inet":"الصافي بعد الخصم (بعد الضريبة)","pastNote":"الشهور اللي فاتت: القيمة من شيت الشركة (بيع فعلي)، والكميات من فواتيرك اللي رفعتها بس.","countsIn":"بيتحسب في","invsN":"فاتورة","srcInvNote":"الشهور اللي فاتت من شيت الشركة (بيع فعلي)، والشهر الحالي من الفواتير اللي استوردتها"});
+Object.assign(L.en,{"ipp":"Pack price (incl. VAT)","icpi":"Carton price (incl. VAT)","idc":"Discount","inet":"Net after discount (incl. VAT)","pastNote":"Past months: value from the company sheet (actual sales); quantities only from the invoices you uploaded.","countsIn":"counts in","invsN":"invoices","srcInvNote":"Past months from the company sheet (actual sales), the current month from the invoices you imported"});
 const DEFREP="اسلام عز كمال";
 const $=id=>document.getElementById(id);
 const fmt=(n,d=0)=>Number(n||0).toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d});
@@ -627,9 +630,17 @@ function aggC(){
     m.n+=l.n;m.g+=l.g;m.ct+=l.ct;if(l.b){const o=m.b[l.b]||(m.b[l.b]={n:0,ct:0});o.n+=l.n;o.ct+=l.ct}if(l.sg>0&&l.inv)m.inv.add(l.inv)});
   return _A=A;
 }
+const curMk=()=>mkey(today());
+const mlabel=k=>{const c=CAL.find(x=>x.k===k);return c&&S.cal!=="gr"?`${MN[c.i]} ${c.y} (${dfmt(c.s)}→${dfmt(c.e)})`:k};
+function sheetV(c,i){return c.s?(+c.s[i]||0):(+c.a[i]||0)}
+function achV(code,mk,forceInv){
+  const c=S.custdb.map[code],i=+mk.slice(5,7)-1,inv=((aggC()[code]||{})[mk]||{n:0}).n,sh=c?sheetV(c,i):0;
+  if(mk<curMk())return sh;
+  return (S.csrc==="sheet"&&!forceInv)?sh:inv;
+}
 function contract(code,mk){
   const c=S.custdb.map[code],i=+mk.slice(5,7)-1,mm=((aggC()[code]||{})[mk])||{n:0,ct:0,b:{}};
-  const tg=c?(+c.t[i]||0):0,n=mm.n,sum=bs=>bs.reduce((a,b)=>a+((mm.b[b]||{}).ct||0),0);
+  const tg=c?(+c.t[i]||0):0,n=achV(code,mk),sum=bs=>bs.reduce((a,b)=>a+((mm.b[b]||{}).ct||0),0);
   const ca=sum(S.ct.a.b),cg=sum(S.ct.g.b),valOk=tg>0&&n>=tg-0.005,qtyOk=ca>=S.ct.a.m-1e-9&&cg>=S.ct.g.m-1e-9;
   const pct=(valOk?S.ct.vd:0)+(valOk&&qtyOk?S.ct.qd:0);
   return{tg,n,ca,cg,valOk,qtyOk,pct,amt:Math.max(n,0)*pct/100,act:n>0.005,b:mm.b};
@@ -652,13 +663,13 @@ async function importItems(f){
       if(row.some(x=>typeof x==="string"&&hn(x)==="كودالصنف")){hr=r;row.forEach((x,c)=>{if(typeof x==="string"&&H[hn(x)]==null)H[hn(x)]=c})}}
     if(hr<0)continue;
     const g=k=>{if(H[k]!=null)return H[k];const e=Object.keys(H).find(q=>q.startsWith(k));return e?H[e]:-1};
-    const cc=g("كودالصنف"),cn=g("اسمالصنف"),ck=g("عادي/عرض"),cu=g("عددالوحداتبالكرتونه"),cs=g("الشده"),cp=g("نوعالعبوه"),cup=g("سعرالعبوهغيرشامل"),ccp=g("سعرالكرتونهغيرشامل");
+    const cc=g("كودالصنف"),cn=g("اسمالصنف"),ck=g("عادي/عرض"),cu=g("عددالوحداتبالكرتونه"),cs=g("الشده"),cp=g("نوعالعبوه"),cup=g("سعرالعبوهغيرشامل"),ccp=g("سعرالكرتونهغيرشامل"),cupi=g("سعرالعبوهشامل"),ccpi=g("سعرالكرتونهشامل"),cdc=g("نسبهالخصم"),cnet=g("السعرالصافي");
     for(let r=hr+1;r<rows.length;r++){
       const row=rows[r]||[];
       const code=String(row[cc]==null?"":row[cc]).trim().toUpperCase(),name=String(row[cn]==null?"":row[cn]).trim();
       if(!code||!name)continue;
       const N=c=>c>=0&&typeof row[c]==="number"?row[c]:null;
-      map[code]={n:name,k:ck>=0&&row[ck]?String(row[ck]).trim():(nm.includes("عروض")?"عرض":""),u:N(cu),sh:N(cs),pt:cp>=0&&row[cp]?String(row[cp]).trim():"",up:N(cup),cp:N(ccp)};n++;
+      map[code]={n:name,k:ck>=0&&row[ck]?String(row[ck]).trim():(nm.includes("عروض")?"عرض":""),u:N(cu),sh:N(cs),pt:cp>=0&&row[cp]?String(row[cp]).trim():"",up:N(cup),cp:N(ccp),upi:N(cupi),cpi:N(ccpi),dc:N(cdc),net:N(cnet)};n++;
     }
   }
   if(!n)throw new Error("noitems");
@@ -756,7 +767,7 @@ function renderDash(){
     </article>`}).join("");
   /* indicators computed from invoices */
   const A=aggC(),invM=S.invs.filter(v=>!v.del&&v.mode!=="return"&&mkey(v.date)===m),i0=+m.slice(5,7)-1;
-  let achieved=0;Object.keys(S.custdb.map).forEach(code=>{const tg=+S.custdb.map[code].t[i0]||0,mm=(A[code]||{})[m];if(tg>0&&mm&&mm.n>=tg-0.005)achieved++});
+  let achieved=0;Object.keys(S.custdb.map).forEach(code=>{const tg=+S.custdb.map[code].t[i0]||0;if(tg>0&&achV(code,m,true)>=tg-0.005)achieved++});
   const auto={cust:achieved,active:new Set(invM.map(v=>v.cc).filter(Boolean)).size,inv:invM.length,lines:invM.length?invM.reduce((a,v)=>a+v.L.length,0)/invM.length:0};
   const act=S.act[m]||{};
   $("others").innerHTML=OT.map(([key])=>{
@@ -816,7 +827,7 @@ function nameOf(cc){const v=S.invs.find(x=>x.cc===cc&&x.cn);return v?v.cn:""}
 function custData(){
   const m=$("month").value,i=Math.max(0,Math.min(11,(+m.slice(5,7)||1)-1)),map=S.custdb.map,A=aggC();
   const rows=Object.keys(map).map(code=>{
-    const c=map[code],tg=+c.t[i]||0,k=contract(code,m),aS=c.s?(+c.s[i]||0):(+c.a[i]||0),a=S.csrc==="inv"?k.n:aS,p=tg>0?a/tg*100:0;
+    const c=map[code],tg=+c.t[i]||0,k=contract(code,m),aS=c.s?(+c.s[i]||0):(+c.a[i]||0),a=k.n,p=tg>0?a/tg*100:0;
     return{code,c,tg,a,k,qy:quarter(code,m),p,rem:Math.max(tg-a,0),st:tg<=0?"np":a>=tg-0.005?"dn":a<=0?"zr":"op"};
   });
   const unk=Object.keys(A).filter(cc=>!map[cc]&&A[cc][m]).map(cc=>({code:cc,name:nameOf(cc),a:A[cc][m].n}));
@@ -828,7 +839,7 @@ function renderCust(){
   if(!codes.length){$("cstats").innerHTML="";$("clist").innerHTML=`<div class="empty">${t("noDB")}</div>`;$("cunk").innerHTML="";return}
   const d=custData(),pl=d.rows.filter(r=>r.tg>0);
   const tgT=pl.reduce((a,r)=>a+r.tg,0),aT=pl.reduce((a,r)=>a+r.a,0),rem=pl.reduce((a,r)=>a+r.rem,0),dn=pl.filter(r=>r.st==="dn").length,zr=pl.filter(r=>r.st==="zr").length;
-  const both=pl.filter(r=>r.k.valOk&&r.k.qtyOk).length,qd=d.rows.reduce((a,r)=>a+r.qy.total,0),P=tgT>0?aT/tgT*100:0,qn=d.rows[0]?d.rows[0].qy.q:1;
+  const both=pl.filter(r=>r.k.valOk&&r.k.qtyOk).length,P=tgT>0?aT/tgT*100:0;
   $("cstats").innerHTML=`<div class="stat"><span class="lbl">${t("cPlanned")}</span><b>${pl.length} / ${d.rows.length}</b></div>
    <div class="stat"><span class="lbl">${t("cReached")}</span><b style="color:var(--ok)">${dn}</b></div>
    <div class="stat"><span class="lbl">${t("stBoth")}</span><b style="color:var(--ok)">${both}</b></div>
@@ -836,7 +847,6 @@ function renderCust(){
    <div class="stat"><span class="lbl">${t("cTarget")}</span><b>${fmt(tgT)}</b></div>
    <div class="stat"><span class="lbl">${t("cAch")}</span><b style="color:${col(P)}">${fmt(aT)} · ${fmt(P,1)}%</b></div>
    <div class="stat"><span class="lbl">${t("cRemain")}</span><b>${fmt(rem)}</b></div>
-   <div class="stat"><span class="lbl">${t("stQDisc")} Q${qn}</span><b style="color:var(--gold)">${fmt(qd)}</b></div>
    <div class="stat" style="grid-column:1/-1"><span class="lbl">${S.csrc==="inv"?t("srcInvNote"):t("srcSheetNote")+" "+(S.custdb.salesTo||"—")}</span></div>`;
   const q=norm(cf.q);
   let rows=d.rows.filter(r=>{
@@ -856,9 +866,7 @@ function renderCust(){
 function showCust(code){
   const c=S.custdb.map[code];if(!c)return;
   const d=custData(),r=d.rows.find(x=>x.code===code),i=d.i,m=d.m,k=r.k,qy=r.qy,ser=c.s||c.a,A=aggC()[code]||{};
-  const yN=Object.keys(A).filter(x=>x.slice(0,4)===m.slice(0,4)).reduce((a,x)=>a+A[x].n,0),yT=c.t.reduce((a,b)=>a+b,0);
-  const mx=Math.max(1,...c.t,...MN.map((_,j)=>(A[m.slice(0,4)+"-"+String(j+1).padStart(2,"0")]||{n:0}).n));
-  const vals=MN.map((_,j)=>(A[m.slice(0,4)+"-"+String(j+1).padStart(2,"0")]||{n:0}).n);
+  const yr=m.slice(0,4),vals=MN.map((_,j)=>achV(code,yr+"-"+String(j+1).padStart(2,"0"))),yN=vals.reduce((a,b)=>a+b,0),yT=c.t.reduce((a,b)=>a+b,0),mx=Math.max(1,...c.t,...vals);
   const bars=MN.map((mn,j)=>{const x=6+j*30,tv=c.t[j]/mx*84,av=Math.max(vals[j],0)/mx*84;
     return `<rect x="${x}" y="${96-tv}" width="12" height="${tv}" rx="3" fill="rgba(255,255,255,.25)"/><rect x="${x+13}" y="${96-av}" width="12" height="${av}" rx="3" fill="${j===i?"#f2b84b":"#37c6a8"}"/><text x="${x+13}" y="112" font-size="9" text-anchor="middle" fill="#a9bad6">${mn}</text>`}).join("");
   const btn=(h,l)=>`<a class="cbtn" href="${h}" target="_blank" rel="noopener">${l}</a>`;
@@ -874,7 +882,7 @@ function showCust(code){
     <div class="row"><span>${t("cValue")}</span><span>${ok_(k.valOk)} ${fmt(k.n)} / ${fmt(k.tg)} · ${t("cRemain")} ${fmt(need(k.n,k.tg))}</span></div>
     <div class="row"><span>${t("grp1")} (${S.ct.a.b.join("+")})</span><span>${ok_(k.ca>=S.ct.a.m)} ${fmtC(k.ca)} / ${S.ct.a.m} · ${t("cRemain")} ${fmtC(need(k.ca,S.ct.a.m))}</span></div>
     <div class="row"><span>${t("grp2")} (${S.ct.g.b.join("+")})</span><span>${ok_(k.cg>=S.ct.g.m)} ${fmtC(k.cg)} / ${S.ct.g.m} · ${t("cRemain")} ${fmtC(need(k.cg,S.ct.g.m))}</span></div>
-    <div class="row"><span>${t("cDiscM")}</span><b style="color:var(--gold)">${fmt(k.pct,2)}% · ${fmt(k.amt,2)}</b></div></div>
+    <div class="row"><span>${t("cDiscM")}</span><b style="color:var(--gold)">${fmt(k.pct,2)}% · ${fmt(k.amt,2)}</b></div>${m<curMk()?`<div class="lbl" style="margin-top:6px">${t("pastNote")}</div>`:""}</div>
    <div class="invc"><b>${t("cQuarter")} Q${qy.q}</b>
     <div class="row"><span>${t("cValue")}</span><span>${ok_(qy.qOk)} ${fmt(qy.n)} / ${fmt(qy.tg)} · ${t("cRemain")} ${fmt(need(qy.n,qy.tg))}</span></div>
     <div class="row"><span>${t("cActive")}</span><span>${qy.act} / 3 · ${t("cFactor")} ${fmt(qy.f*100)}%</span></div>
@@ -896,7 +904,7 @@ function showCust(code){
    <div class="tw" dir="ltr"><table class="ytab"><thead><tr><th></th>${MN.map(x=>`<th>${x}</th>`).join("")}</tr></thead><tbody>
     <tr><th>${t("yTarget")}</th>${c.t.map(v=>`<td>${fmt(v)}</td>`).join("")}</tr>
     <tr><th>${t("yAch")}</th>${vals.map(v=>`<td>${fmt(v)}</td>`).join("")}</tr>
-    <tr><th>${t("srcSheet")}</th>${ser.map(v=>`<td>${fmt(v)}</td>`).join("")}</tr></tbody></table></div>
+    <tr><th>%</th>${vals.map((v,j)=>`<td>${c.t[j]>0?fmt(v/c.t[j]*100,0)+"%":"—"}</td>`).join("")}</tr></tbody></table></div>
    ${ivl.length?`<h2 style="margin-top:14px">${t("appInv")}</h2>`+ivl.map(v=>{const o=tot[v.id]||{n:0,c:0};return `<div class="row"><span dir="ltr">${esc(v.no)} · ${v.date}${v.mode==="return"?" ↩":""}</span><b>${fmt(o.n,2)} · ${fmtC(o.c)}</b></div>`}).join(""):""}`;
   $("cdlg").showModal();
 }
@@ -922,10 +930,16 @@ function renderItems(){
   const f=q?arr.filter(([c,x])=>norm(x.n).includes(q)||c.toLowerCase().includes(q)):arr;
   f.sort((a,b)=>a[0].localeCompare(b[0]));
   $("icount").textContent=arr.length?`${f.length} / ${arr.length} ${t("itemsN")}${S.items.file?" · "+S.items.file:""}`:"";
-  $("itable").innerHTML=arr.length?`<table><thead><tr><th>${t("code")}</th><th>${t("iname")}</th><th>${t("ikind")}</th><th>${t("ipack")}</th><th>${t("iupc")}</th><th>${t("ishrink")}</th><th>${t("icp")}</th></tr></thead><tbody>`+
-   f.slice(0,200).map(([c,x])=>`<tr><td dir="ltr">${esc(c)}</td><td dir="auto" style="white-space:normal;min-width:200px">${esc(x.n)}</td><td>${esc(x.k)}</td><td>${esc(x.pt)}</td><td>${x.u==null?"":fmtC(x.u)}</td><td>${x.sh==null?"":fmtC(x.sh)}</td><td>${x.cp==null?"":fmt(x.cp,2)}</td></tr>`).join("")+`</tbody></table>`+(f.length>200?`<div class="empty">${t("moreRes")}</div>`:""):`<div class="empty">${t("noItems")}</div>`;
+  $("itable").innerHTML=arr.length?`<table><thead><tr><th>${t("code")}</th><th>${t("iname")}</th><th>${t("ikind")}</th><th>${t("ipack")}</th><th>${t("iupc")}</th><th>${t("ishrink")}</th><th>${t("ipp")}</th><th>${t("icpi")}</th><th>${t("idc")}</th><th>${t("inet")}</th></tr></thead><tbody>`+
+   f.slice(0,200).map(([c,x])=>{const inc=(a,b)=>x[a]!=null?x[a]:(x[b]!=null?x[b]*(1+VAT):null),P=v=>v==null?"":fmt(v,2);return `<tr><td dir="ltr">${esc(c)}</td><td dir="auto" style="white-space:normal;min-width:200px">${esc(x.n)}</td><td>${esc(x.k)}</td><td>${esc(x.pt)}</td><td>${x.u==null?"":fmtC(x.u)}</td><td>${x.sh==null?"":fmtC(x.sh)}</td><td>${P(inc("upi","up"))}</td><td>${P(inc("cpi","cp"))}</td><td>${x.dc!=null?fmt(x.dc,2)+"%":""}</td><td>${P(x.net)}</td></tr>`}).join("")+`</tbody></table>`+(f.length>200?`<div class="empty">${t("moreRes")}</div>`:""):`<div class="empty">${t("noItems")}</div>`;
 }
-function render(){renderDash();renderCust();renderItems();$("cdl").innerHTML=Object.entries(S.custdb.map).map(([c,x])=>`<option value="${esc(c)} — ${esc(x.n)}">`).join("")}
+function renderChips(){
+  const cnt={};S.invs.forEach(v=>{if(!v.del){const k=mkey(v.date);cnt[k]=(cnt[k]||0)+1}});
+  const m=$("month").value;
+  $("mchips").innerHTML=Object.keys(cnt).sort().map(k=>{const c=CAL.find(x=>x.k===k);return `<button type="button" data-mk="${k}" class="${k===m?"on":""}">${c&&S.cal!=="gr"?MN[c.i]+" "+c.y:k} · ${cnt[k]} ${t("invsN")}</button>`}).join("");
+}
+$("mchips").onclick=e=>{const b=e.target.closest("[data-mk]");if(!b)return;const sel=$("month");if(![...sel.options].some(o=>o.value===b.dataset.mk)){const o=document.createElement("option");o.value=b.dataset.mk;o.textContent=b.dataset.mk;sel.appendChild(o)}sel.value=b.dataset.mk;render()};
+function render(){renderChips();renderDash();renderCust();renderItems();$("cdl").innerHTML=Object.entries(S.custdb.map).map(([c,x])=>`<option value="${esc(c)} — ${esc(x.n)}">`).join("")}
 
 /* ---------- tabs ---------- */
 function setTab(x){tab=x;document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===x));document.querySelectorAll(".view").forEach(v=>v.classList.toggle("on",v.id==="v_"+x))}
@@ -1011,13 +1025,14 @@ function showImp(errs){
   if(!Object.keys(S.items.map).length)h+=`<div class="warn" style="margin-bottom:8px">${t("impNoItems")}</div>`;
   pendInv.forEach((iv,i)=>{
     lineCartons(iv);
-    const exact=S.invs.some(v=>!v.del&&v.no===iv.inv&&v.mode===impMode),legacy=!exact&&S.sales.some(s=>!s.del&&s.inv===iv.inv&&s.src==="xls");
-    iv.dup=!!iv.inv&&exact;iv.legacy=legacy;
+    const exv=S.invs.find(v=>!v.del&&v.no===iv.inv&&v.mode===impMode),exact=!!exv,legacy=!exact&&S.sales.some(s=>!s.del&&s.inv===iv.inv&&s.src==="xls");
+    iv.dup=!!iv.inv&&exact;iv.legacy=legacy;iv.exm=exv?mlabel(mkey(exv.date)):"";
     const ok=iv.expected!=null&&Math.abs(iv.sum-iv.expected)<0.05,by={};
     iv.lines.forEach(l=>{if(l.b){const o=by[l.b]||(by[l.b]={v:0,c:0});o.v+=l.value;o.c+=l.ct||0}});
     const cr=S.custdb.map[iv.ccode];
     h+=`<div class="invc"><label style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><input type="checkbox" data-use="${i}" ${iv.dup?"":"checked"}><b dir="ltr">${esc(iv.inv||iv.file)}</b><span class="lbl" dir="auto">${esc(iv.customer)} · ${esc(iv.date)}</span></label>
-     <div class="lbl" style="margin-top:6px">${iv.lines.length} ${t("itemsN")} · ${fmt(iv.sum,2)} · ${fmtC(iv.cartons)} ${t("cartons")} <span class="${ok?"ok":"warn"}">${ok?"✓ "+t("impMatch"):iv.expected!=null?"⚠ "+t("impMis")+" "+fmt(iv.expected,2):""}</span>${iv.isReturn&&impMode==="sale"?` · <span class="bad">${t("impRet")}</span>`:""}${iv.dup?` · <span class="warn">${t("impDup")}</span>`:""}${legacy?` · <span class="ok">${t("legacyUpd")}</span>`:""}</div>
+     <div class="lbl" style="margin-top:4px">${t("countsIn")} <b style="display:inline">${mlabel(mkey(iv.date||today()))}</b></div>
+     <div class="lbl" style="margin-top:6px">${iv.lines.length} ${t("itemsN")} · ${fmt(iv.sum,2)} · ${fmtC(iv.cartons)} ${t("cartons")} <span class="${ok?"ok":"warn"}">${ok?"✓ "+t("impMatch"):iv.expected!=null?"⚠ "+t("impMis")+" "+fmt(iv.expected,2):""}</span>${iv.isReturn&&impMode==="sale"?` · <span class="bad">${t("impRet")}</span>`:""}${iv.dup?` · <span class="warn">${t("impDup")} · ${iv.exm}</span>`:""}${legacy?` · <span class="ok">${t("legacyUpd")}</span>`:""}</div>
      <div class="lbl" style="margin-top:4px" dir="auto">${iv.ccode?esc(iv.ccode)+" · ":""}${cr?`<span class="ok">${t("custIn")}</span>`:`<span class="warn">${t("custOut")}</span>`}</div>
      <div class="chips">${Object.keys(by).map(b=>`<span class="pill">${b} ${fmt(by[b].v,2)} · ${fmtC(by[b].c)}</span>`).join("")}</div></div>`;
   });
@@ -1046,7 +1061,7 @@ $("iok").onclick=()=>{
     n++;last=date;
   });
   $("idlg").close();
-  if(n){save();setMonthFor(last);render();toast(t("impDone").replace("{n}",n))}
+  if(n){save();setMonthFor(last);render();toast(t("impDone").replace("{n}",n)+" · "+mlabel(mkey(last)))}
 };
 
 /* ---------- databases ---------- */
