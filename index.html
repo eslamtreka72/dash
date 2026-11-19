@@ -164,6 +164,23 @@ body.locked .wrap{display:none}
 .ctxbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:-6px 0 14px;padding:10px 14px;border-radius:18px;border:1px solid var(--gold);background:rgba(242,184,75,.14)}
 .ctxbar[hidden]{display:none}
 .urow{cursor:default}
+
+.grp{margin-bottom:10px;padding:0}
+.grp>summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:8px;font-weight:600}
+.grp>summary::-webkit-details-marker{display:none}
+.grp>summary::before{content:"▸";color:var(--mu);margin-inline-end:8px;transition:transform .2s}
+.grp[open]>summary::before{transform:rotate(90deg)}
+.grp>summary>span:first-of-type{flex:1}
+.grp[open]>summary{border-bottom:1px solid rgba(255,255,255,.12)}
+.gbody{padding:2px 14px 8px}
+.irow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08);cursor:pointer;align-items:center}
+.irow:last-child{border:0}.irow:hover{background:rgba(255,255,255,.04)}
+.iv{text-align:end}.iv small{display:block;color:var(--mu);font-size:11.5px}
+.in small{color:var(--mu);margin-inline-start:6px}
+.citem{padding:12px 0;border-bottom:1px solid rgba(255,255,255,.1);cursor:pointer}.citem:last-child{border:0}
+.ttab td,.ttab th{padding:5px 6px;font-size:12.5px;text-align:center}
+.ttab td:first-child{text-align:start;white-space:normal}
+.cnt{font-size:12px;color:var(--mu);font-weight:400}
 </style>
 </head>
 <body>
@@ -190,7 +207,7 @@ body.locked .wrap{display:none}
     <input type="file" id="file" accept=".json" hidden>
   </div>
 </header>
-<nav class="tabs" id="tabs"><button data-tab="dash" class="on" data-i="tabDash"></button><button data-tab="cust" data-i="tabCust"></button><button data-tab="items" data-i="tabItems"></button><button data-tab="admin" class="adm" data-i="tabAdmin"></button></nav>
+<nav class="tabs" id="tabs"><button data-tab="dash" class="on" data-i="tabDash"></button><button data-tab="cust" data-i="tabCust"></button><button data-tab="items" data-i="tabItems"></button><button data-tab="route" data-i="tabRoute"></button><button data-tab="camp" data-i="tabCamp"></button><button data-tab="comp" data-i="tabComp"></button><button data-tab="admin" class="adm" data-i="tabAdmin"></button></nav>
 <div class="ctxbar" id="ctxbar" hidden><span><span data-i="ctxIn"></span> <b id="ctxname"></b></span><button id="ctxback" data-i="ctxBack"></button></div>
 <div class="mchips" id="mchips"></div>
 
@@ -246,6 +263,19 @@ body.locked .wrap{display:none}
   <div class="lbl" id="icount" style="margin:0 6px 10px"></div>
   <div class="card"><div class="tw" id="itable" style="max-height:none"></div></div>
 </div>
+<div class="view" id="v_route"><div class="card"><h2 data-i="tabRoute"></h2><p class="lbl" data-i="routeSoon"></p></div></div>
+<div class="view" id="v_camp">
+  <div class="card" style="margin-bottom:14px"><div class="sec"><span id="camptitle"></span><button id="btnCamp" class="adm pri" data-i="campUpd"></button></div><div class="lbl" id="campmeta" dir="auto"></div><input type="file" id="campfile" accept=".xlsx" hidden><div id="campex"></div></div>
+  <div class="ctl"><input type="search" id="campq" data-ph="itemSearch"></div>
+  <div class="mchips" id="campb" style="margin:0 0 12px"></div>
+  <div id="camplist"></div>
+</div>
+<div class="view" id="v_comp">
+  <div class="ctl"><input type="search" id="compq" data-ph="compSearch"><select id="compco"></select></div>
+  <div class="ctl"><div class="seg" id="compch"></div><label class="lbl" style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" id="comphas" style="width:auto"> <span data-i="compHas"></span></label></div>
+  <div class="lbl" id="compstat" style="margin:0 6px 10px"></div>
+  <div id="complist"></div>
+</div>
 <div class="view" id="v_admin">
   <div class="card" style="margin-bottom:14px">
     <div class="sec"><span data-i="uTitle"></span><button id="unew" class="pri" data-i="uNew"></button></div>
@@ -254,7 +284,8 @@ body.locked .wrap{display:none}
   <div class="card" style="margin-bottom:14px">
     <h2 data-i="distTitle"></h2><p class="lbl" data-i="distHint" style="margin-bottom:10px"></p>
     <div class="imps"><button id="btnDist" data-i="distCust"></button><button id="btnDistP" data-i="distPrice"></button></div>
-    <input type="file" id="dfile" accept=".xlsx" hidden><input type="file" id="dpfile" accept=".xlsx" hidden>
+    <div class="imps" style="margin-top:8px"><button id="btnDistC" data-i="distComp"></button><button id="btnDistK" data-i="distCamp"></button></div>
+    <input type="file" id="dfile" accept=".xlsx" hidden><input type="file" id="dpfile" accept=".xlsx" hidden><input type="file" id="cpfile" accept=".xlsx" hidden><input type="file" id="kfile" accept=".xlsx" hidden>
   </div>
   <div class="card">
     <div class="sec"><span data-i="ovTitle"></span><button id="btnOv" data-i="ovLoad"></button></div>
@@ -263,6 +294,9 @@ body.locked .wrap{display:none}
 </div>
 </div>
 
+<dialog id="cmdlg"><div class="tw" id="cmbody" style="max-height:72vh"></div><div class="bar" style="margin-top:12px;justify-content:flex-end"><button type="button" id="cmclose" data-i="close"></button></div></dialog>
+<dialog id="cadlg"><div id="cabody"></div><div class="bar" style="margin-top:12px;justify-content:flex-end"><button type="button" id="caclose" data-i="close"></button></div></dialog>
+<dialog id="kpdlg"><h2 data-i="distCamp"></h2><div id="kpbody" class="tw" style="max-height:55vh"></div><div class="bar" style="margin-top:12px;justify-content:flex-end"><button type="button" id="kpcancel" data-i="cancel"></button><button type="button" class="pri" id="kpok" data-i="impOk"></button></div></dialog>
 <dialog id="adlg">
   <h2 data-i="acctTitle"></h2><div class="lbl" id="aname" dir="auto" style="margin-bottom:10px"></div>
   <form id="aform" onsubmit="return false"><label><span data-i="pwOld"></span><input id="opw" type="password" autocomplete="current-password" dir="ltr"></label>
@@ -291,7 +325,7 @@ body.locked .wrap{display:none}
       <label><span data-i="lPass"></span><input id="lp" type="password" autocomplete="current-password" dir="ltr"></label>
       <div class="lbl" id="lerr" style="color:#ff9a8a;min-height:18px"></div>
       <button class="pri" id="lgo" type="button" data-i="lLogin"></button>
-      <details><summary class="lbl" data-i="lAdv" style="cursor:pointer"></summary><label style="margin-top:8px"><span data-i="lSrv"></span><input id="lsrv" dir="ltr"></label></details>
+      <details><summary class="lbl" data-i="lAdv" style="cursor:pointer"></summary><label style="margin-top:8px"><span data-i="lSrv"></span><input id="lsrv" dir="ltr"></label><button type="button" id="ltest" data-i="lTest" style="margin-top:8px;width:100%"></button><pre id="ltout" class="lbl" style="white-space:pre-wrap;direction:ltr;text-align:left;font-size:11px;margin-top:6px;user-select:text"></pre></details>
     </form>
     <button type="button" id="llang" data-i="lang" style="margin-top:10px;width:100%"></button>
   </div>
@@ -534,6 +568,10 @@ Object.assign(L.ar,{"ipp":"سعر العبوة (بعد الضريبة)","icpi":"
 Object.assign(L.en,{"ipp":"Pack price (incl. VAT)","icpi":"Carton price (incl. VAT)","idc":"Discount","inet":"Net after discount (incl. VAT)","pastNote":"Past months: value from the company sheet (actual sales); quantities only from the invoices you uploaded.","countsIn":"counts in","invsN":"invoices","srcInvNote":"Past months from the company sheet (actual sales), the current month from the invoices you imported"});
 Object.assign(L.ar,{"lTitle": "تسجيل الدخول", "lUser": "اسم المستخدم", "lPass": "كلمة السر", "lLogin": "دخول", "lAdv": "إعدادات السيرفر", "lSrv": "رابط السيرفر (Apps Script)", "lNeed": "اكتب اسم المستخدم وكلمة السر", "lWait": "جاري الدخول…", "lBad": "اسم المستخدم أو كلمة السر غلط", "lLocked": "الحساب اتقفل 15 دقيقة بسبب محاولات كتير غلط", "lOldSrv": "السيرفر مش محدّث (لسه على النسخة القديمة). حدّث كود Apps Script.", "lErr": "حصل خطأ", "lNet": "مفيش اتصال بالسيرفر", "lTimeout": "السيرفر ماردش في الوقت المناسب", "lExpired": "الجلسة انتهت، سجّل دخول تاني", "acctBtn": "👤 حسابي", "acctTitle": "حسابي", "roleAdmin": "مدير", "roleRep": "مندوب", "pwOld": "كلمة السر الحالية", "pwNew": "كلمة السر الجديدة", "pwShort": "كلمة السر لازم 6 حروف على الأقل", "pwDone": "تم تغيير كلمة السر", "pwBad": "كلمة السر الحالية غلط", "aChange": "تغيير كلمة السر", "aLogout": "تسجيل خروج", "logoutQ": "تسجّل خروج؟ هتتمسح نسخة البيانات اللي على الجهاز (والبيانات محفوظة على السيرفر).", "migrateQ": "لقيت بيانات قديمة على الجهاز ده. تنقلها لحسابك؟", "tabAdmin": "الإدارة", "uTitle": "المناديب", "uNew": "+ مندوب جديد", "uOpen": "فتح", "uEdit": "تعديل", "uOff": "موقوف", "uSheet": "الاسم في الشيت", "uNever": "لسه ماسجلش دخول", "uUser": "اسم المستخدم (إنجليزي)", "uName": "الاسم", "uRole": "الصلاحية", "uPass": "كلمة السر", "uPassNew": "6 حروف على الأقل", "uPassKeep": "سيبها فاضية لو مش هتغيرها", "uActive": "الحساب شغال", "uSaved": "تم الحفظ", "eUser": "اسم المستخدم 3 حروف على الأقل (إنجليزي وأرقام)", "eLast": "لازم يفضل مدير واحد شغال على الأقل", "eForb": "مش مسموح", "ctxIn": "انت شايف حساب:", "ctxBack": "رجوع لحسابي", "distTitle": "توزيع البيانات على المناديب", "distHint": "شيت المحققات بيتوزع تلقائي حسب «الاسم في الشيت» لكل مندوب. قائمة الأسعار بتختار لمين.", "distCust": "توزيع العملاء من الشيت", "distPrice": "توزيع قائمة أسعار", "distDone": "تم توزيع العملاء", "distUn": "مندوبين في الشيت مالهمش حساب", "ovTitle": "ملخص كل المناديب (الشهر المختار)", "ovLoad": "تحميل الملخص", "ovLoading": "جاري تحميل", "ovRep": "المندوب", "ovNet": "صافي المبيعات", "ovPct": "% الهدف", "ovInv": "فواتير", "ovAct": "متعاملين", "ovAch": "محققين", "ovTot": "الإجمالي", "sAuth": "☁ مفيش صلاحية / الجلسة انتهت"});
 Object.assign(L.en,{"lTitle": "Sign in", "lUser": "Username", "lPass": "Password", "lLogin": "Sign in", "lAdv": "Server settings", "lSrv": "Server URL (Apps Script)", "lNeed": "Enter username and password", "lWait": "Signing in…", "lBad": "Wrong username or password", "lLocked": "Account locked for 15 minutes after too many failed attempts", "lOldSrv": "The server is not updated (still the old version). Update the Apps Script code.", "lErr": "Error", "lNet": "Cannot reach the server", "lTimeout": "The server did not respond in time", "lExpired": "Session expired, please sign in again", "acctBtn": "👤 Account", "acctTitle": "My account", "roleAdmin": "Admin", "roleRep": "Rep", "pwOld": "Current password", "pwNew": "New password", "pwShort": "Password must be at least 6 characters", "pwDone": "Password changed", "pwBad": "Current password is wrong", "aChange": "Change password", "aLogout": "Sign out", "logoutQ": "Sign out? The data copy on this device will be cleared (data stays on the server).", "migrateQ": "Found old data on this device. Move it to your account?", "tabAdmin": "Admin", "uTitle": "Reps", "uNew": "+ New rep", "uOpen": "Open", "uEdit": "Edit", "uOff": "Disabled", "uSheet": "Name in sheet", "uNever": "never signed in", "uUser": "Username (English)", "uName": "Name", "uRole": "Role", "uPass": "Password", "uPassNew": "min 6 characters", "uPassKeep": "leave empty to keep", "uActive": "Account active", "uSaved": "Saved", "eUser": "Username needs 3+ letters/numbers (English)", "eLast": "At least one active admin must remain", "eForb": "Not allowed", "ctxIn": "You are viewing:", "ctxBack": "Back to my account", "distTitle": "Distribute data to reps", "distHint": "The tracking sheet is distributed automatically by each rep's “Name in sheet”. For price lists you choose the reps.", "distCust": "Distribute customers from sheet", "distPrice": "Distribute a price list", "distDone": "Customers distributed", "distUn": "Reps in the sheet without an account", "ovTitle": "All reps summary (selected month)", "ovLoad": "Load summary", "ovLoading": "Loading", "ovRep": "Rep", "ovNet": "Net sales", "ovPct": "% target", "ovInv": "Invoices", "ovAct": "Transacting", "ovAch": "Achieved", "ovTot": "Total", "sAuth": "☁ Not allowed / session expired"});
+Object.assign(L.ar,{"lTest":"اختبار الاتصال بالسيرفر"});
+Object.assign(L.en,{"lTest":"Test server connection"});
+Object.assign(L.ar,{"tabRoute": "خط السير", "tabCamp": "تصفية الحملات", "tabComp": "المنافسة", "routeSoon": "هنظبط تاب خط السير مع بعض في خطوة جاية.", "campUpd": "رفع تصفية الحملات (Excel)", "campEx": "خصومات إضافية على الفاتورة", "campTot": "إجمالي الخصومات الإضافية", "noCamp": "مفيش تصفية حملات لحسابك لسه. المدير هو اللي بيرفعها.", "pcs": "قطعة", "ctn": "كرتونة", "campPack": "في الكرتونة", "campBase": "السعر الأساسي (بعد الضريبة)", "campDisc": "الخصم", "campPiece": "للقطعة", "campCarton": "للكرتونة", "campBrands": "براند", "calcQty": "الكمية", "calcUnit": "الوحدة", "calcPcs": "عدد القطع", "calcDisc": "الخصم", "calcTotal": "إجمالي السعر", "calcBase": "السعر الأساسي بدون خصم", "calcNext": "كمّل {n} قطعة كمان وهتاخد خصم {d} (سعر القطعة {p})", "campDone": "تم رفع تصفية الحملات", "badCamp": "الملف ده مش شكل تصفية الحملات المتوقع", "compSearch": "ابحث باسم الصنف أو الشركة", "compHas": "اللي ليها سعر بس", "compAll": "كل الشركات", "noComp": "مفيش قائمة منافسة لحسابك لسه. المدير هو اللي بيرفعها.", "compPrice": "سعر الرف", "compDisc": "السعر بعد الخصم", "compCh": "القناة", "compDate": "التاريخ", "compWhere": "المكان / العميل (اختياري)", "compSave": "سجّل السعر", "compHist": "آخر الأسعار", "compStats": "أقل / متوسط / أعلى", "compKg": "كجم", "compL": "لتر", "compPriced": "ليها سعر", "adcoVs": "ادكو مقابل السوق", "distComp": "توزيع قائمة المنافسة", "distCamp": "رفع تصفية حملات لمندوب", "compDone": "تم توزيع قائمة المنافسة على {n}", "badComp": "الملف ده مش شكل قائمة المنافسة المتوقع"});
+Object.assign(L.en,{"tabRoute": "Route", "tabCamp": "Campaigns", "tabComp": "Competition", "routeSoon": "We will set up the Route tab together in a coming step.", "campUpd": "Upload campaign settlement (Excel)", "campEx": "Extra invoice discounts", "campTot": "Total extra discounts", "noCamp": "No campaign settlement for your account yet. The admin uploads it.", "pcs": "piece", "ctn": "carton", "campPack": "Per carton", "campBase": "Base price (after VAT)", "campDisc": "Discount", "campPiece": "Per piece", "campCarton": "Per carton", "campBrands": "brands", "calcQty": "Quantity", "calcUnit": "Unit", "calcPcs": "Pieces", "calcDisc": "Discount", "calcTotal": "Total price", "calcBase": "Base price without discount", "calcNext": "Add {n} more pieces to get {d} off (piece price {p})", "campDone": "Campaign settlement uploaded", "badCamp": "This file is not the expected campaign settlement format", "compSearch": "Search item or company", "compHas": "With price only", "compAll": "All companies", "noComp": "No competition list for your account yet. The admin uploads it.", "compPrice": "Shelf price", "compDisc": "Price after discount", "compCh": "Channel", "compDate": "Date", "compWhere": "Place / customer (optional)", "compSave": "Save price", "compHist": "Latest prices", "compStats": "Min / avg / max", "compKg": "kg", "compL": "L", "compPriced": "priced", "adcoVs": "Adco vs market", "distComp": "Distribute competition list", "distCamp": "Upload campaign settlement for a rep", "compDone": "Competition list distributed to {n}", "badComp": "This file is not the expected competition list format"});
 const DEFREP="اسلام عز كمال";
 const $=id=>document.getElementById(id);
 const fmt=(n,d=0)=>Number(n||0).toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d});
@@ -571,7 +609,8 @@ function fix(d){
   d.ot=d.ot||{};OT.forEach(([k,tg,c])=>{if(!d.ot[k])d.ot[k]={target:tg,comm:c}});
   if(d.mig!=="c75"){let ch=0;["lines","cust","inv","active"].forEach(k=>{if(d.ot[k]&&d.ot[k].comm===8){d.ot[k].comm=7.5;ch=1}});d.mig="c75";if(ch)d.tsT=Date.now()}
   d.act=d.act||{};d.rules=d.rules||{};d.vatMode=d.vatMode||"mul";d.tsT=d.tsT||0;d.tsA=d.tsA||{};d.lang=d.lang||"ar";d.base=d.base||"net";d.sales=d.sales||[];
-  d.cal=d.cal||"co";d.csrc=d.csrc||"inv";d.rep=d.rep||DEFREP;d.invs=d.invs||[];d.pk=d.pk||{};
+  d.cal=d.cal||"co";d.csrc=d.csrc||"inv";d.rep=d.rep||DEFREP;d.invs=d.invs||[];d.pk=d.pk||{};d.cp=d.cp||[];d.route=d.route||{};d.routecfg=d.routecfg||{};d.chSel=d.chSel||"SVS";
+  d.comp=d.comp||{ts:0,groups:[],items:[],ch:[]};d.camp=d.camp||{ts:0,brands:[],ex:[]};
   d.ct=Object.assign({vd:0.75,qd:1.5,qq:1.25,an:0,a:{b:["Clorel","Feba"],m:15},g:{b:["Glassy","MaxelMagic","Velveta","Diva","Speed"],m:10},reg:[80,90,100]},d.ct||{});
   if(d.mig2!=="v3"){d.csrc="inv";d.mig2="v3"}
   d.items=d.items||{ts:0,map:{}};d.custdb=d.custdb||{ts:0,map:{},salesTo:""};
@@ -583,7 +622,7 @@ function fix(d){
   return d;
 }
 const SK="sd_sess_v2",SRVK="sd_server",DEFSERVER="https://script.google.com/macros/s/AKfycbyBjrfqUacXsUEeZvifZ9R2HQWUi-nmZEZAzo0rDiO3n-4cI8Kovwo84XBj9dMpgxIPzA/exec";
-const CFGK=["items","custdb","ct","targets","ot","vatMode","cal"],DATAK=["sales","invs","pk","rules","act","tsA"];
+const CFGK=["items","custdb","ct","targets","ot","vatMode","cal","comp","camp","routecfg"],DATAK=["sales","invs","pk","rules","act","tsA","cp","route"];
 const pick=(o,ks)=>{const r={};ks.forEach(k=>{if(o[k]!==undefined)r[k]=o[k]});return r};
 let SESS=null;try{SESS=JSON.parse(localStorage.getItem(SK)||"null")}catch(e){}
 if(SESS&&!(SESS.exp>Date.now()))SESS=null;
@@ -610,7 +649,7 @@ function toast(m){const e=$("toast");e.textContent=m;e.classList.add("show");cle
 function status(k,c,x){const e=$("sst");if(!SESS){e.hidden=true;return}e.hidden=false;e.textContent=t(k)+(x?" – "+x:"");e.style.color=c||"var(--mu)"}
 async function jf(url,opt,ms){
   const c=new AbortController(),id=setTimeout(()=>c.abort(),ms||25000);
-  try{const r=await fetch(url,Object.assign({signal:c.signal,cache:"no-store"},opt||{}));const tx=await r.text();
+  try{const r=await fetch(url,Object.assign({signal:c.signal},opt||{}));const tx=await r.text();
     try{return JSON.parse(tx)}catch(e){throw new Error("bad:"+tx.replace(/<[^>]*>/g," ").replace(/\s+/g," ").trim().slice(0,50))}}
   finally{clearTimeout(id)}
 }
@@ -619,6 +658,8 @@ function mergeData(r){
   S.pk=Object.assign({},r.pk||{},S.pk||{});
   const m=new Map(S.sales.map(x=>[x.id,x]));(r.sales||[]).forEach(x=>{const l=m.get(x.id);if(!l)S.sales.push(x);else if(x.del&&!l.del)l.del=1});
   const im=new Map(S.invs.map(x=>[x.id,x]));(r.invs||[]).forEach(x=>{const l=im.get(x.id);if(!l)S.invs.push(x);else if(x.del&&!l.del)l.del=1});
+  const cmm=new Map(S.cp.map(x=>[x.id,x]));(r.cp||[]).forEach(x=>{const l=cmm.get(x.id);if(!l)S.cp.push(x);else if(x.del&&!l.del)l.del=1});
+  S.route=Object.assign({},r.route||{},S.route||{});
   Object.keys(r.act||{}).forEach(mo=>{const rt=(r.tsA&&r.tsA[mo])||0;if(!S.act[mo]||rt>(S.tsA[mo]||0)){S.act[mo]=r.act[mo];S.tsA[mo]=rt}});
 }
 function mergeInto(r){
@@ -1009,7 +1050,7 @@ function renderChips(){
   $("mchips").innerHTML=Object.keys(cnt).sort().map(k=>{const c=CAL.find(x=>x.k===k);return `<button type="button" data-mk="${k}" class="${k===m?"on":""}">${c&&S.cal!=="gr"?MN[c.i]+" "+c.y:k} · ${cnt[k]} ${t("invsN")}</button>`}).join("");
 }
 $("mchips").onclick=e=>{const b=e.target.closest("[data-mk]");if(!b)return;const sel=$("month");if(![...sel.options].some(o=>o.value===b.dataset.mk)){const o=document.createElement("option");o.value=b.dataset.mk;o.textContent=b.dataset.mk;sel.appendChild(o)}sel.value=b.dataset.mk;render()};
-function render(){renderChips();renderDash();renderCust();renderItems();$("cdl").innerHTML=Object.entries(S.custdb.map).map(([c,x])=>`<option value="${esc(c)} — ${esc(x.n)}">`).join("")}
+function render(){renderChips();renderDash();renderCust();renderItems();renderCamp();renderComp();$("cdl").innerHTML=Object.entries(S.custdb.map).map(([c,x])=>`<option value="${esc(c)} — ${esc(x.n)}">`).join("")}
 
 /* ---------- tabs ---------- */
 function setTab(x){tab=x;document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===x));document.querySelectorAll(".view").forEach(v=>v.classList.toggle("on",v.id==="v_"+x))}
@@ -1155,6 +1196,234 @@ $("sst").onclick=()=>sync();
 $("splash").onclick=()=>{$("splash").classList.add("go");document.body.classList.add("skip")};
 addEventListener("online",sync);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)sync()});
+
+/* ---------- competition catalog + campaign settlement parsers ---------- */
+function compFromWB(R,file){
+  const base=R.SVS||R[Object.keys(R)[0]];
+  if(!base)throw new Error("nocomp");
+  const cl=x=>String(x==null?"":x).replace(/\s+/g," ").trim();
+  let hr=-1;for(let r=0;r<10&&hr<0;r++){if((base[r]||[]).some(x=>typeof x==="string"&&hn(x)==="اسمالشركه"))hr=r}
+  if(hr<0)throw new Error("nocomp");
+  const groups=[],items=[],seen={};let g=-1;
+  for(let r=hr+1;r<base.length;r++){
+    const row=base[r]||[],a=cl(row[0]),sb=cl(row[1]),co=cl(row[2]),w=cl(row[3]),nm=cl(row[4]);
+    if(a){groups.push(a);g=groups.length-1}
+    if(!nm&&!w)continue;
+    if(g<0){groups.push("—");g=0}
+    let k=[norm(groups[g]),norm(co),norm(nm),norm(w)].join("|");
+    if(seen[k]){seen[k]++;k+="#"+seen[k]}else seen[k]=1;
+    items.push({k,g,co,w,n:nm||w,sb});
+  }
+  if(!items.length)throw new Error("nocomp");
+  return{ts:Date.now(),file:file||"",groups,items,ch:["MT","SVS","NR","WS"].filter(n=>R[n])};
+}
+function campFromWB(R,file){
+  const cl=x=>String(x==null?"":x).replace(/\s+/g," ").trim();
+  const key=Object.keys(R).find(q=>(R[q]||[]).some(row=>(row||[]).some(x=>typeof x==="string"&&hn(x)==="اسمالصنف")));
+  if(!key)throw new Error("nocamp");
+  const rows=R[key];let title="",sector="";
+  for(let r=0;r<6;r++)(rows[r]||[]).forEach(x=>{if(typeof x==="string"){const s=x.trim();if(/تصفي/.test(s))title=cl(s);else if(/^[A-Za-z]{2,6}$/.test(s))sector=s}});
+  const brands=[];let extraAt=-1;
+  for(let r=0;r<rows.length;r++){
+    const row=rows[r]||[];
+    if(row.some(x=>typeof x==="string"&&hn(x).startsWith("خصوماتاضافيه"))&&extraAt<0)extraAt=r;
+    const ni=row.findIndex(x=>typeof x==="string"&&hn(x)==="اسمالصنف");
+    if(ni<0)continue;
+    const bn=cl(row.slice(0,ni).find(x=>typeof x==="string"&&x.trim())||"");
+    const bp=row.findIndex(x=>typeof x==="string"&&hn(x).startsWith("سعراساسي"));
+    const tc=[];row.forEach((x,c)=>{if(typeof x==="string"&&/^الشريحه/.test(hn(x)))tc.push(c)});
+    const its=[];
+    for(let q=r+1;q<rows.length;q++){
+      const d=rows[q]||[];
+      if(d.some(x=>typeof x==="string"&&hn(x)==="اسمالصنف"))break;
+      if(d.some(x=>typeof x==="string"&&hn(x).startsWith("خصوماتاضافيه")))break;
+      const nm=d[ni];if(nm==null||nm==="")continue;
+      const bpv=d[bp];if(typeof bpv!=="number")continue;
+      const pk=typeof d[ni+1]==="number"?d[ni+1]:+d[ni+1]||1,t=[];
+      tc.forEach(c=>{
+        const qs=d[c];if(qs==null||qs==="")return;
+        const m=/(\d+(?:\.\d+)?)\s*(ق|ك)/.exec(String(qs));if(!m)return;
+        const dd=typeof d[c+1]==="number"?d[c+1]:null,pp=typeof d[c+2]==="number"?d[c+2]:null;
+        if(pp==null)return;
+        const pc=typeof d[c+3]==="number"?d[c+3]:pp*pk;
+        t.push({q:+m[1],u:m[2]==="ك"?"c":"p",d:dd,pp,pc});
+      });
+      its.push({n:cl(nm),pk,bp:bpv,t});
+    }
+    if(its.length)brands.push({n:bn,items:its});
+  }
+  if(!brands.length)throw new Error("nocamp");
+  const ex=[];let total=null;
+  if(extraAt>=0)for(let r=extraAt+1;r<rows.length;r++){
+    const row=rows[r]||[],lb=cl(row.find(x=>typeof x==="string"&&x.trim())||""),v=row.find(x=>typeof x==="number");
+    if(!lb||v==null)continue;
+    if(/اجمالي/.test(norm(lb)))total=v;else ex.push({n:lb,v});
+  }
+  return{ts:Date.now(),file:file||"",title,sector,brands,ex,total};
+}
+
+/* ---------- campaign settlement (read-only for reps) ---------- */
+let campB="";
+const pc1=d=>d==null?"—":fmt(d*100,2)+"%";
+const tierNeed=(it,x)=>x.u==="c"?x.q*it.pk:x.q;
+function tierFor(it,pcs){let b=null;it.t.forEach(x=>{const n=tierNeed(it,x);if(pcs>=n&&(!b||n>=b.n))b={x,n}});return b}
+function calcRes(it,qty,unit){
+  const pcs=unit==="c"?qty*it.pk:qty,b=tierFor(it,pcs),pp=b?b.x.pp:it.bp;
+  const nx=it.t.map(x=>({x,n:tierNeed(it,x)})).filter(o=>o.n>pcs).sort((a,b)=>a.n-b.n)[0];
+  return{pcs,pp,total:pcs*pp,base:pcs*it.bp,disc:it.bp>0?1-pp/it.bp:0,nx};
+}
+function renderCamp(){
+  const c=S.camp;
+  $("camptitle").textContent=c.title||t("tabCamp");
+  $("campmeta").textContent=c.brands.length?[c.sector,c.file,new Date(c.ts).toLocaleDateString("en-GB")].filter(Boolean).join(" · "):"";
+  $("campex").innerHTML=(c.ex&&c.ex.length)?`<h2 style="margin:12px 0 6px">${t("campEx")}</h2>`+c.ex.map(x=>`<div class="row"><span dir="auto" style="flex:1">${esc(x.n)}</span><b>${fmt(x.v*100,2)}%</b></div>`).join("")+(c.total!=null?`<div class="row"><span>${t("campTot")}</span><b style="color:var(--gold)">${fmt(c.total*100,2)}%</b></div>`:""):"";
+  if(!c.brands.length){$("campb").innerHTML="";$("camplist").innerHTML=`<div class="card empty">${t("noCamp")}</div>`;return}
+  $("campb").innerHTML=[["",t("fAll")]].concat(c.brands.map(b=>[b.n,b.n])).map(([k,l])=>`<button type="button" data-cb="${esc(k)}" class="${k===campB?"on":""}">${esc(l)}</button>`).join("");
+  const q=norm($("campq").value);
+  $("camplist").innerHTML=c.brands.map((b,bi)=>{
+    if(campB&&b.n!==campB)return"";
+    const its=b.items.map((it,ii)=>({it,ii})).filter(o=>!q||norm(b.n+" "+o.it.n).includes(q));
+    if(!its.length)return"";
+    return `<details class="card grp" ${(q||campB||c.brands.length===1)?"open":""}><summary><span>${esc(b.n)}</span><span class="cnt">${its.length} ${t("itemsN")}</span></summary><div class="gbody">`+
+     its.map(o=>{const it=o.it;return `<div class="citem" data-bi="${bi}" data-ii="${o.ii}"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><b dir="auto">${esc(b.n+" "+it.n)}</b><span class="pill">${t("campPack")} ${fmtC(it.pk)}</span></div>
+      <div class="tw" style="max-height:none;overflow-x:auto"><table class="ttab"><thead><tr><th></th><th>${t("campDisc")}</th><th>${t("campPiece")}</th><th>${t("campCarton")}</th></tr></thead><tbody>
+      <tr><td>${t("campBase")}</td><td>—</td><td>${fmt(it.bp,2)}</td><td>${fmt(it.bp*it.pk,2)}</td></tr>
+      ${it.t.map(x=>`<tr><td>${fmtC(x.q)} ${t(x.u==="c"?"ctn":"pcs")}+</td><td>${pc1(x.d)}</td><td><b>${fmt(x.pp,2)}</b></td><td>${fmt(x.pc,2)}</td></tr>`).join("")}</tbody></table></div></div>`}).join("")+`</div></details>`;
+  }).join("")||`<div class="card empty">${t("noRes")}</div>`;
+}
+function calcHTML(it){
+  const qty=parseFloat($("caq").value)||0,unit=$("cau").value,r=calcRes(it,qty,unit);
+  $("careq").innerHTML=qty>0?`<div class="row"><span>${t("calcPcs")}</span><b>${fmtC(r.pcs)}</b></div>
+   <div class="row"><span>${t("campPiece")}</span><b style="color:var(--gold)">${fmt(r.pp,2)}</b></div>
+   <div class="row"><span>${t("calcDisc")}</span><b>${fmt(r.disc*100,2)}%</b></div>
+   <div class="row"><span>${t("calcTotal")}</span><b style="color:var(--gold)">${fmt(r.total,2)}</b></div>
+   <div class="row"><span>${t("calcBase")}</span><span>${fmt(r.base,2)}</span></div>
+   ${r.nx?`<div class="lbl" style="margin-top:8px">${t("calcNext").replace("{n}",fmtC(r.nx.n-r.pcs)).replace("{d}",pc1(r.nx.x.d)).replace("{p}",fmt(r.nx.x.pp,2))}</div>`:""}`:"";
+}
+function showCalc(bi,ii){
+  const b=S.camp.brands[bi],it=b.items[ii];
+  $("cabody").innerHTML=`<h2 dir="auto">${esc(b.n+" "+it.n)}</h2><div class="lbl" style="margin-bottom:10px">${t("campPack")} ${fmtC(it.pk)} · ${t("campBase")} ${fmt(it.bp,2)}</div>
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><label class="lbl">${t("calcQty")}<input id="caq" type="number" min="0" step="any" inputmode="decimal"></label>
+   <label class="lbl">${t("calcUnit")}<select id="cau"><option value="p">${t("pcs")}</option><option value="c">${t("ctn")}</option></select></label></div><div id="careq" style="margin-top:12px"></div>`;
+  $("caq").oninput=()=>calcHTML(it);$("cau").onchange=()=>calcHTML(it);
+  $("cadlg").showModal();
+}
+$("camplist").onclick=e=>{const c=e.target.closest(".citem");if(c)showCalc(+c.dataset.bi,+c.dataset.ii)};
+$("campb").onclick=e=>{const b=e.target.closest("[data-cb]");if(b){campB=b.dataset.cb;renderCamp()}};
+$("campq").oninput=renderCamp;
+$("caclose").onclick=()=>$("cadlg").close();
+$("btnCamp").onclick=()=>$("campfile").click();
+$("campfile").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;toast(t("reading"));
+  try{S.camp=campFromWB(await readXlsx(await f.arrayBuffer()),f.name);campB="";cfgChanged();save();render();toast(t("campDone"))}catch(x){alert(t("badCamp"))}};
+
+/* ---------- competition prices ---------- */
+function wAmt(w){
+  const m=/(\d+(?:[.,]\d+)?)\s*(كجم|كيلو|كج|كغ|kg|جم|جرام|جرا|g|مل|ملي|ml|لتر|ل|l)(?![a-z\u0600-\u06FF])/i.exec(String(w||""));
+  if(!m)return null;const v=parseFloat(m[1].replace(",",".")),u=m[2].toLowerCase();
+  if(/^(كجم|كيلو|كج|كغ|kg)$/.test(u))return{a:v*1000,f:"w"};
+  if(/^(لتر|ل|l)$/.test(u))return{a:v*1000,f:"v"};
+  if(/^(جم|جرام|جر|جرا|g)$/.test(u))return{a:v,f:"w"};
+  return{a:v,f:"v"};
+}
+const perU=(p,w)=>{const a=wAmt(w);return a&&a.a>0?{v:p/(a.a/1000),f:a.f}:null};
+const ADCO="ادكو";
+function lastMap(ch){const last={};S.cp.forEach(e=>{if(e.del||e.ch!==ch)return;const o=last[e.k];if(!o||e.dt>o.dt||(e.dt===o.dt&&e.id>o.id))last[e.k]=e});return last}
+function compRow(it,last){
+  const e=last[it.k],u=e?perU(e.p,it.w):null;
+  return `<div class="irow" data-k="${esc(it.k)}"><div class="in"><span class="chip ${it.co===ADCO?"d":""}" style="margin:0 0 0 6px">${esc(it.co||"—")}</span><b dir="auto">${esc(it.n)}</b><small dir="auto">${esc(it.w)}</small></div>
+   <div class="iv">${e?`<b style="color:var(--gold)">${fmt(e.p,2)}</b><small>${u?fmt(u.v,2)+" /"+t(u.f==="w"?"compKg":"compL")+" · ":""}${e.dt}</small>`:`<span class="lbl">—</span>`}</div></div>`;
+}
+function grpBadge(items,last){
+  const a=[],o=[];items.forEach(it=>{const e=last[it.k];if(!e)return;const u=perU(e.p,it.w);if(u)(it.co===ADCO?a:o).push(u.v)});
+  if(!a.length||!o.length)return"";
+  const A=a.reduce((x,y)=>x+y,0)/a.length,O=o.reduce((x,y)=>x+y,0)/o.length,d=(A/O-1)*100;
+  return `<span class="chip ${d<=0?"d":"z"}">${t("adcoVs")} ${d>0?"+":""}${fmt(d,0)}%</span>`;
+}
+function fillGroup(det){
+  if(det.dataset.f)return;det.dataset.f="1";
+  const C=S.comp,last=lastMap(S.chSel),g=+det.dataset.g,q=norm($("compq").value),co=$("compco").value,has=$("comphas").checked;
+  const its=C.items.filter(it=>it.g===g&&(!co||it.co===co)&&(!q||norm(it.n+" "+it.co+" "+it.w+" "+C.groups[g]).includes(q))&&(!has||last[it.k]));
+  det.querySelector(".gbody").innerHTML=its.slice(0,300).map(it=>compRow(it,last)).join("")+(its.length>300?`<div class="empty">${t("moreRes")}</div>`:"");
+}
+function renderComp(){
+  const C=S.comp;
+  if(!C.items.length){$("compch").innerHTML="";$("compstat").textContent="";$("complist").innerHTML=`<div class="card empty">${t("noComp")}</div>`;return}
+  const chs=(C.ch&&C.ch.length)?C.ch:["SVS"];if(!chs.includes(S.chSel))S.chSel=chs[0];
+  $("compch").innerHTML=chs.map(c=>`<button type="button" data-ch="${c}" class="${c===S.chSel?"on":""}">${c}</button>`).join("");
+  const cnt={};C.items.forEach(it=>{if(it.co)cnt[it.co]=(cnt[it.co]||0)+1});
+  const cos=Object.keys(cnt).sort((a,b)=>a===ADCO?-1:b===ADCO?1:cnt[b]-cnt[a]),sel=$("compco"),old=sel.value;
+  if(sel.dataset.n!==String(cos.length)+C.ts){sel.innerHTML=`<option value="">${t("compAll")}</option>`+cos.map(c=>`<option value="${esc(c)}">${esc(c)} (${cnt[c]})</option>`).join("");sel.dataset.n=String(cos.length)+C.ts;sel.value=cos.includes(old)?old:""}
+  const last=lastMap(S.chSel),q=norm($("compq").value),co=sel.value,has=$("comphas").checked,filt=!!(q||co||has);
+  const byG={};C.items.forEach(it=>{(byG[it.g]||(byG[it.g]=[])).push(it)});
+  let shown=0,html="";
+  Object.keys(byG).forEach(gk=>{
+    const g=+gk,all=byG[gk];
+    const m=all.filter(it=>(!co||it.co===co)&&(!q||norm(it.n+" "+it.co+" "+it.w+" "+C.groups[g]).includes(q))&&(!has||last[it.k]));
+    if(!m.length)return;shown+=m.length;
+    const priced=all.filter(it=>last[it.k]).length;
+    html+=`<details class="card grp" data-g="${g}" ${filt?"open":""}><summary><span dir="auto">${esc(C.groups[g])}</span><span style="display:flex;gap:6px;align-items:center">${grpBadge(all,last)}<span class="cnt">${priced?priced+" / ":""}${all.length}</span></span></summary><div class="gbody"></div></details>`;
+  });
+  $("complist").innerHTML=html||`<div class="card empty">${t("noRes")}</div>`;
+  $("compstat").textContent=`${shown} / ${C.items.length} ${t("itemsN")} · ${Object.keys(last).length} ${t("compPriced")}`;
+  if(filt)$("complist").querySelectorAll("details").forEach(fillGroup);
+}
+$("complist").addEventListener("toggle",e=>{if(e.target.matches("details.grp")&&e.target.open)fillGroup(e.target)},true);
+$("compq").oninput=renderComp;$("compco").onchange=renderComp;$("comphas").onchange=renderComp;
+$("compch").onclick=e=>{const b=e.target.closest("[data-ch]");if(b){S.chSel=b.dataset.ch;save(false);renderComp()}};
+function compDlgHTML(it){
+  const ents=S.cp.filter(e=>!e.del&&e.k===it.k).sort((a,b)=>b.dt.localeCompare(a.dt)||b.id-a.id),inCh=ents.filter(e=>e.ch===S.chSel);
+  const ps=inCh.map(e=>e.p),st=ps.length?`${fmt(Math.min(...ps),2)} / ${fmt(ps.reduce((a,b)=>a+b,0)/ps.length,2)} / ${fmt(Math.max(...ps),2)}`:"—";
+  const chs=(S.comp.ch&&S.comp.ch.length)?S.comp.ch:["SVS"];
+  $("cmbody").innerHTML=`<h2 dir="auto" style="margin-bottom:2px">${esc(it.n)}</h2><div class="lbl" dir="auto" style="margin-bottom:10px">${esc(it.co)} · ${esc(it.w)} · ${esc(S.comp.groups[it.g])}</div>
+   <div class="stat"><span class="lbl">${t("compStats")} (${S.chSel})</span><b>${st}</b></div>
+   <form id="cmform" onsubmit="return false" style="margin-top:12px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+    <label class="lbl">${t("compPrice")}<input id="cmp" type="number" step="0.01" min="0" inputmode="decimal"></label>
+    <label class="lbl">${t("compDisc")}<input id="cmd" type="number" step="0.01" min="0" inputmode="decimal"></label>
+    <label class="lbl">${t("compCh")}<select id="cmc">${chs.map(c=>`<option ${c===S.chSel?"selected":""}>${c}</option>`).join("")}</select></label>
+    <label class="lbl">${t("compDate")}<input id="cmt" type="date" value="${today()}"></label></div>
+    <label class="lbl">${t("compWhere")}<input id="cmw" dir="auto" autocomplete="off"></label>
+    <button class="pri" type="button" id="cmsave" style="margin-top:8px">${t("compSave")}</button></form>
+   <h2 style="margin:14px 0 6px">${t("compHist")}</h2>
+   ${ents.length?ents.slice(0,30).map(e=>{const u=perU(e.p,it.w);return `<div class="row"><span><span class="chip" style="margin:0 0 0 6px">${esc(e.ch)}</span>${e.dt}${e.wh?" · "+esc(e.wh):""}</span><span><b>${fmt(e.p,2)}</b>${e.dp?` / ${fmt(e.dp,2)}`:""}${u?` <small class="lbl">${fmt(u.v,2)}/${t(u.f==="w"?"compKg":"compL")}</small>`:""} <button type="button" data-cpdel="${e.id}" style="padding:2px 8px;color:#ff9a8a">×</button></span></div>`}).join(""):`<div class="lbl">${t("noInvC")}</div>`}`;
+  $("cmsave").onclick=()=>{
+    const p=parseFloat($("cmp").value);if(!(p>0)){toast(t("badNum"));return}
+    const dp=parseFloat($("cmd").value);
+    S.cp.push({id:uid(),k:it.k,ch:$("cmc").value,p,dp:dp>0?dp:0,dt:$("cmt").value||today(),wh:$("cmw").value.trim()});
+    S.chSel=$("cmc").value;save();render();compDlgHTML(it);toast(t("saved"));
+  };
+  $("cmbody").onclick=e=>{const id=e.target.dataset.cpdel;if(id&&confirm(t("confirmDel"))){const x=S.cp.find(q=>q.id==id);if(x){x.del=1;save();render();compDlgHTML(it)}}};
+}
+$("complist").onclick=e=>{const r=e.target.closest(".irow");if(!r)return;const it=S.comp.items.find(x=>x.k===r.dataset.k);if(it){compDlgHTML(it);$("cmdlg").showModal()}};
+$("cmclose").onclick=()=>$("cmdlg").close();
+
+/* ---------- admin: distribute competition catalog / campaign settlement ---------- */
+$("btnDistC").onclick=()=>$("cpfile").click();
+$("cpfile").onchange=async e=>{
+  const f=e.target.files[0];e.target.value="";if(!f)return;toast(t("reading"));
+  try{
+    const comp=compFromWB(await readXlsx(await f.arrayBuffer()),f.name),us=USERS.filter(x=>x.active);
+    const r=await api({action:"putcfgmany",items:us.map(u=>({u:u.u,cfg:{comp}}))},120000);
+    if(r.error)throw new Error(r.error);
+    toast(t("compDone").replace("{n}",us.length)+" · "+comp.items.length+" "+t("itemsN"));sync();
+  }catch(x){alert(t("badComp"))}
+};
+let pendCamp=null;
+$("btnDistK").onclick=()=>$("kfile").click();
+$("kfile").onchange=async e=>{
+  const f=e.target.files[0];e.target.value="";if(!f)return;toast(t("reading"));
+  try{
+    pendCamp=campFromWB(await readXlsx(await f.arrayBuffer()),f.name);
+    $("kpbody").innerHTML=`<div class="lbl" style="margin-bottom:8px" dir="auto">${esc(pendCamp.title||f.name)} · ${pendCamp.brands.length} ${t("campBrands")}</div>`+USERS.filter(x=>x.active).map((u,i)=>`<label class="row" style="cursor:pointer"><span dir="auto">${esc(u.name)} <small class="lbl">${esc(u.u)}</small></span><input type="radio" name="kpu" value="${esc(u.u)}" ${u.u===CTX?"checked":""} style="width:auto"></label>`).join("");
+    $("kpdlg").showModal();
+  }catch(x){alert(t("badCamp"))}
+};
+$("kpcancel").onclick=()=>$("kpdlg").close();
+$("kpok").onclick=async()=>{
+  const r=document.querySelector('#kpbody input[name=kpu]:checked');if(!r||!pendCamp)return;
+  const res=await api({action:"putcfg",as:r.value,cfg:{camp:pendCamp}},60000);
+  $("kpdlg").close();if(res.ok){toast(t("campDone")+" · "+r.value);sync()}else alert(t("lErr")+" "+(res.error||""))
+};
+
 /* ---------- accounts, admin, overview ---------- */
 let USERS=[],OVC={};
 function setRoleUI(){document.body.classList.toggle("rep",!(SESS&&SESS.role==="admin"))}
@@ -1178,6 +1447,21 @@ async function doLogin(){
   }catch(e){$("lerr").textContent=e.name==="AbortError"?t("lTimeout"):(e.message||"").startsWith("bad:")?t("lOldSrv"):t("lNet")}
   finally{$("lgo").disabled=false}
 }
+async function connTest(){
+  const out=[],o=$("ltout"),U=$("lsrv").value.trim()||server();
+  const show=()=>{o.textContent=out.join("\n")};
+  out.push("page: "+location.origin+" | online: "+navigator.onLine);show();
+  const step=async(name,fn)=>{
+    const t0=performance.now(),c=new AbortController(),id=setTimeout(()=>c.abort(),25000);let r;
+    try{r="OK "+await fn(c.signal)}catch(e){r="ERR "+(e.name||"")+" "+(e.message||"")}
+    clearTimeout(id);out.push(name+": "+r+" ("+Math.round(performance.now()-t0)+"ms)");show();
+  };
+  await step("1 GET",async sg=>{const r=await fetch(U,{signal:sg});return r.status+" "+(await r.text()).slice(0,70)});
+  await step("2 POST login(test user)",async sg=>{const r=await fetch(U,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"login",u:"diag-test",p:"x"}),signal:sg});return r.status+" "+(await r.text()).slice(0,70)});
+  await step("3 POST no-cors",async sg=>{await fetch(U,{method:"POST",mode:"no-cors",body:JSON.stringify({action:"login",u:"diag-test",p:"x"}),signal:sg});return "sent"});
+  out.push("done");show();
+}
+$("ltest").onclick=connTest;
 $("lgo").onclick=doLogin;
 $("lp").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin()});
 $("llang").onclick=()=>{S.lang=S.lang==="ar"?"en":"ar";applyLang()};
