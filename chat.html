@@ -2,11 +2,86 @@
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#0a1220"><meta name="referrer" content="no-referrer"><title>مساعدك الذكي | ADCO</title>
 <style>
-:root{color-scheme:dark;--tx:#eef3fb;--mu:#a9bad6;--gold:#f2b84b;--ok:#37c6a8}*{box-sizing:border-box}body{margin:0;color:var(--tx);font:15px/1.7 "Segoe UI",Tahoma,Arial,sans-serif;background:radial-gradient(ellipse at 0 0,rgba(55,198,168,.27),transparent 50%),radial-gradient(ellipse at 100% 100%,rgba(92,120,255,.25),transparent 50%),#0a1220;min-height:100dvh;padding:22px 20px}main{max-width:940px;margin:auto}button,input,textarea{font:inherit}a{color:var(--mu);text-decoration:none}.topnav{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px}.topnav button{padding:5px 10px;min-height:36px;font-size:12px;background:transparent;color:var(--mu)}.glass{background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.05));border:1px solid rgba(255,255,255,.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 14px 34px rgba(0,0,0,.25);backdrop-filter:blur(22px);border-radius:26px;overflow:hidden}header{display:flex;align-items:center;gap:14px;padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.13)}
-.glyph{display:grid;place-items:center;flex:0 0 52px;width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25)}.glyph svg{width:32px;height:32px}h1{font-size:23px;line-height:1.3;margin:0 0 4px}p{margin:0}.sub{color:var(--mu);font-size:13px}.dot{width:7px;height:7px;display:inline-block;border-radius:50%;background:var(--gold);margin-inline-end:5px}.chat{height:clamp(350px,52dvh,590px);overflow:auto;padding:24px;display:flex;flex-direction:column;gap:16px;overscroll-behavior:contain}.message{max-width:85%;padding:14px 18px;border-radius:18px;border:1px solid rgba(255,255,255,.17);overflow-wrap:anywhere;flex-shrink:0}.assistant{align-self:flex-start;background:rgba(255,255,255,.08);border-start-start-radius:5px}.rep{align-self:flex-end;background:rgba(55,198,168,.14);border-color:rgba(55,198,168,.3);border-start-end-radius:5px}.message b{display:block;font-size:12px;color:var(--mu);margin-bottom:4px}.message .text{white-space:pre-wrap;unicode-bidi:plaintext}.message time{display:block;color:var(--mu);font-size:10px;margin-top:8px}.welcome ul{padding-inline-start:20px;margin:8px 0;color:var(--mu)}
-.welcome h2{font-size:16px;margin:0 0 6px}.welcome p{font-size:13px;color:var(--mu)}.setup{padding:16px 22px;background:rgba(242,184,75,.06);border-top:1px solid rgba(255,255,255,.12)}.setup label{display:block;font-size:13px;margin-bottom:5px}.setup input{max-width:360px}.composer{padding:16px 22px;border-top:1px solid rgba(255,255,255,.15)}.inputrow{display:flex;align-items:flex-end;gap:10px}input,textarea{width:100%;border:1px solid rgba(255,255,255,.23);border-radius:14px;padding:10px 13px;background:rgba(255,255,255,.07);color:var(--tx);min-width:0}input::placeholder,textarea::placeholder{color:#9aaecb;opacity:1}textarea{resize:vertical;min-height:66px;max-height:220px}button{border:1px solid rgba(255,255,255,.6);border-radius:14px;padding:11px 22px;min-height:48px;background:linear-gradient(#fff,#dce6ef);color:#14213a;font-weight:600;cursor:pointer;white-space:nowrap}button:disabled{opacity:.6;cursor:wait}#mic{flex:0 0 auto;width:48px;padding:0;display:grid;place-items:center;background:rgba(255,255,255,.09);color:var(--tx)}#mic svg{width:20px;height:20px}#mic.rec{background:rgba(239,111,94,.3);border-color:#ef6f5e;animation:recPulse 1.2s ease-in-out infinite}
-@keyframes recPulse{50%{box-shadow:0 0 0 5px rgba(239,111,94,.18)}}.message audio{display:block;width:min(100%,280px);margin-top:4px}@media(prefers-reduced-motion:reduce){#mic.rec{animation:none}}a:focus-visible,input:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}.status{font-size:12px;color:var(--mu);min-height:24px;margin-top:8px;overflow-wrap:anywhere}.status[data-error=true]{color:#ffb2a6}.privacy{font-size:11px;color:var(--mu);margin-top:8px;line-height:1.7}.threadmeta{font-size:11px;color:var(--mu);margin:10px 4px;overflow-wrap:anywhere}[hidden]{display:none!important}.trap{position:fixed;left:0;top:0;width:1px;height:1px;clip-path:inset(50%);overflow:hidden;pointer-events:none}.composer label{display:block;font-size:13px;margin-bottom:7px}@media(max-width:560px){body{padding:12px 10px}.topnav{font-size:12px}.glass{border-radius:22px}header{padding:15px;gap:10px}h1{font-size:21px}.sub{font-size:11px}.chat{padding:16px 12px;height:clamp(330px,48dvh,540px);gap:12px}.message{max-width:94%;padding:12px 14px}.composer,.setup{padding:14px}.inputrow{gap:8px}button{padding:10px 14px}textarea{min-height:74px}
-.privacy{font-size:10px}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+:root{color-scheme:dark;--tx:#eef3fb;--mu:#a9bad6;--gold:#f2b84b;--ok:#37c6a8}
+*{box-sizing:border-box}
+
+body{margin:0;color:var(--tx);font:15px/1.7 "Segoe UI",Tahoma,Arial,sans-serif;background:radial-gradient(ellipse at 0 0,rgba(55,198,168,.27),transparent 50%),radial-gradient(ellipse at 100% 100%,rgba(92,120,255,.25),transparent 50%),#0a1220;min-height:100dvh;padding:22px 20px}
+main{max-width:940px;margin:auto}
+button,input,textarea{font:inherit}
+a{color:var(--mu);text-decoration:none}
+.topnav{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px}
+.topnav button{padding:5px 10px;min-height:36px;font-size:12px;background:transparent;color:var(--mu)}
+.glass{background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.05));border:1px solid rgba(255,255,255,.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 14px 34px rgba(0,0,0,.25);backdrop-filter:blur(22px);border-radius:26px;overflow:hidden}
+header{display:flex;align-items:center;gap:14px;padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.13)}
+
+.glyph{display:grid;place-items:center;flex:0 0 52px;width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25)}
+.glyph svg{width:32px;height:32px}
+h1{font-size:23px;line-height:1.3;margin:0 0 4px}
+p{margin:0}
+.sub{color:var(--mu);font-size:13px}
+.dot{width:7px;height:7px;display:inline-block;border-radius:50%;background:var(--gold);margin-inline-end:5px}
+.chat{height:clamp(350px,52dvh,590px);overflow:auto;padding:24px;display:flex;flex-direction:column;gap:16px;overscroll-behavior:contain}
+.message{max-width:85%;padding:14px 18px;border-radius:18px;border:1px solid rgba(255,255,255,.17);overflow-wrap:anywhere;flex-shrink:0}
+.assistant{align-self:flex-start;background:rgba(255,255,255,.08);border-start-start-radius:5px}
+.rep{align-self:flex-end;background:rgba(55,198,168,.14);border-color:rgba(55,198,168,.3);border-start-end-radius:5px}
+.message b{display:block;font-size:12px;color:var(--mu);margin-bottom:4px}
+.message .text{white-space:pre-wrap;unicode-bidi:plaintext}
+.message time{display:block;color:var(--mu);font-size:10px;margin-top:8px}
+.welcome ul{padding-inline-start:20px;margin:8px 0;color:var(--mu)}
+
+.welcome h2{font-size:16px;margin:0 0 6px}
+.welcome p{font-size:13px;color:var(--mu)}
+.setup{padding:16px 22px;background:rgba(242,184,75,.06);border-top:1px solid rgba(255,255,255,.12)}
+.setup label{display:block;font-size:13px;margin-bottom:5px}
+.setup input{max-width:360px}
+.composer{padding:16px 22px;border-top:1px solid rgba(255,255,255,.15)}
+.inputrow{display:flex;align-items:flex-end;gap:10px}
+input,textarea{width:100%;border:1px solid rgba(255,255,255,.23);border-radius:14px;padding:10px 13px;background:rgba(255,255,255,.07);color:var(--tx);min-width:0}
+input::placeholder,textarea::placeholder{color:#9aaecb;opacity:1}
+textarea{resize:vertical;min-height:66px;max-height:220px}
+button{border:1px solid rgba(255,255,255,.6);border-radius:14px;padding:11px 22px;min-height:48px;background:linear-gradient(#fff,#dce6ef);color:#14213a;font-weight:600;cursor:pointer;white-space:nowrap}
+button:disabled{opacity:.6;cursor:wait}
+#mic{flex:0 0 auto;width:48px;padding:0;display:grid;place-items:center;background:rgba(255,255,255,.09);color:var(--tx)}
+#mic svg{width:20px;height:20px}
+#mic.rec{background:rgba(239,111,94,.3);border-color:#ef6f5e;animation:recPulse 1.2s ease-in-out infinite}
+
+@keyframes recPulse{50%{box-shadow:0 0 0 5px rgba(239,111,94,.18)}
+}
+.message audio{display:block;width:min(100%,280px);margin-top:4px}
+@media(prefers-reduced-motion:reduce){#mic.rec{animation:none}
+}
+a:focus-visible,input:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.status{font-size:12px;color:var(--mu);min-height:24px;margin-top:8px;overflow-wrap:anywhere}
+.status[data-error=true]{color:#ffb2a6}
+.privacy{font-size:11px;color:var(--mu);margin-top:8px;line-height:1.7}
+.threadmeta{font-size:11px;color:var(--mu);margin:10px 4px;overflow-wrap:anywhere}
+[hidden]{display:none!important}
+.trap{position:fixed;left:0;top:0;width:1px;height:1px;clip-path:inset(50%);overflow:hidden;pointer-events:none}
+.composer label{display:block;font-size:13px;margin-bottom:7px}
+@media(max-width:560px){body{padding:12px 10px}
+.topnav{font-size:12px}
+.glass{border-radius:22px}
+header{padding:15px;gap:10px}
+h1{font-size:21px}
+.sub{font-size:11px}
+.chat{padding:16px 12px;height:clamp(330px,48dvh,540px);gap:12px}
+.message{max-width:94%;padding:12px 14px}
+.composer,.setup{padding:14px}
+.inputrow{gap:8px}
+button{padding:10px 14px}
+textarea{min-height:74px}
+
+.privacy{font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}
+}
+
+.attachment{margin-top:12px;padding:12px;border:1px solid rgba(255,255,255,.23);border-radius:12px;min-width:190px;max-width:100%;background:rgba(255,255,255,.05)}
+.attachment .filename{font-size:13px;direction:ltr;text-align:right;word-break:break-all}
+.attachment small{display:block;color:var(--mu);font-size:11px;margin:3px 0 8px}
+.attachment button,.attachment a{font-size:12px;min-height:38px;padding:6px 10px}
+.attachment a{display:inline-block;border:1px solid rgba(255,255,255,.4);border-radius:9px;margin-inline-end:6px;color:var(--tx)}
+
 </style></head><body><main>
 <nav class="topnav"><a href="./index.html">← الرجوع للداشبورد</a><button id="newChat" type="button">محادثة جديدة على الجهاز</button></nav>
 <section class="glass"><header><span class="glyph"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="7" width="20" height="16" rx="6"/><path d="M14 7V3M11 3h6M1 13v5M27 13v5M10 18c2 2 6 2 8 0"/><circle cx="10" cy="13" r="1" fill="currentColor"/><circle cx="18" cy="13" r="1" fill="currentColor"/></svg></span><div><h1>مساعدك الذكي</h1><p class="sub"><span class="dot"></span>استفسارات شغل ADCO · الرد يظهر هنا</p></div></header>
@@ -26,7 +101,23 @@ function updateIdentity(){if(!state)return;nameInput.value=state.name;nameInput.
 function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));return true;}catch(e){return false;}}
 async function api(payload){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),40000);try{const r=await fetch(CHAT_ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload),redirect:'follow',signal:controller.signal});if(!r.ok)throw Error('network');const data=await r.json();if(data.ok!==true){const err=Error(data.code||'server');err.code=data.code;throw err;}return data;}finally{clearTimeout(timer);}}
 function errorText(e){return ({auth:'مش قادرين نفتح المحادثة بالمفتاح المحفوظ. راجع مسؤول الموقع قبل ما تبدأ محادثة جديدة.',limited:'وصلت للحد المسموح من الأسئلة. جرّب بعد شوية.',busy:'الخدمة مشغولة. حاول بعد شوية.',capacity:'الخدمة وصلت لسعتها. تواصل مع مسؤول الموقع.',invalid:'راجع الاسم والسؤال وحاول تاني.',not_configured:'خدمة الشات لسه مش متوصلة. تواصل مع مسؤول الموقع.'})[e.code]||'ما قدرناش نتأكد من الاتصال. سؤالك لسه موجود، وممكن تحاول تاني. راجع مسؤول الموقع لو المشكلة مستمرة.';}
-function render(messages){for(const m of messages){if(seen.has(m.id))continue;seen.add(m.id);const article=document.createElement('article');article.className='message '+(m.role==='assistant'?'assistant':'rep');const who=document.createElement('b');who.textContent=m.role==='assistant'?'مساعدك الذكي':state.name;const time=document.createElement('time');time.dateTime=m.at;time.textContent=new Date(m.at).toLocaleString('ar-EG',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});article.append(who);if(m.audioBase64||m.audioUrl){const label=document.createElement('div');label.className='text';label.textContent='رسالة صوتية';const audio=document.createElement('audio');audio.controls=true;audio.preload='metadata';audio.src=m.audioUrl||('data:'+(m.audioMime||'audio/webm')+';base64,'+m.audioBase64);article.append(label,audio);if(m.audioError)label.textContent='رسالة صوتية (تعذر تحميل الصوت حالياً)';}if(m.text){const text=document.createElement('div');text.className='text';text.textContent=m.text;article.append(text);}article.append(time);box.append(article);}if(messages.length)box.scrollTop=box.scrollHeight;}
+function render(messages){for(const m of messages){if(seen.has(m.id))continue;seen.add(m.id);const article=document.createElement('article');article.className='message '+(m.role==='assistant'?'assistant':'rep');const who=document.createElement('b');who.textContent=m.role==='assistant'?'مساعدك الذكي':state.name;const time=document.createElement('time');time.dateTime=m.at;time.textContent=new Date(m.at).toLocaleString('ar-EG',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});article.append(who);if(m.audioBase64||m.audioUrl){const label=document.createElement('div');label.className='text';label.textContent='رسالة صوتية';const audio=document.createElement('audio');audio.controls=true;audio.preload='metadata';audio.src=m.audioUrl||('data:'+(m.audioMime||'audio/webm')+';base64,'+m.audioBase64);article.append(label,audio);if(m.audioError)label.textContent='رسالة صوتية (تعذر تحميل الصوت حالياً)';}if(m.text){const text=document.createElement('div');text.className='text';text.textContent=m.text;article.append(text);}if(m.attachment)renderAttachment(article,m);article.append(time);box.append(article);}if(messages.length)box.scrollTop=box.scrollHeight;}
+function renderAttachment(article,m){
+ const card=document.createElement('div');card.className='attachment';
+ const name=document.createElement('div');name.className='filename';name.textContent=m.attachment.name;
+ const info=document.createElement('small');info.textContent='PDF · '+Math.ceil(m.attachment.size/1024)+' كيلوبايت · مرفق من المساعد';
+ const load=document.createElement('button');load.type='button';load.textContent='فتح / تحميل PDF';
+ load.addEventListener('click',async()=>{load.disabled=true;load.textContent='جاري تحميل المرفق...';try{
+  const data=await api({action:'attachment',threadId:state.threadId,token:state.token,messageId:m.id});
+  if(data.mime!=='application/pdf'||!data.base64)throw Error('invalid');
+  const bytes=Uint8Array.from(atob(data.base64),c=>c.charCodeAt(0));
+  const url=URL.createObjectURL(new Blob([bytes],{type:'application/pdf'}));
+  const open=document.createElement('a');open.href=url;open.target='_blank';open.rel='noopener';open.textContent='فتح PDF';
+  const download=document.createElement('a');download.href=url;download.download=data.name;download.textContent='تحميل PDF';
+  load.replaceWith(open,download);
+ }catch(e){load.disabled=false;load.textContent='إعادة تحميل PDF';info.textContent='تعذر تحميل المرفق. حاول تاني.';}});
+ card.append(name,info,load);article.append(card);
+}
 function schedule(){clearTimeout(pollTimer);if(document.hidden||!state||!state.created||!configured())return;const delay=Math.min(300000,30000*Math.pow(2,failures));pollTimer=setTimeout(poll,delay);}
 async function poll(){if(polling||sending||!state||!state.created||document.hidden){schedule();return;}polling=true;try{let more=false;do{const data=await api({action:'read',threadId:state.threadId,token:state.token,after:cursor});render(data.messages||[]);cursor=data.cursor;more=data.more===true;}while(more);failures=0;status('آخر تحديث: '+new Date().toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})+' · الرد غير فوري، التحديث كل 30 ثانية.');}catch(e){failures++;status(errorText(e),true);}finally{polling=false;schedule();}}
 form.addEventListener('submit',async event=>{event.preventDefault();if(sending||!form.reportValidity())return;if(!configured()){status('الشات لسه مش متوصل بالخدمة. تواصل مع مسؤول الموقع.',true);return;}sending=true;clearTimeout(pollTimer);sendButton.disabled=true;sendButton.textContent='جاري...';status('جاري حفظ رسالتك...');try{if(!state){const bytes=crypto.getRandomValues(new Uint8Array(32));state={threadId:crypto.randomUUID(),token:Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join(''),name:nameInput.value.trim(),created:false};if(!saveState()){state=null;throw {code:'storage'};}}
