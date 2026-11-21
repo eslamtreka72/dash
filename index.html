@@ -745,12 +745,20 @@ function invoiceOwnerError(v,st){
  if(!v.rp||norm(v.rp)!==norm(o.repName))return v.rp?'rep_mismatch':'owner_missing';
  return '';
 }
+function invoiceReadError(v,st){
+ const o=invoiceOwner(st);if(!o||!o.account||!o.repCode)return 'owner_unverified';
+ if(!v.cc||!st.custdb||!st.custdb.map||!st.custdb.map[v.cc])return 'customer_outside_account';
+ if(v.ownerAccount&&v.ownerAccount!==o.account)return 'account_mismatch';
+ if(v.repCode&&v.repCode!==o.repCode)return 'rep_mismatch';
+ if(v.rp&&o.repName&&norm(v.rp)!==norm(o.repName))return 'rep_mismatch';
+ return '';
+}
 function invoiceKey(v,st){const o=invoiceOwner(st)||{};return JSON.stringify([o.account||'',String(v.buid||'?'),o.repCode||'',String(v.no||'').trim(),v.mode==='return'?'return':'sale'])}
 function invoiceReportKey(v,st){const o=invoiceOwner(st)||{};return JSON.stringify([o.account||'',String(v.no||'').trim(),v.mode==='return'?'return':'sale'])}
 function invoiceSignature(v){return JSON.stringify([v.date,v.cc,v.cn,v.mode||'sale',v.L||[]])}
 function activeInvoices(st=S){
  const groups=new Map(),issues=[];
- for(const v of st.invs||[]){if(v.del)continue;const err=invoiceOwnerError(v,st);if(err){issues.push({id:v.id,no:v.no,reason:err});continue}const k=invoiceReportKey(v,st);if(!groups.has(k))groups.set(k,[]);groups.get(k).push(v)}
+ for(const v of st.invs||[]){if(v.del)continue;const err=invoiceReadError(v,st);if(err){issues.push({id:v.id,no:v.no,reason:err});continue}const k=invoiceReportKey(v,st);if(!groups.has(k))groups.set(k,[]);groups.get(k).push(v)}
  const result=[];for(const a of groups.values()){if(a.some(v=>invoiceSignature(v)!==invoiceSignature(a[0]))){issues.push({no:a[0].no,reason:'active_conflict',ids:a.map(v=>v.id)});continue}result.push(a[0])}
  st._invoiceIssues=issues;return result;
 }
@@ -762,7 +770,7 @@ function mergeInvoiceRows(incoming,source,st=S){
  const byId=new Map(st.invs.map(v=>[String(v.id),v]));
  for(const raw of incoming||[]){const v=JSON.parse(JSON.stringify(raw)),old=byId.get(String(v.id));
   if(v.del){if(old)old.del=1;else{st.invs.push(v);byId.set(String(v.id),v)}continue}
-  const err=invoiceOwnerError(v,st);if(err){reviewInvoice(v,err,source,st);continue}
+  const err=source==='sync'?invoiceReadError(v,st):invoiceOwnerError(v,st);if(err){reviewInvoice(v,err,source,st);continue}
   if(old){if(old.del)continue;if(invoiceSignature(old)!==invoiceSignature(v))reviewInvoice(v,'same_id_conflict',source,st);continue}
   st.invs.push(v);byId.set(String(v.id),v);
  }
@@ -833,7 +841,7 @@ function mergeData(r){
   S.rules=Object.assign({},r.rules||{},S.rules||{});
   S.pk=Object.assign({},r.pk||{},S.pk||{});
   const m=new Map(S.sales.map(x=>[x.id,x]));(r.sales||[]).forEach(x=>{const l=m.get(x.id);if(!l)S.sales.push(x);else if(x.del&&!l.del)l.del=1});
-  mergeInvoiceRows(r.invs||[],"sync/restore");
+  mergeInvoiceRows(r.invs||[],r._restore?"restore":"sync");
   const cmm=new Map(S.cp.map(x=>[x.id,x]));(r.cp||[]).forEach(x=>{const l=cmm.get(x.id);if(!l)S.cp.push(x);else if(x.del&&!l.del)l.del=1});
   S.route=Object.assign({},r.route||{},S.route||{});
   Object.keys(r.act||{}).forEach(mo=>{const rt=(r.tsA&&r.tsA[mo])||0;if(!S.act[mo]||rt>(S.tsA[mo]||0)){S.act[mo]=r.act[mo];S.tsA[mo]=rt}});
@@ -854,9 +862,9 @@ async function api(body,ms){
 function applyServer(g){
   const ownerCfg=g.cfg&&g.cfg.custdb||S.custdb;
   S._owner={account:CTX,repName:g.user&&g.user.rn||"",repCode:ownerCfg&&ownerCfg.repCode||""};
-  mergeData(g.data||{});
   if(g.cfg){CFGK.forEach(k=>{if(g.cfg[k]!==undefined)S[k]=g.cfg[k]});S.cfgRev=g.cfgRev}
   else if(g.cfgRev!==undefined)S.cfgRev=g.cfgRev;
+  mergeData(g.data||{});
   if(g.user)S.rep=g.user.rn||S.rep;
   fix(S);
 }
@@ -883,7 +891,7 @@ async function sync(){
   applyServer(g);save(false);
   if(!(document.activeElement&&document.activeElement.classList.contains("kin")))render();
   const writeRevision=stateRevision,data=JSON.parse(JSON.stringify(pick(S,DATAK)));
-  data.invs=(data.invs||[]).filter(v=>v.del||!invoiceOwnerError(v,S));
+  data.invs=(data.invs||[]).filter(v=>v.del||!invoiceReadError(v,S));
   const w=await scopedRequest(scope,{action:"put",data});
   if(!sameScope(scope))return;if(w.error)throw Error(w.error);
   if(stateRevision!==writeRevision)again=true;
@@ -1958,4 +1966,4 @@ applyLang();boot();
 
 </script>
 </body>
-     </html>
+ </html>
