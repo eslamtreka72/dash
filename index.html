@@ -227,6 +227,24 @@ body.locked .wrap{display:none}
  .paper thead{display:table-header-group}.paper tr{page-break-inside:avoid}
  .paper .pill{border:1px solid #999;color:#111;background:#fff}
 }
+
+.rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:12px;align-items:start}
+.rcard{margin:0}
+.rcard.today{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 14px 34px rgba(0,0,0,.33)}
+.rtop{margin:6px 0 8px}
+.rg{border-top:1px solid rgba(255,255,255,.1);padding-top:4px;margin-top:6px}
+.rg>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:6px;padding:6px 0}
+.rg>summary::-webkit-details-marker{display:none}
+.rg>summary .cnt{margin-inline-start:auto}
+.rg.off{opacity:.72}
+.rrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.rrow:last-child{border:0}
+.rn{cursor:pointer}.rn b{display:block;font-size:14.5px}.rn small{color:var(--mu);font-size:11.5px}
+.rr{display:flex;gap:8px;align-items:center}
+.pin{width:38px;height:38px;border-radius:50%;padding:0;font-size:18px;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#ffd983,#f2b84b);border-color:rgba(255,255,255,.5);color:#1b1405}
+.pin.sm{width:auto;height:auto;border-radius:12px;padding:3px 10px;font-size:13px}
+.mpl{display:flex;flex-wrap:wrap;gap:8px}
+@media(max-width:520px){.rgrid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -309,7 +327,12 @@ body.locked .wrap{display:none}
   <div class="lbl" id="icount" style="margin:0 6px 10px"></div>
   <div class="card"><div class="tw" id="itable" style="max-height:none"></div></div>
 </div>
-<div class="view" id="v_route"><div class="card"><h2 data-i="tabRoute"></h2><p class="lbl" data-i="routeSoon"></p></div></div>
+<div class="view" id="v_route">
+  <div class="card" style="margin-bottom:14px"><div class="sec"><span data-i="tabRoute"></span><button id="btnRoute" class="adm pri" data-i="routeUpd"></button></div><div class="lbl" id="routemeta" dir="auto"></div><input type="file" id="routefile" accept=".xlsx" hidden><div id="routestat" class="chips" style="margin-top:10px"></div></div>
+  <div class="mchips" id="routewk" style="margin:0 0 12px"></div>
+  <div class="ctl"><input type="search" id="routeq" data-ph="search"><button id="routeexp" data-i="rtExpand"></button></div>
+  <div id="routelist"></div>
+</div>
 <div class="view" id="v_camp">
   <div class="card" style="margin-bottom:14px"><div class="sec"><span id="camptitle"></span><button id="btnCamp" class="adm pri" data-i="campUpd"></button></div><div class="lbl" id="campmeta" dir="auto"></div><input type="file" id="campfile" accept=".xlsx" hidden><div id="campex" style="max-width:760px"></div></div>
   <div class="ctl"><input type="search" id="campq" data-ph="itemSearch"></div>
@@ -331,7 +354,7 @@ body.locked .wrap{display:none}
     <h2 data-i="distTitle"></h2><p class="lbl" data-i="distHint" style="margin-bottom:10px"></p>
     <div class="imps"><button id="btnDist" data-i="distCust"></button><button id="btnDistP" data-i="distPrice"></button></div>
     <div class="imps" style="margin-top:8px"><button id="btnDistC" data-i="distComp"></button><button id="btnDistK" data-i="distCamp"></button></div>
-    <input type="file" id="dfile" accept=".xlsx" hidden><input type="file" id="dpfile" accept=".xlsx" hidden><input type="file" id="cpfile" accept=".xlsx" hidden><input type="file" id="kfile" accept=".xlsx" hidden>
+    <div class="imps" style="margin-top:8px"><button id="btnDistR" data-i="distRoute"></button></div><input type="file" id="rfile" accept=".xlsx" hidden><input type="file" id="dfile" accept=".xlsx" hidden><input type="file" id="dpfile" accept=".xlsx" hidden><input type="file" id="cpfile" accept=".xlsx" hidden><input type="file" id="kfile" accept=".xlsx" hidden>
   </div>
   <div class="card">
     <div class="sec"><span data-i="ovTitle"></span><button id="btnOv" data-i="ovLoad"></button></div>
@@ -340,6 +363,7 @@ body.locked .wrap{display:none}
 </div>
 </div>
 
+<dialog id="mpdlg"><div id="mpbody"></div><div class="bar" style="margin-top:12px;justify-content:flex-end"><button type="button" id="mpclose" data-i="close"></button></div></dialog>
 <dialog id="cmdlg"><div class="tw" id="cmbody" style="max-height:72vh"></div><div class="bar" style="margin-top:12px;justify-content:flex-end"><button type="button" id="cmclose" data-i="close"></button></div></dialog>
 <dialog id="cadlg"><div id="cabody"></div><div class="bar" style="margin-top:12px;justify-content:flex-end"><button type="button" id="caclose" data-i="close"></button></div></dialog>
 <dialog id="kpdlg"><h2 data-i="distCamp"></h2><div id="kpbody" class="tw" style="max-height:55vh"></div><div class="bar" style="margin-top:12px;justify-content:flex-end"><button type="button" id="kpcancel" data-i="cancel"></button><button type="button" class="pri" id="kpok" data-i="impOk"></button></div></dialog>
@@ -628,6 +652,8 @@ Object.assign(L.ar,{"fAllB": "كل البراندات", "ivOpen": "فتح", "ivS
 Object.assign(L.en,{"fAllB": "All brands", "ivOpen": "Open", "ivSale": "Sales invoice", "ivRet": "Return invoice", "ivRep": "Rep", "ivFile": "File", "ivTotal": "Total incl. VAT", "ivTot": "Total", "ivQty": "Qty", "ivGross": "Value incl. VAT", "ivPrint": "Print / Save PDF", "ivUnk": "{n} items without units per carton (cartons incomplete)"});
 Object.assign(L.ar,{"installBtn": "📲 تثبيت التطبيق", "installIos": "على الآيفون: دوس زرار المشاركة ثم «إضافة إلى الشاشة الرئيسية»", "installedOk": "تم تثبيت التطبيق"});
 Object.assign(L.en,{"installBtn": "📲 Install the app", "installIos": "On iPhone: tap the Share button, then “Add to Home Screen”", "installedOk": "App installed"});
+Object.assign(L.ar,{"routeUpd": "رفع خط السير (Excel)", "noRoute": "مفيش خط سير لحسابك لسه. المدير هو اللي بيرفعه.", "rtAll": "كل الأسابيع", "rtWeek": "الأسبوع", "rtNow": "اليوم", "rtThisWk": "الأسبوع ده", "rtOffWk": "مش الأسبوع ده", "rtG13": "الأسبوع الأول والثالث", "rtG24": "الأسبوع الثاني والرابع", "rtEvery": "كل أسبوع", "rtCust": "عميل", "rtDays": "أيام", "rtDueWk": "عميل في الأسبوع", "rtRoute": "المسار", "rtStops": "محطة", "rtRouteHint": "بيفتح جوجل مابس بالمحطات بالترتيب من موقعك الحالي. كل 10 محطات في رابط.", "rtView": "عرض الموقع", "rtCopy": "نسخ الإحداثيات", "rtCopied": "تم النسخ", "rtNoBuy": "لسه ماشترّاش", "rtExpand": "فتح الكل", "rtCollapse": "قفل الكل", "routeDone": "تم رفع خط السير", "badRoute": "الملف مش شكل خط السير المتوقع", "distRoute": "توزيع خط السير على المناديب"});
+Object.assign(L.en,{"routeUpd": "Upload route (Excel)", "noRoute": "No route for your account yet. The admin uploads it.", "rtAll": "All weeks", "rtWeek": "Week", "rtNow": "Today", "rtThisWk": "This week", "rtOffWk": "Not this week", "rtG13": "Weeks 1 & 3", "rtG24": "Weeks 2 & 4", "rtEvery": "Every week", "rtCust": "customers", "rtDays": "days", "rtDueWk": "customers due in week", "rtRoute": "Route", "rtStops": "stops", "rtRouteHint": "Opens Google Maps with the stops in order, from your current location. 10 stops per link.", "rtView": "View location", "rtCopy": "Copy coordinates", "rtCopied": "Copied", "rtNoBuy": "No purchase yet", "rtExpand": "Expand all", "rtCollapse": "Collapse all", "routeDone": "Route uploaded", "badRoute": "This file is not the expected route format", "distRoute": "Distribute route to reps"});
 const DEFREP="اسلام عز كمال";
 const $=id=>document.getElementById(id);
 const fmt=(n,d=0)=>Number(n||0).toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d});
@@ -1106,7 +1132,7 @@ function renderChips(){
   $("mchips").innerHTML=Object.keys(cnt).sort().map(k=>{const c=CAL.find(x=>x.k===k);return `<button type="button" data-mk="${k}" class="${k===m?"on":""}">${c&&S.cal!=="gr"?MN[c.i]+" "+c.y:k} · ${cnt[k]} ${t("invsN")}</button>`}).join("");
 }
 $("mchips").onclick=e=>{const b=e.target.closest("[data-mk]");if(!b)return;const sel=$("month");if(![...sel.options].some(o=>o.value===b.dataset.mk)){const o=document.createElement("option");o.value=b.dataset.mk;o.textContent=b.dataset.mk;sel.appendChild(o)}sel.value=b.dataset.mk;render()};
-function render(){renderChips();renderDash();renderCust();renderItems();renderCamp();renderComp();$("cdl").innerHTML=Object.entries(S.custdb.map).map(([c,x])=>`<option value="${esc(c)} — ${esc(x.n)}">`).join("")}
+function render(){renderChips();renderDash();renderCust();renderItems();renderCamp();renderComp();renderRoute();$("cdl").innerHTML=Object.entries(S.custdb.map).map(([c,x])=>`<option value="${esc(c)} — ${esc(x.n)}">`).join("")}
 
 /* ---------- tabs ---------- */
 function setTab(x){tab=x;document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===x));document.querySelectorAll(".view").forEach(v=>v.classList.toggle("on",v.id==="v_"+x))}
@@ -1544,6 +1570,110 @@ $("btnInstall").onclick=doInstall;$("btnInstall2").onclick=doInstall;
 if(standalone())localStorage.setItem("sd_installed",String(Date.now()));
 if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register("sw.js").catch(()=>{});
 pwaUI();
+/* ---------- route (خط السير) ---------- */
+const DAYS_AR=["السبت","الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة"],DAYS_EN=["Saturday","Sunday","Monday","Tuesday","Wednesday","Thursday","Friday"],DN=DAYS_AR.map(norm);
+const cnum=v=>{if(typeof v==="number")return isFinite(v)?v:null;if(typeof v==="string"){const s=v.replace(/[\u0660-\u0669]/g,d=>d.charCodeAt(0)-1632).replace(/\u066B/g,".").replace(",",".").trim();if(/^-?\d+(\.\d+)?$/.test(s))return parseFloat(s)}return null};
+function routeFromWB(R,file){
+  const rows=R[Object.keys(R)[0]]||[];let hr=-1;const H={};
+  for(let r=0;r<6&&hr<0;r++){const row=rows[r]||[];if(row.some(x=>typeof x==="string"&&/customernumber/.test(hn(x)))){hr=r;row.forEach((x,c)=>{if(typeof x==="string")H[hn(x)]=c})}}
+  if(hr<0)throw new Error("noroute");
+  const find=re=>{const e=Object.keys(H).find(q=>re.test(q));return e!=null?H[e]:-1};
+  const cc=find(/customernumber/),cn=find(/customername/),cr=find(/userdefined1/),cla=find(/latitude/),clo=find(/longitude/),cd=find(/يومالزيار/),cw=find(/الاسبوع/);
+  const wk=x=>{const s=norm(x);if(!s)return"all";if(s.includes("الاول")&&s.includes("الثالث"))return"13";if(s.includes("الثاني")&&s.includes("الرابع"))return"24";if(/1.*3/.test(s))return"13";if(/2.*4/.test(s))return"24";return"all"};
+  const out=[];
+  for(let r=hr+1;r<rows.length;r++){
+    const row=rows[r]||[],c=String(row[cc]==null?"":row[cc]).trim();if(!c)continue;
+    const d=cd>=0?DN.indexOf(norm(row[cd])):-1;
+    out.push({c,n:String(row[cn]==null?"":row[cn]).replace(/\s+/g," ").trim(),rp:cr>=0&&row[cr]?String(row[cr]).trim():"",la:cnum(row[cla]),lo:cnum(row[clo]),d,w:cw>=0?wk(row[cw]):"all"});
+  }
+  if(!out.length)throw new Error("noroute");
+  return{ts:Date.now(),file:file||"",rows:out};
+}
+function weekNo(dateStr){const x=ds(dateStr),c=CAL.find(q=>x>=q.s&&x<=q.e);return c?Math.floor((x-c.s)/(7*864e5))+1:1}
+const todayIdx=()=>(new Date().getDay()+1)%7;
+const grpOn=(g,w)=>w==="all"||g==="all"||(g==="13"&&(w===1||w===3))||(g==="24"&&(w===2||w===4));
+const dayName=i=>(S.lang==="ar"?DAYS_AR:DAYS_EN)[i]||"—";
+const splitName=n=>{const m=/^(.*\S)\s*-\s*([^-]+)$/.exec(n);return m?{n:m[1].trim(),a:m[2].trim()}:{n,a:""}};
+function mapLinks(la,lo,name){
+  const q=la+","+lo,nm=encodeURIComponent(name||"");
+  const L=[["🗺 Google Maps","https://www.google.com/maps/dir/?api=1&destination="+q+"&travelmode=driving"],
+   ["🚕 Uber","https://m.uber.com/ul/?action=setPickup&pickup=my_location&dropoff%5Blatitude%5D="+la+"&dropoff%5Blongitude%5D="+lo+"&dropoff%5Bnickname%5D="+nm],
+   ["🧭 Waze","https://waze.com/ul?ll="+q+"&navigate=yes"]];
+  if(/iphone|ipad|ipod|macintosh/i.test(navigator.userAgent))L.push(["🍎 Apple Maps","https://maps.apple.com/?daddr="+q+"&dirflg=d"]);
+  L.push(["📍 "+t("rtView"),"https://www.google.com/maps/search/?api=1&query="+q]);
+  return L;
+}
+function showMap(code){
+  const r=(S.routecfg.rows||[]).find(x=>x.c===code);if(!r||r.la==null)return;
+  const nm=splitName(r.n);
+  $("mpbody").innerHTML=`<h2 dir="auto" style="margin-bottom:2px">${esc(nm.n)}</h2><div class="lbl" dir="auto" style="margin-bottom:10px">${esc(nm.a)} · <span dir="ltr">${r.la.toFixed(6)}, ${r.lo.toFixed(6)}</span></div>
+   <div class="mpl">${mapLinks(r.la,r.lo,r.n).map(([l,h])=>`<a class="cbtn" href="${h}" target="_blank" rel="noopener">${l}</a>`).join("")}<button type="button" id="mpcopy">📋 ${t("rtCopy")}</button></div>`;
+  $("mpcopy").onclick=()=>{try{navigator.clipboard.writeText(r.la+","+r.lo);toast(t("rtCopied"))}catch(e){}};
+  $("mpdlg").showModal();
+}
+function showDayRoute(d,g){
+  const rows=(S.routecfg.rows||[]).filter(r=>r.d===d&&(g==="*"||r.w===g)&&r.la!=null);
+  if(!rows.length)return;
+  const chunks=[];for(let i=0;i<rows.length;i+=10)chunks.push(rows.slice(i,i+10));
+  $("mpbody").innerHTML=`<h2>${t("rtRoute")} · ${dayName(d)}</h2><div class="lbl" style="margin-bottom:10px">${rows.length} ${t("rtStops")}</div><div class="mpl">`+
+   chunks.map((c,i)=>{const dest=c[c.length-1],wp=c.slice(0,-1).map(x=>x.la+","+x.lo).join("|"),
+     h="https://www.google.com/maps/dir/?api=1&destination="+dest.la+","+dest.lo+(wp?"&waypoints="+encodeURIComponent(wp):"")+"&travelmode=driving";
+     return `<a class="cbtn" href="${h}" target="_blank" rel="noopener">🗺 ${i*10+1} → ${i*10+c.length}</a>`}).join("")+`</div><div class="lbl" style="margin-top:8px">${t("rtRouteHint")}</div>`;
+  $("mpdlg").showModal();
+}
+function renderRoute(){
+  const R=S.routecfg||{},rows=R.rows||[];
+  $("routemeta").textContent=rows.length?[R.file,new Date(R.ts).toLocaleDateString("en-GB")].filter(Boolean).join(" · "):"";
+  if(!rows.length){$("routestat").innerHTML="";$("routewk").innerHTML="";$("routelist").innerHTML=`<div class="card empty">${t("noRoute")}</div>`;return}
+  const cur=weekNo(today());if(S.rtWk===undefined||S.rtWk===null)S.rtWk=cur;
+  const w=S.rtWk==="all"?"all":+S.rtWk;
+  $("routewk").innerHTML=[["all",t("rtAll")]].concat([1,2,3,4,5].map(n=>[n,t("rtWeek")+" "+n+(n===cur?" ●":"")])).map(([k,l])=>`<button type="button" data-rw="${k}" class="${String(k)===String(S.rtWk)?"on":""}">${l}</button>`).join("");
+  const q=norm($("routeq").value),cd=custData(),stm={};cd.rows.forEach(r=>{stm[r.code]=r});
+  const byDay={};rows.forEach(r=>{if(r.d<0)return;if(q&&!(norm(r.n).includes(q)||r.c.toLowerCase().includes(q)))return;((byDay[r.d]||(byDay[r.d]={}))[r.w]=(byDay[r.d][r.w]||[])).push(r)});
+  const days=Object.keys(byDay).map(Number).sort((a,b)=>a-b),td=todayIdx();
+  const total=rows.length,dueN=rows.filter(r=>grpOn(r.w,w)).length;
+  $("routestat").innerHTML=`<span class="pill">${total} ${t("rtCust")}</span><span class="pill">${days.length} ${t("rtDays")}</span>${w!=="all"?`<span class="pill okp">${dueN} ${t("rtDueWk")} ${w}</span>`:""}`;
+  const row=r=>{const nm=splitName(r.n),s=stm[r.c],chip=s&&s.tg>0?`<span class="chip ${s.st==="dn"?"d":s.st==="zr"?"z":""}">${s.st==="zr"?t("rtNoBuy"):s.st==="dn"?"✓ "+fmt(s.p,0)+"%":fmt(s.p,0)+"%"}</span>`:"";
+    return `<div class="rrow"><div class="rn" data-cc="${esc(r.c)}"><b dir="auto">${esc(nm.n)}</b><small>${nm.a?esc(nm.a)+" · ":""}<span dir="ltr">${esc(r.c)}</span></small></div><div class="rr">${chip}${r.la!=null?`<button type="button" class="pin" data-pin="${esc(r.c)}" aria-label="map">📍</button>`:""}</div></div>`};
+  $("routelist").innerHTML=`<div class="rgrid">`+days.map(d=>{
+    const g=byDay[d],keys=["all","13","24"].filter(k=>g[k]),cnt=keys.reduce((a,k)=>a+g[k].length,0),act=keys.reduce((a,k)=>a+(grpOn(k,w)?g[k].length:0),0);
+    const ar={};keys.forEach(k=>g[k].forEach(r=>{const a=splitName(r.n).a;if(a)ar[a]=(ar[a]||0)+1}));
+    const top=Object.keys(ar).sort((a,b)=>ar[b]-ar[a]).slice(0,3).map(a=>`${esc(a)} ${ar[a]}`).join(" · ");
+    const isT=d===td,open=isT||!!q||S.rtOpen;
+    const body=keys.map(k=>{
+      const on=grpOn(k,w),lab=k==="13"?t("rtG13"):k==="24"?t("rtG24"):"";
+      if(keys.length===1&&k==="all")return `<div class="rlist">${g[k].map(row).join("")}</div>`;
+      return `<details class="rg ${on?"on":"off"}" ${on||q?"open":""}><summary><b>${lab||t("rtEvery")}</b><span class="chip ${on?"d":""}" style="margin:0 8px">${on?(w==="all"?"":t("rtThisWk")):t("rtOffWk")}</span><span class="cnt">${g[k].length}</span><button type="button" class="pin sm" data-droute="${d}|${k}">🗺</button></summary><div class="rlist">${g[k].map(row).join("")}</div></details>`}).join("");
+    return `<details class="card grp rcard ${isT?"today":""}" ${open?"open":""}><summary><span>${dayName(d)} ${isT?`<span class="chip d">${t("rtNow")}</span>`:""}</span><span class="cnt">${w!=="all"&&act!==cnt?act+" / ":""}${cnt} ${t("rtCust")}</span></summary><div class="gbody"><div class="lbl rtop">${top}</div>${keys.length===1&&keys[0]==="all"?`<div style="text-align:end;margin-bottom:4px"><button type="button" class="pin sm" data-droute="${d}|*">🗺 ${t("rtRoute")}</button></div>`:""}${body}</div></details>`}).join("")+`</div>`;
+}
+$("routewk").onclick=e=>{const b=e.target.closest("[data-rw]");if(b){S.rtWk=b.dataset.rw;save(false);renderRoute()}};
+$("routeq").oninput=renderRoute;
+$("routeexp").onclick=()=>{S.rtOpen=!S.rtOpen;$("routelist").querySelectorAll("details.rcard").forEach(d=>{d.open=S.rtOpen});$("routeexp").textContent=t(S.rtOpen?"rtCollapse":"rtExpand")};
+$("routelist").onclick=e=>{
+  const p=e.target.closest("[data-pin]");if(p){e.preventDefault();showMap(p.dataset.pin);return}
+  const dr=e.target.closest("[data-droute]");if(dr){e.preventDefault();e.stopPropagation();const[d,g]=dr.dataset.droute.split("|");showDayRoute(+d,g);return}
+  const n=e.target.closest("[data-cc]");if(n&&S.custdb.map[n.dataset.cc])showCust(n.dataset.cc);
+};
+$("mpclose").onclick=()=>$("mpdlg").close();
+$("btnRoute").onclick=()=>$("routefile").click();
+$("routefile").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;toast(t("reading"));
+  try{S.routecfg=routeFromWB(await readXlsx(await f.arrayBuffer()),f.name);cfgChanged();save();render();toast(t("routeDone"))}catch(x){alert(t("badRoute"))}};
+/* admin: distribute a route file to reps by the rep name inside the file */
+$("btnDistR").onclick=()=>$("rfile").click();
+$("rfile").onchange=async e=>{
+  const f=e.target.files[0];e.target.value="";if(!f)return;toast(t("reading"));
+  try{
+    const rt=routeFromWB(await readXlsx(await f.arrayBuffer()),f.name),by={};
+    rt.rows.forEach(r=>{(by[r.rp||"—"]=by[r.rp||"—"]||[]).push(r)});
+    const items=[],res=[],un=[];
+    Object.keys(by).forEach(name=>{const u=USERS.find(x=>x.active&&x.rn&&norm(x.rn)===norm(name));
+      if(u){items.push({u:u.u,cfg:{routecfg:{ts:Date.now(),file:f.name,rows:by[name]}}});res.push([u.name,by[name].length])}else un.push([name,by[name].length])});
+    if(items.length){const r=await api({action:"putcfgmany",items},120000);if(r.error)throw new Error(r.error)}
+    $("ddbody").innerHTML=`<h2>${t("routeDone")}</h2>`+res.map(x=>`<div class="row"><span dir="auto">${esc(x[0])}</span><b>${x[1]} ${t("rtCust")}</b></div>`).join("")+(un.length?`<h2 style="margin-top:12px">${t("distUn")}</h2>`+un.map(x=>`<div class="row"><span dir="auto">${esc(x[0])}</span><span>${x[1]} ${t("rtCust")}</span></div>`).join(""):"");
+    $("ddlg").showModal();sync();
+  }catch(x){alert(t("badRoute"))}
+};
+
 /* ---------- accounts, admin, overview ---------- */
 let USERS=[],OVC={};
 function setRoleUI(){document.body.classList.toggle("rep",!(SESS&&SESS.role==="admin"))}
