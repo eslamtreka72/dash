@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a1220">
+<title>داشبورد المبيعات — نسخة تجريبية</title>
+<style>
+:root{--bg:#0a1220;--card:#111c30;--card2:#16233c;--line:#22344f;--txt:#e8eef7;--mut:#8fa3bf;--acc:#3b82f6;--ok:#22c55e;--warn:#f59e0b;--bad:#ef4444}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,Arial,sans-serif}
+body{background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:40px}
+.wrap{max-width:720px;margin:0 auto;padding:14px}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 4px 10px}
+header h1{font-size:19px}
+header .co{font-size:13px;color:var(--mut);margin-top:3px}
+.badge{background:var(--warn);color:#1a1206;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap}
+.monthbar{display:flex;gap:8px;margin:6px 0 14px}
+.monthbar button{flex:1;background:var(--card);border:1px solid var(--line);color:var(--mut);padding:9px;border-radius:10px;font-size:14px;cursor:pointer}
+.monthbar button.on{background:var(--acc);color:#fff;border-color:var(--acc);font-weight:700}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.kpi .l{font-size:12px;color:var(--mut);margin-bottom:6px}
+.kpi .v{font-size:20px;font-weight:800}
+.kpi .s{font-size:12px;margin-top:4px}
+.kpi .s.up{color:var(--ok)}.kpi .s.dn{color:var(--bad)}
+.sec{font-size:15px;font-weight:700;margin:20px 2px 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:6px 14px;margin-bottom:12px}
+.rep{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+.rep:last-child{border-bottom:none}
+.av{width:38px;height:38px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;flex-shrink:0;border:1px solid var(--line)}
+.rep .info{flex:1;min-width:0}
+.rep .nm{font-size:14px;font-weight:700}
+.rep .dt{font-size:12px;color:var(--mut);margin-top:3px}
+.rep .num{text-align:left;flex-shrink:0}
+.rep .net{font-size:15px;font-weight:800}
+.rep .pct{font-size:12px;font-weight:700;margin-top:3px}
+.pct.hi{color:var(--ok)}.pct.mid{color:var(--warn)}.pct.lo{color:var(--bad)}
+.bar{height:5px;background:var(--card2);border-radius:3px;margin-top:6px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:3px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{color:var(--mut);font-size:12px;font-weight:600;text-align:right;padding:10px 6px;border-bottom:1px solid var(--line)}
+td{padding:10px 6px;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:none}
+.tag{font-size:11px;font-weight:700;padding:3px 8px;border-radius:12px}
+.tag.ok{background:rgba(34,197,94,.15);color:var(--ok)}
+.tag.warn{background:rgba(245,158,11,.15);color:var(--warn)}
+.tag.bad{background:rgba(239,68,68,.15);color:var(--bad)}
+.inv{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);font-size:13px}
+.inv:last-child{border-bottom:none}
+.inv .c{color:var(--mut);font-size:12px;margin-top:3px}
+.inv .amt{font-weight:800;white-space:nowrap}
+footer{text-align:center;color:var(--mut);font-size:12px;margin-top:24px;line-height:1.9}
+.num{font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:embed}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <h1>📊 داشبورد المبيعات</h1>
+    <div class="co">شركة النيل للتوزيع — متابعة لايف</div>
+  </div>
+  <span class="badge">نسخة تجريبية</span>
+</header>
+
+<div class="monthbar">
+  <button id="m0" class="on" onclick="setMonth(0)">نوفمبر 2026</button>
+  <button id="m1" onclick="setMonth(1)">أكتوبر 2026</button>
+  <button id="m2" onclick="setMonth(2)">سبتمبر 2026</button>
+</div>
+
+<div class="kpis">
+  <div class="kpi"><div class="l">صافي مبيعات الشهر</div><div class="v num" id="kNet">—</div><div class="s up" id="kNetS"></div></div>
+  <div class="kpi"><div class="l">نسبة تحقيق الهدف</div><div class="v num" id="kPct">—</div><div class="s" id="kPctS"></div></div>
+  <div class="kpi"><div class="l">عدد الفواتير</div><div class="v num" id="kInv">—</div><div class="s" id="kInvS" style="color:var(--mut)"></div></div>
+  <div class="kpi"><div class="l">العملاء المتعاملون</div><div class="v num" id="kAct">—</div><div class="s" id="kActS" style="color:var(--mut)"></div></div>
+</div>
+
+<div class="sec">🧑‍💼 المناديب</div>
+<div class="card" id="reps"></div>
+
+<div class="sec">🎯 حالة العملاء</div>
+<div class="card"><table>
+<thead><tr><th>العميل</th><th>الهدف</th><th>المحقق</th><th>الحالة</th></tr></thead>
+<tbody id="cust"></tbody>
+</table></div>
+
+<div class="sec">🧾 أحدث الفواتير</div>
+<div class="card" id="invs"></div>
+
+<footer>
+  البيانات المعروضة تجريبية لغرض العرض فقط<br>
+  الداشبورد بيشتغل على الموبايل وبيتابع مبيعات كل مندوب أول بأول
+</footer>
+</div>
+
+<script>
+const fmt=n=>n.toLocaleString('en-EG')+" ج";
+const pctCls=p=>p>=85?'hi':p>=60?'mid':'lo';
+const M=[
+{name:'نوفمبر 2026',net:412750,pct:82,dNet:'+14% عن أكتوبر',tgt:504000,inv:486,act:118,tot:156,
+ reps:[
+  {n:'أحمد سامي',net:112400,pct:94,inv:131,act:41},
+  {n:'محمد رمضان',net:98600,pct:87,inv:118,act:36},
+  {n:'كريم عبد الله',net:84300,pct:79,inv:102,act:25},
+  {n:'حسن علي',net:67250,pct:66,inv:78,act:16},
+  {n:'مصطفى فؤاد',net:50200,pct:58,inv:57,act:12}
+ ],
+ cust:[
+  ['سوبر ماركت البركة','8,000','8,940','ok','حقق الهدف'],
+  ['ماركت النور','6,500','5,120','warn','قريب'],
+  ['محلات السلام','5,000','5,000','ok','حقق الهدف'],
+  ['بقالة الحسين','4,200','1,830','bad','متأخر'],
+  ['ماركت الأوليمب','7,500','6,200','warn','قريب'],
+  ['سوبر ماركت المدينة','9,000','9,760','ok','حقق الهدف'],
+  ['محلات الفتح','3,800','0','bad','لم يشترِ'],
+  ['ماركت زهراء','5,500','4,480','warn','قريب']
+ ],
+ invs:[
+  ['#10,482','سوبر ماركت المدينة','أحمد سامي','4,860 ج'],
+  ['#10,481','ماركت النور','محمد رمضان','2,140 ج'],
+  ['#10,480','محلات السلام','كريم عبد الله','3,325 ج'],
+  ['#10,479','سوبر ماركت البركة','أحمد سامي','6,750 ج'],
+  ['#10,478','ماركت الأوليمب','حسن علي','1,980 ج'],
+  ['#10,477','ماركت زهراء','مصطفى فؤاد','2,610 ج']
+ ]},
+{name:'أكتوبر 2026',net:362100,pct:76,dNet:'+6% عن سبتمبر',tgt:478000,inv:441,act:109,tot:156,
+ reps:[
+  {n:'أحمد سامي',net:101300,pct:88,inv:122,act:39},
+  {n:'محمد رمضان',net:91200,pct:81,inv:109,act:33},
+  {n:'كريم عبد الله',net:75600,pct:72,inv:94,act:22},
+  {n:'حسن علي',net:54800,pct:61,inv:71,act:15},
+  {n:'مصطفى فؤاد',net:39200,pct:47,inv:45,act:11}
+ ],
+ cust:[
+  ['سوبر ماركت البركة','8,000','8,210','ok','حقق الهدف'],
+  ['ماركت النور','6,500','4,660','warn','قريب'],
+  ['محلات السلام','5,000','4,150','warn','قريب'],
+  ['بقالة الحسين','4,200','900','bad','متأخر'],
+  ['ماركت الأوليمب','7,500','5,400','warn','قريب'],
+  ['سوبر ماركت المدينة','9,000','9,020','ok','حقق الهدف'],
+  ['محلات الفتح','3,800','1,200','bad','متأخر'],
+  ['ماركت زهراء','5,500','5,500','ok','حقق الهدف']
+ ],
+ invs:[
+  ['#9,955','ماركت الأوليمب','محمد رمضان','3,480 ج'],
+  ['#9,954','سوبر ماركت البركة','أحمد سامي','5,120 ج'],
+  ['#9,953','ماركت زهراء','كريم عبد الله','2,260 ج'],
+  ['#9,952','محلات السلام','حسن علي','1,740 ج']
+ ]},
+{name:'سبتمبر 2026',net:341800,pct:71,dNet:'+3% عن أغسطس',tgt:478000,inv:418,act:104,tot:156,
+ reps:[
+  {n:'أحمد سامي',net:96900,pct:84,inv:116,act:38},
+  {n:'محمد رمضان',net:88500,pct:79,inv:105,act:32},
+  {n:'كريم عبد الله',net:70200,pct:68,inv:89,act:21},
+  {n:'حسن علي',net:50100,pct:57,inv:66,act:13},
+  {n:'مصطفى فؤاد',net:36100,pct:44,inv:42,act:10}
+ ],
+ cust:[
+  ['سوبر ماركت البركة','8,000','7,300','warn','قريب'],
+  ['ماركت النور','6,500','5,900','warn','قريب'],
+  ['محلات السلام','5,000','5,000','ok','حقق الهدف'],
+  ['بقالة الحسين','4,200','1,100','bad','متأخر'],
+  ['ماركت الأوليمب','7,500','4,900','warn','قريب'],
+  ['سوبر ماركت المدينة','9,000','8,600','warn','قريب'],
+  ['محلات الفتح','3,800','600','bad','متأخر'],
+  ['ماركت زهراء','5,500','4,900','warn','قريب']
+ ],
+ invs:[
+  ['#9,540','سوبر ماركت البركة','أحمد سامي','4,390 ج'],
+  ['#9,539','ماركت النور','محمد رمضان','2,870 ج'],
+  ['#9,538','ماركت الأوليمب','كريم عبد الله','1,960 ج']
+ ]}
+];
+function setMonth(i){
+ const d=M[i];
+ for(let j=0;j<3;j++)document.getElementById('m'+j).className=j===i?'on':'';
+ document.getElementById('kNet').textContent=fmt(d.net);
+ document.getElementById('kNetS').textContent=d.dNet;
+ document.getElementById('kPct').textContent=d.pct+'%';
+ document.getElementById('kPct').style.color=d.pct>=80?'var(--ok)':d.pct>=65?'var(--warn)':'var(--bad)';
+ document.getElementById('kPctS').textContent='الهدف: '+fmt(d.tgt);
+ document.getElementById('kPctS').style.color='var(--mut)';
+ document.getElementById('kInv').textContent=d.inv;
+ document.getElementById('kInvS').textContent='فاتورة هذا الشهر';
+ document.getElementById('kAct').textContent=d.act+' / '+d.tot;
+ document.getElementById('kActS').textContent='عميل اشترى من إجمالي '+d.tot;
+ document.getElementById('reps').innerHTML=d.reps.map(r=>`
+  <div class="rep">
+   <div class="av">${r.n.trim()[0]}</div>
+   <div class="info">
+    <div class="nm">${r.n}</div>
+    <div class="dt num">${r.inv} فاتورة · ${r.act} عميل متعامل</div>
+    <div class="bar"><i style="width:${r.pct}%;background:${r.pct>=85?'var(--ok)':r.pct>=60?'var(--warn)':'var(--bad)'}"></i></div>
+   </div>
+   <div class="num">
+    <div class="net num">${fmt(r.net)}</div>
+    <div class="pct ${pctCls(r.pct)}">${r.pct}%</div>
+   </div>
+  </div>`).join('');
+ document.getElementById('cust').innerHTML=d.cust.map(c=>`
+  <tr><td>${c[0]}</td><td class="num">${c[1]}</td><td class="num">${c[2]}</td><td><span class="tag ${c[3]}">${c[4]}</span></td></tr>`).join('');
+ document.getElementById('invs').innerHTML=d.invs.map(v=>`
+  <div class="inv"><div><div>${v[1]}</div><div class="c">${v[0]} · ${v[2]}</div></div><div class="amt num">${v[3]}</div></div>`).join('');
+}
+setMonth(0);
+</script>
+</body>
+</html>
