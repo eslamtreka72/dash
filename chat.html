@@ -83,6 +83,13 @@ textarea{min-height:74px}
 .attachment a{display:inline-block;border:1px solid rgba(255,255,255,.4);border-radius:9px;margin-inline-end:6px;color:var(--tx)}
 
 .relay-hold{margin:12px 0 12px auto;max-width:80%;padding:14px 17px;border:1px dashed rgba(255,255,255,.32);border-radius:18px;background:rgba(255,255,255,.045);font-size:14px;line-height:1.8;color:var(--muted,#ccd4e1)}.relay-hold b{display:block;font-size:12px;font-weight:500}.relay-hold small{display:block;font-size:11px;opacity:.75}
+
+.dots{display:inline-flex;gap:5px;padding:4px 2px 8px}.dots i{width:8px;height:8px;border-radius:50%;background:var(--mu);opacity:.35;animation:dotb 1.2s infinite ease-in-out}.dots i:nth-child(2){animation-delay:.2s}.dots i:nth-child(3){animation-delay:.4s}
+@keyframes dotb{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}
+@keyframes arrive{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.message{animation:arrive .25s ease-out}.relay-hold{animation:arrive .2s ease-out}
+.delivery{color:var(--mu);font-size:11px}.rep[data-delivery=sent] .delivery{color:var(--ok)}
+@media(prefers-reduced-motion:reduce){.dots i,.message,.relay-hold{animation:none}}
 </style></head><body><main>
 <nav class="topnav"><a href="./index.html">← الرجوع للداشبورد</a><button id="newChat" type="button">محادثة جديدة على الجهاز</button></nav>
 <section class="glass"><header><span class="glyph"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="7" width="20" height="16" rx="6"/><path d="M14 7V3M11 3h6M1 13v5M27 13v5M10 18c2 2 6 2 8 0"/><circle cx="10" cy="13" r="1" fill="currentColor"/><circle cx="18" cy="13" r="1" fill="currentColor"/></svg></span><div><h1>مساعد إدكو الذكي</h1><p class="sub"><span class="dot"></span>استفسارات شغل ADCO · الرد يظهر هنا</p></div></header>
@@ -98,7 +105,7 @@ const STORAGE_KEY='adco_assistant_thread_v2:'+(initialSession?initialSession.use
 let verifiedAccount=null;
 
 const form=document.getElementById('chatForm'),statusBox=document.getElementById('status'),sendButton=document.getElementById('send'),box=document.getElementById('messages'),nameInput=document.getElementById('repName'),question=document.getElementById('question');
-let state=null,cursor=0,polling=false,sending=false,pollTimer=null,failures=0,lastSignature='',pendingId='';
+let fastUntil=0,state=null,cursor=0,polling=false,sending=false,pollTimer=null,failures=0,lastSignature='',pendingId='';
 const seen=new Set(),outbox=new Map();
 try {state=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');if(state && (!/^[a-f0-9-]{36}$/.test(state.threadId)||!/^[a-f0-9]{64}$/.test(state.token)))state=null;}catch(e){state=null;}
 function configured(){return /^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(CHAT_ENDPOINT);}
@@ -128,12 +135,12 @@ function renderAttachment(article,m){
  }catch(e){load.disabled=false;load.textContent='إعادة تحميل PDF';info.textContent='تعذر تحميل المرفق. حاول تاني.';}});
  card.append(name,info,load);article.append(card);
 }
-function schedule(){clearTimeout(pollTimer);if(document.hidden||!verifiedAccount||!state||!state.created||!configured())return;const delay=Math.min(300000,30000*Math.pow(2,failures));pollTimer=setTimeout(poll,delay);}
-async function poll(){if(!verifiedAccount||polling||sending||!state||!state.created||document.hidden){schedule();return;}polling=true;try{let more=false;do{const data=await api({action:'read',threadId:state.threadId,token:state.token,after:cursor});render(data.messages||[]);cursor=data.cursor;more=data.more===true;}while(more);failures=0;status('آخر تحديث: '+new Date().toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})+' · الرد غير فوري، التحديث كل 30 ثانية.');}catch(e){failures++;status(errorText(e),true);}finally{polling=false;schedule();}}
+function schedule(){clearTimeout(pollTimer);if(document.hidden||!verifiedAccount||!state||!state.created||!configured())return;const delay=(Date.now()<fastUntil&&failures===0)?4000:Math.min(300000,30000*Math.pow(2,failures));pollTimer=setTimeout(poll,delay);}
+async function poll(){if(!verifiedAccount||polling||sending||!state||!state.created||document.hidden){schedule();return;}polling=true;try{let more=false;do{const data=await api({action:'read',threadId:state.threadId,token:state.token,after:cursor});render(data.messages||[]);cursor=data.cursor;more=data.more===true;}while(more);failures=0;status('آخر تحديث: '+new Date().toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})+(Date.now()<fastUntil?' · بنتابع الرد كل ثواني...':' · التحديث كل 30 ثانية.'));}catch(e){failures++;status(errorText(e),true);}finally{polling=false;schedule();}}
 function markDelivery(id,delivery,at){
  const article=[...box.querySelectorAll('[data-message-id]')].find(e=>e.dataset.messageId===id);if(!article)return;
  let label=article.querySelector('.delivery');if(!label){label=document.createElement('small');label.className='delivery';label.style.display='block';article.append(label)}
- label.textContent=delivery==='pending'?'جاري الإرسال...':delivery==='failed'?'تعذر تأكيد الإرسال. الرسالة محفوظة هنا لإعادة المحاولة.':'تم الحفظ';
+ label.textContent=delivery==='pending'?'🕓 جاري الإرسال...':delivery==='failed'?'تعذر تأكيد الإرسال. الرسالة محفوظة هنا لإعادة المحاولة.':'✓ تم الإرسال';
  article.dataset.delivery=delivery;article.style.outline=delivery==='failed'?'1px solid #ff7d76':'';
  let retry=article.querySelector('.retry-send');if(retry)retry.remove();
  if(delivery==='failed'){retry=document.createElement('button');retry.type='button';retry.className='retry-send';retry.textContent='إعادة المحاولة';retry.onclick=()=>{const item=outbox.get(id);if(item&&!sending&&verifiedAccount)deliver(item)};article.append(retry)}
@@ -142,15 +149,15 @@ function markDelivery(id,delivery,at){
 }
 const relayHolds=new Map();
 function removeHold(id){const h=relayHolds.get(id);if(h)h.node.remove();relayHolds.delete(id)}
-function showHold(item,relayed=false){if(!verifiedAccount)return;let h=relayHolds.get(item.id);if(!h){const node=document.createElement('div');node.className='relay-hold';node.setAttribute('role','status');node.dataset.forMessage=item.id;const title=document.createElement('b');title.textContent='متابعة مؤقتة';const text=document.createElement('div');text.className='text';const note=document.createElement('small');note.textContent='حالة على جهازك فقط، مش إجابة على السؤال.';node.append(title,text,note);h={node,text,after:Date.now()};relayHolds.set(item.id,h);box.append(node)}h.text.textContent=relayed?'ثواني بشوفلك وهرجعلك. الرد هيظهر هنا لما يكون جاهز.':'ثواني براجع سؤالك...';box.scrollTop=box.scrollHeight;}
-function clearAnsweredHolds(at){const when=Date.parse(at);if(!Number.isFinite(when))return;for(const [id,h]of relayHolds)if(h.after<=when)removeHold(id)}
+function showHold(item,relayed=false){if(!verifiedAccount)return;let h=relayHolds.get(item.id);if(!h){const node=document.createElement('div');node.className='relay-hold';node.setAttribute('role','status');node.dataset.forMessage=item.id;const title=document.createElement('b');title.textContent='متابعة مؤقتة';const text=document.createElement('div');text.className='text';const note=document.createElement('small');note.textContent='حالة على جهازك فقط، مش إجابة على السؤال.';const dots=document.createElement('span');dots.className='dots';dots.setAttribute('aria-hidden','true');dots.innerHTML='<i></i><i></i><i></i>';node.append(title,dots,text,note);h={node,text,after:Date.now()};relayHolds.set(item.id,h);box.append(node)}h.text.textContent=relayed?'ثواني بشوفلك وهرجعلك. الرد هيظهر هنا لما يكون جاهز.':'ثواني براجع سؤالك...';box.scrollTop=box.scrollHeight;}
+function clearAnsweredHolds(at){const when=Date.parse(at);if(!Number.isFinite(when))return;for(const [id,h]of relayHolds)if(h.after<=when)removeHold(id);if(!relayHolds.size)fastUntil=0}
 function clearHolds(){for(const id of [...relayHolds.keys()])removeHold(id)}
 function enqueue(item){outbox.set(item.id,item);render([{...item,role:'rep',at:new Date().toISOString(),localPending:true}]);void deliver(item)}
 async function deliver(item){
  if(sending||!verifiedAccount)return;sending=true;clearTimeout(pollTimer);sendButton.disabled=true;micButton.disabled=true;sendButton.textContent='جاري...';markDelivery(item.id,'pending');showHold(item);status('رسالتك ظاهرة هنا، جاري تأكيد حفظها...');
  try{if(await iqTry(item)){removeHold(item.id);return;}showHold(item,true);await ensureThread();const payload={action:'send',threadId:state.threadId,token:state.token,id:item.id,text:item.text||'',website:document.getElementById('website').value};
  if(item.blob){const dataUrl=await new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.onerror=rej;fr.readAsDataURL(item.blob)});payload.audio=String(dataUrl).split(',')[1]||'';payload.audioMime=item.blob.type||'audio/webm'}
- const result=await api(payload);if(result.id!==item.id)throw Error('response');markDelivery(item.id,'sent',result.at);failures=0;
+ const result=await api(payload);if(result.id!==item.id)throw Error('response');markDelivery(item.id,'sent',result.at);failures=0;fastUntil=Date.now()+120000;
  status(result.notificationDelivered===false?'اتحفظت الرسالة، لكن إشعار المساعد متأخر. لو مفيش رد، بلغ مسؤول المبيعات برقم المحادثة.':'رسالتك اتحفظت ووصل إشعار للمساعد. الرد هيظهر هنا لما يكون جاهز.',result.notificationDelivered===false);
  }catch(e){removeHold(item.id);markDelivery(item.id,'failed');status(errorText(e),true)}finally{sending=false;sendButton.disabled=!verifiedAccount;micButton.disabled=!verifiedAccount;sendButton.textContent='إرسال';schedule()}
 }
@@ -241,6 +248,57 @@ else if(target){const targets=g.cfg.targets;if(!targets)return null;const select
 else answer='صافي مبيعاتك المسجلة بعد المرتجعات: '+f(gross)+' جنيه شامل الضريبة، و'+f(net)+' قبلها. '+invs.size+' فاتورة بيع.';
 return {text:answer+suffix,source:'local-dashboard',period,invoiceCount:invs.size};}
 
+/* v2: extra deterministic own-account answers (invoice lookup, today, customer total, product by name). Read-only, own account only. */
+const IQX_ALIAS=[['فيفا','viva','vivo'],['جلاسي','glassy','glacy','glasy'],['كلوريل','clorel','chloryl','clorell'],['ليمون','lemon'],['صنوبر','pine'],['الوان','colors','color','colour'],['زيرو','zero'],['فيبا','feba'],['ماكسيل','maxel','maxelmagic'],['فلفيتا','velveta'],['فيما','fema'],['ديفا','diva'],['سبيد','speed'],['بحر','sea'],['لافندر','lavender'],['تفاح','apple']].map(a=>a.map(iqNorm));
+const IQX_STOP=new Set(iqNorm('عايز اعرف انا مبيعات مبيعاتي مبيعات بايع بعت كام كرتونه كراتين بالكرتونه بكام الشهر ده دي الفتره الحاليه منتج صنف ماركه من في ال لو سمحت يا باشا ممكن').split(' '));
+function iqxSize(name){const m=iqNorm(name).match(/(?:^| )(\d+(?:[.,]\d+)?)\s*(كجم|كيلو|جم|جرام|لتر|مل)(?: |$)/);if(!m)return null;const n=Number(m[1].replace(',','.'));return {mass:['كجم','كيلو'].includes(m[2])?n*1000:['جم','جرام'].includes(m[2])?n:null,vol:m[2]==='لتر'?n*1000:m[2]==='مل'?n:null}}
+function iqxTokenHit(tok,hay){const words=hay.split(' ');const grp=IQX_ALIAS.find(a=>a.includes(tok))||[tok];return grp.some(a=>(' '+hay+' ').includes(' '+a+' ')||words.some(w=>(w.startsWith(a)||w==='ال'+a||w.startsWith('ال'+a))&&a.length>=3))||(tok.length>=4&&words.some(w=>w.length>=4&&iqEdit(w,tok)<=1))}
+function iqxLines(g,rows,period,customerCode){const items=g.cfg.items?.map||{},out=[];for(const v of rows){if(v.mode==='return')continue;if(period&&(v.date<period.start||v.date>period.end))continue;if(customerCode&&v.cc!==customerCode)continue;for(const z of v.L||[]){const item=items[z[0]]||{};out.push({v,z,name:item.n||z[6]||'',brand:z[5]||'',pack:Number(g.data.pk?.[z[0]]||item.u||0)})}}return out}
+function iqxCartons(l){const unit=iqNorm(l.z[2]),q=Math.abs(Number(l.z[1])||0);if(/^(crt|ctn|cs|case|carton|box)$/.test(unit)||unit.includes('كرتون'))return {c:q,u:0};if(l.pack>0)return {c:q/l.pack,u:0};return {c:0,u:1}}
+function iqExtra(text,g,account,date){
+ const q=iqNorm(text);if(!g?.user||g.user.u!==account||!g.cfg?.custdb?.repCode)return null;
+ if(/اوردر|اطلب|اكد|تاكيد|احذف|امسح|عدل|سجل|سيلز|salesbuzz|ابعت|ارسل|pdf|ملف|صوره|مرتجع|امبارح|السنه|الشهر اللي فات|شهر سابق|الاسبوع|يناير|فبراير|مارس|ابريل|مايو|يونيو|يوليو|اغسطس|سبتمبر|اكتوبر|نوفمبر|ديسمبر|\d{1,2}[\/-]\d{1,2}/.test(q))return null;
+ const period=iqPeriod(g.cfg||{},date);if(!period)return null;const own=iqRows(g,account);if(own.conflicts.length)return {text:'فيه نسخ نشطة متعارضة لفواتير في حسابك. السؤال اتبعت للمراجعة عشان ما اديكش رقم غلط.',review:true};
+ const f=n=>Number(n).toLocaleString('en-US',{maximumFractionDigits:2}),map=g.cfg.custdb.map||{};
+ const foot='\nمن فواتير الداشبورد المسجلة فقط'+(own.rejected?' · سجلات خارج نطاق الملكية مستبعدة':'');
+ const total=ls=>ls.reduce((a,l)=>({g:a.g+Math.abs(Number(l.z[3])||0),n:a.n+Math.abs(Number(l.z[4])||0)}),{g:0,n:0});
+ const today=date||new Intl.DateTimeFormat('en-CA',{timeZone:'Africa/Cairo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+ // 1) invoice lookup
+ if(/فاتوره|فاتورة/.test(q)){
+  const num=(q.match(/(?:^| )(\d{5,9})(?: |$)/)||[])[1];let inv=null,cust=null;
+  const mk=v=>{const ls=iqxLines(g,[{...v,mode:'sale'}],null,null),t=total(ls);return 'فاتورة '+v.no+' ('+(v.mode==='return'?'مرتجع':'بيع')+')\nالعميل: '+(map[v.cc]?.n||v.cn||v.cc)+' ('+v.cc+')\nالتاريخ: '+v.date+'\nعدد البنود: '+(v.L||[]).length+'\nالإجمالي: '+f(t.g)+' جنيه شامل الضريبة، و'+f(t.n)+' قبلها.'};
+  if(num){const hits=own.rows.filter(v=>String(v.no).replace(/\D/g,'').endsWith(num));if(hits.length===1)inv=hits[0];else if(!hits.length)return {text:'مفيش فاتورة برقم '+num+' في فواتيرك المسجلة على الداشبورد. ممكن تكون لسه ما اتسجلتش.'+foot,source:'local-dashboard'};else return null}
+  else if(/اخر|اخيره|اجديد/.test(q)){cust=iqCustomer(text,map);if(cust?.ambiguous)return null;const pool=own.rows.filter(v=>!cust||v.cc===cust.code).sort((a,b)=>String(b.date).localeCompare(String(a.date)));if(!pool.length)return null;inv=pool[0]}
+  else return null;
+  return {text:mk(inv)+foot+'\nلو عايز ملف PDF للفاتورة اطلبه وهيتراجع.',source:'local-dashboard'};
+ }
+ // 2) sales today
+ if(/النهارده|اليوم|انهارده/.test(q)&&/مبيعات|بعت|بايع/.test(q)){
+  const ls=iqxLines(g,own.rows.filter(v=>v.date===today),null,null);if(!ls.length)return {text:'مفيش فواتير بيع مسجلة بتاريخ النهاردة ('+today+') على الداشبورد لحد دلوقتي. الفواتير بتظهر بعد ما تتسجل.'+foot,source:'local-dashboard'};
+  const t=total(ls),n=new Set(ls.map(l=>l.v.no)).size;return {text:'مبيعات النهاردة ('+today+'): '+f(t.g)+' جنيه شامل الضريبة، و'+f(t.n)+' قبلها، في '+n+' فاتورة بيع (قبل خصم المرتجعات).'+foot,source:'local-dashboard'};
+ }
+ // 3) customer total
+ if(/عميل|واخد|اخد|مشتريات|مشتريات/.test(q)&&!/(\d+)\s*(لتر|كجم|مل|جم)/.test(q)){
+  const cust=iqCustomer(text,map);if(!cust||cust.ambiguous||!cust.code)return null;
+  const ls=iqxLines(g,own.rows,period,cust.code);if(!ls.length)return {text:cust.c.n+' ('+cust.code+'): مفيش فواتير بيع مسجلة في الفترة '+period.start+' إلى '+period.end+'.'+foot,source:'local-dashboard'};
+  const t=total(ls),inv=[...new Set(ls.map(l=>l.v.no))],last=ls.map(l=>l.v.date).sort().pop();
+  return {text:cust.c.n+' ('+cust.code+'): مبيعات الفترة '+period.start+' إلى '+period.end+': '+f(t.g)+' جنيه شامل الضريبة، و'+f(t.n)+' قبلها، في '+inv.length+' فاتورة. آخر فاتورة بتاريخ '+last+'. (قبل خصم المرتجعات)'+foot,source:'local-dashboard'};
+ }
+ // 4) product by name (brand + variant + size), lists the exact matched items
+ let toks=q.split(' ').filter(w=>w&&!IQX_STOP.has(w));if(!toks.length||toks.length>6)return null;
+ if(/واخد|اخد|عميل|تارجت|هدف|تحقيق|بكام العميل/.test(q))return null;
+ const sizes=[];const wordToks=[];
+ for(let i=0;i<toks.length;i++){const w=toks[i];if(/^\d+([.,]\d+)?$/.test(w)){const unit=['لتر','مل','كجم','كيلو','جم','جرام'].includes(toks[i+1])?toks[++i]:null;const n=Number(w.replace(',','.'));sizes.push({n,unit})}else wordToks.push(w)}
+ if(!wordToks.length)return null;
+ const all=iqxLines(g,own.rows,period,null);
+ const hit=all.filter(l=>{const hay=iqNorm(l.name+' '+l.brand+' '+l.z[0]);if(!wordToks.every(t=>iqxTokenHit(t,hay)))return false;const sz=iqxSize(l.name);return sizes.every(s=>{if(!sz){return s.unit?false:(' '+hay+' ').includes(' '+s.n+' ')}if(s.unit){const mass=['كجم','كيلو'].includes(s.unit)?s.n*1000:['جم','جرام'].includes(s.unit)?s.n:null,vol=s.unit==='لتر'?s.n*1000:s.unit==='مل'?s.n:null;return (mass!==null&&sz.mass===mass)||(vol!==null&&sz.vol===vol)}return sz.mass===s.n||sz.vol===s.n||sz.mass===s.n*1000||sz.vol===s.n*1000})});
+ if(!hit.length)return null;
+ const bySku=new Map();for(const l of hit){const k=l.z[0];if(!bySku.has(k))bySku.set(k,[]);bySku.get(k).push(l)}
+ if(bySku.size>6)return null;
+ const rowsOut=[];let unknown=0,totC=0,totG=0;for(const [k,ls]of bySku){let c=0,u=0;for(const l of ls){const r=iqxCartons(l);c+=r.c;u+=r.u}const t=total(ls);unknown+=u;totC+=c;totG+=t.g;rowsOut.push('• '+(ls[0].name||k)+' ('+k+'): '+f(c)+' كرتونة'+(u?' (+'+u+' سطر بدون شدة)':'')+' · '+f(t.g)+' جنيه')}
+ return {text:'مبيعات '+toks.join(' ')+' ('+period.start+' إلى '+period.end+'):\n'+rowsOut.join('\n')+(bySku.size>1?'\nالإجمالي: '+f(totC)+' كرتونة · '+f(totG)+' جنيه شامل الضريبة':'')+'\nقبل خصم المرتجعات.'+(unknown?'\nفيه بنود بدون شدة مؤكدة، فعدد الكراتين ناقص.':'')+'\nاتأكد إن الأصناف اللي فوق هي اللي تقصدها.'+foot,source:'local-dashboard'};
+}
+
 let iqCache=null,iqCacheAt=0,iqFetching=null;
 const IQ_DASH='https://script.google.com/macros/s/AKfycbyBjrfqUacXsUEeZvifZ9R2HQWUi-nmZEZAzo0rDiO3n-4cI8Kovwo84XBj9dMpgxIPzA/exec';
 const iqServer=()=>localStorage.getItem('sd_server')||IQ_DASH;
@@ -248,7 +306,7 @@ const iqHistoryKey=()=>STORAGE_KEY+':local:'+encodeURIComponent(iqServer());
 function iqRemember(messages){try{const a=JSON.parse(localStorage.getItem(iqHistoryKey())||'[]');localStorage.setItem(iqHistoryKey(),JSON.stringify(a.concat(messages).slice(-60)))}catch(e){}}
 async function iqLoad(){const session=currentSession(),url=iqServer();if(!verifiedAccount||!session||session.user!==initialSession.user||session.token!==initialSession.token)return null;if(iqCache&&Date.now()-iqCacheAt<60000&&iqCache.user.u===session.user&&iqCache._url===url)return iqCache;if(iqFetching)return iqFetching;
  iqFetching=(async()=>{const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);try{const r=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'get',token:session.token,cfgRev:-1}),signal:controller.signal});const g=await r.json(),latest=currentSession();if(!latest||latest.user!==session.user||latest.token!==session.token||iqServer()!==url||g.error||g.user?.u!==session.user||!g.cfg?.custdb)return null;iqCache={...g,_url:url};iqCacheAt=Date.now();return iqCache}catch(e){return null}finally{clearTimeout(timer);iqFetching=null}})();return iqFetching;}
-async function iqTry(item){if(item.blob)return false;const g=await iqLoad();if(!g)return false;const answer=iqAnswer(item.text,g,verifiedAccount.user);if(!answer||answer.review)return false;markDelivery(item.id,'sent');const reply={id:'local-'+crypto.randomUUID(),role:'assistant',text:answer.text+'\nإجابة مباشرة على الجهاز، محفوظة هنا فقط.',at:new Date().toISOString()};render([reply]);iqRemember([{id:item.id,role:'rep',text:item.text,at:reply.at},reply]);status('إجابة مباشرة من بيانات حسابك. لم تحتج انتظار رد يدوي.');return true;}
+async function iqTry(item){if(item.blob)return false;const g=await iqLoad();if(!g)return false;let answer=iqAnswer(item.text,g,verifiedAccount.user);if(!answer)answer=iqExtra(item.text,g,verifiedAccount.user);if(!answer||answer.review)return false;markDelivery(item.id,'sent');await new Promise(r=>setTimeout(r,600));const reply={id:'local-'+crypto.randomUUID(),role:'assistant',text:answer.text+'\nإجابة مباشرة على الجهاز، محفوظة هنا فقط.',at:new Date().toISOString()};render([reply]);iqRemember([{id:item.id,role:'rep',text:item.text,at:reply.at},reply]);status('إجابة مباشرة من بيانات حسابك. لم تحتج انتظار رد يدوي.');return true;}
 function iqBoot(){try{const messages=JSON.parse(localStorage.getItem(iqHistoryKey())||'[]');if(Array.isArray(messages))render(messages.filter(m=>typeof m.id==='string'&&typeof m.text==='string'))}catch(e){}void iqLoad();}
 
 bootIdentity();
